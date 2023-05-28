@@ -75,7 +75,7 @@ namespace TradeOnAnalysis.Assets.WPFElements
                 (item, date) => date == item.BuyInfo!.Date.Date,
                 item => item.BuyInfo!.Price,
                 startDate.Date, endDate.Date);
-            DisplayValues(values, "Покупки", new SKColor(244, 67, 54));
+            DisplayValues(values, "Покупки", new SKColor(33, 150, 243));
         }
 
         public void DisplaySells(IEnumerable<Item> items, DateTime startDate, DateTime endDate)
@@ -84,7 +84,7 @@ namespace TradeOnAnalysis.Assets.WPFElements
                 (item, date) => date == item.SellInfo!.Date.Date,
                 item => item.SellInfo!.Price,
                 startDate.Date, endDate.Date);
-            DisplayValues(values, "Продажи", new SKColor(33, 150, 243));
+            DisplayValues(values, "Продажи", new SKColor(244, 67, 54));
         }
 
         public void DisplayProfit(IEnumerable<Item> items, DateTime startDate, DateTime endDate)
