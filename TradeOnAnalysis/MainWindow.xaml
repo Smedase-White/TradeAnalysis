@@ -1,0 +1,44 @@
+﻿<Window x:Class="TradeOnAnalysis.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:TradeOnAnalysis"
+        xmlns:controls="clr-namespace:TradeOnAnalysis.Assets.WPFElements"
+        mc:Ignorable="d"
+        Title="Trade analysis" 
+        Height="1040" Width="1855" ResizeMode="NoResize" 
+        Background="{StaticResource MainBackgroundColor}">
+    <Grid>
+        <controls:UserData 
+            x:Name="UserData" 
+            HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,10,0,0"/>
+        <Button 
+            HorizontalAlignment="Left" VerticalAlignment="Top" Margin="325,10,0,0" 
+            Height="30" Width="128" 
+            Style="{StaticResource Panel}" Background="{StaticResource BorderColor}" Foreground="{StaticResource ForegroundColor}"
+            Content="Загрузить" FontSize="16" 
+            Click="Button_Click" FontFamily="Arial" FontWeight="Bold"/>
+        <Label 
+            x:Name="StatusLabel"
+            HorizontalAlignment="Left" VerticalAlignment="Top" Margin="325,45,0,0"
+            Height="25" Width="128"
+            Style="{StaticResource Panel}"  Foreground="{StaticResource ForegroundColor}" Padding="8,4,0,0"/>
+        <controls:ItemsGrid 
+            x:Name="Grid" 
+            HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,81,0,0" 
+            Height="910"/>
+        <controls:Chart 
+            x:Name="BuySellChart"
+            HorizontalAlignment="Left" VerticalAlignment="Top" Margin="825,81,0,0" 
+            Height="300" Width="1000"/>
+        <controls:Chart 
+            x:Name="ProfitChart" 
+            HorizontalAlignment="Left" VerticalAlignment="Top" Margin="825,386,0,0" 
+            Height="300" Width="1000"/>
+        <controls:Chart 
+            x:Name="DailyProfitChart" 
+            HorizontalAlignment="Left" VerticalAlignment="Top" Margin="825,691,0,0" 
+            Height="300" Width="1000"/>
+    </Grid>
+</Window>
