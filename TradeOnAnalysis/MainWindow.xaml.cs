@@ -40,15 +40,7 @@ namespace TradeOnAnalysis
                         select item;
 
             Grid.Display(items, item => (item.BuyInfo!.Date >= UserData.StartDate && item.SellInfo!.Date <= UserData.EndDate));
-
-            BuySellChart.Clear();
-            ProfitChart.Clear();
-            DailyProfitChart.Clear();
-
-            BuySellChart.DisplayBuys(Item.GetAllItems().Where(x => x.BuyInfo != null), UserData.StartDate, UserData.EndDate);
-            BuySellChart.DisplaySells(Item.GetAllItems().Where(x => x.SellInfo != null), UserData.StartDate, UserData.EndDate);
-            ProfitChart.DisplayProfit(items, UserData.StartDate, UserData.EndDate);
-            DailyProfitChart.DisplayDailyProfit(items, UserData.StartDate, UserData.EndDate);
+            ChartsPanel.DisplayAll(items, UserData.StartDate, UserData.EndDate);
         }
 
         private static long DateTimeToUnix(DateTime dateTime)

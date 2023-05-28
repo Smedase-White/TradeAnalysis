@@ -28,17 +28,9 @@
             x:Name="Grid" 
             HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,81,0,0" 
             Height="910"/>
-        <controls:Chart 
-            x:Name="BuySellChart"
+        <controls:Charts 
+            x:Name="ChartsPanel"
             HorizontalAlignment="Left" VerticalAlignment="Top" Margin="825,81,0,0" 
-            Height="300" Width="1000"/>
-        <controls:Chart 
-            x:Name="ProfitChart" 
-            HorizontalAlignment="Left" VerticalAlignment="Top" Margin="825,386,0,0" 
-            Height="300" Width="1000"/>
-        <controls:Chart 
-            x:Name="DailyProfitChart" 
-            HorizontalAlignment="Left" VerticalAlignment="Top" Margin="825,691,0,0" 
-            Height="300" Width="1000"/>
+            Width="1000"/>
     </Grid>
 </Window>
