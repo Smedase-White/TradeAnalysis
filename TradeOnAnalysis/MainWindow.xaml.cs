@@ -6,8 +6,9 @@ using System.Net.Http;
 using System.Text.Json;
 using System.Windows;
 using TradeOnAnalysis.Assets;
-using TradeOnAnalysis.Assets.MarketAPI;
-using TradeOnAnalysis.Assets.MarketAPI.Answer;
+using TradeOnAnalysis.Assets.MarketAPI.Requests;
+using TradeOnAnalysis.Assets.MarketAPI.Results;
+using TradeOnAnalysis.Assets.MarketAPI.Utils;
 
 namespace TradeOnAnalysis
 {
@@ -20,11 +21,6 @@ namespace TradeOnAnalysis
         {
             InitializeComponent();
         }
-
-        private readonly static HttpClient httpClient = new()
-        {
-            BaseAddress = new Uri("https://market.csgo.com/api/"),
-        };
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
@@ -43,25 +39,17 @@ namespace TradeOnAnalysis
             ChartsPanel.DisplayAll(items, UserData.StartDate, UserData.EndDate);
         }
 
-        private static long DateTimeToUnix(DateTime dateTime)
-            => ((DateTimeOffset)dateTime).ToUnixTimeSeconds();
-
         private void ParseItems()
         {
-            var task = httpClient.GetAsync($"OperationHistory/" +
-                $"{DateTimeToUnix(UserData.StartDate)}/" +
-                $"{DateTimeToUnix(UserData.EndDate)}/" +
-                $"?key={UserData.MarketApi}");
+            OperationHistoryRequest request = new(UserData.StartDate, UserData.EndDate, UserData.MarketApi);
+            HttpStatusCode status = request.ResultMessage.StatusCode;
 
-            var result = task.Result;
-            StatusLabel.Content = $"{result.StatusCode}";
-            if (result.StatusCode != HttpStatusCode.OK)
+            StatusLabel.Content = $"{status}";
+            if (status != HttpStatusCode.OK)
                 return;
 
-            StreamReader reader = new StreamReader(result.Content.ReadAsStream());
-            string answer = reader.ReadToEnd();
-            OperationHistoryAnswer historyRecord = JsonSerializer.Deserialize<OperationHistoryAnswer>(answer);
-            foreach (OperationHistoryElement element in historyRecord.History)
+            OperationHistoryResult? result = request.Result as OperationHistoryResult;
+            foreach (OperationHistoryElement element in result!.History)
                 Item.LoadFromAPI(element);
         }
     }

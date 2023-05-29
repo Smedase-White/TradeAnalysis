@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Text.Json.Serialization;
 
-namespace TradeOnAnalysis.Assets.MarketAPI
+namespace TradeOnAnalysis.Assets.MarketAPI.Utils
 {
     public enum EventType
     {

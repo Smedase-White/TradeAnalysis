@@ -1,8 +1,8 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace TradeOnAnalysis.Assets.MarketAPI.Answer
+namespace TradeOnAnalysis.Assets.MarketAPI.Results
 {
-    public class BaseAnswer
+    public class BaseResult
     {
         [JsonPropertyName("success")]
         public bool Success { get; set; }
