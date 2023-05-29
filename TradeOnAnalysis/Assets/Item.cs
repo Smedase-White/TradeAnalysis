@@ -63,17 +63,11 @@ namespace TradeOnAnalysis.Assets
             switch (element.EventType)
             {
                 case EventType.Buy:
-                    found = from x in found
-                            where x.BuyInfo == null
-                            select x;
+                    found = found.Where(x => x.BuyInfo == null);
                     break;
                 case EventType.Sell:
-                    found = from x in found
-                            where x.SellInfo == null
-                            select x;
+                    found = found.Where(x => x.SellInfo == null);
                     break;
-                case EventType.Transaction:
-                    return null;
             }
 
             if (found.Any())
@@ -94,8 +88,6 @@ namespace TradeOnAnalysis.Assets
                 case EventType.Sell:
                     item.SellInfo = new ActionInfo(Convert.ToInt32(element.Recieved) / 100.0, element.DateTime); ;
                     break;
-                case EventType.Transaction:
-                    return item;
             }
 
             return item;
