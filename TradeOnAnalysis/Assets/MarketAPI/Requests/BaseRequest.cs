@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net.Http;
-using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using TradeOnAnalysis.Assets.MarketAPI.Results;
@@ -30,13 +27,13 @@ namespace TradeOnAnalysis.Assets.MarketAPI.Requests
         public BaseRequest(params string[] requestParams)
             : this(string.Join("/", requestParams)) { }
 
-        public HttpResponseMessage ResultMessage 
+        public HttpResponseMessage ResultMessage
             => _requestTask.Result;
 
         public virtual ResultType? Result
             => DeserializeMessage(ResultMessage);
 
-        public void Resend() 
+        public void Resend()
             => _requestTask = MarketClient.GetAsync(_requestUri);
 
         public ResultType? DeserializeMessage(HttpResponseMessage message)

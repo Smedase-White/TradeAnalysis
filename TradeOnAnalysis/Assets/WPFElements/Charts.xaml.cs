@@ -69,9 +69,9 @@ namespace TradeOnAnalysis.Assets.WPFElements
             chart.Series = chart.Series.Concat(new ISeries[] { line });
         }
 
-        private static ObservableCollection<DateTimePoint> CalcDailyValues(DateTime startDate, DateTime endDate, 
-            IEnumerable<Item> items, 
-            Func<Item, DateTime, bool> predicate, 
+        private static ObservableCollection<DateTimePoint> CalcDailyValues(DateTime startDate, DateTime endDate,
+            IEnumerable<Item> items,
+            Func<Item, DateTime, bool> predicate,
             Func<Item, DateTime, double> selection,
             Func<IEnumerable<double>, double>? calc = null)
         {
@@ -99,7 +99,7 @@ namespace TradeOnAnalysis.Assets.WPFElements
 
         public void DisplayBuys(IEnumerable<Item> items, DateTime startDate, DateTime endDate)
         {
-            ObservableCollection<DateTimePoint> values = CalcDailyValues(startDate.Date, endDate.Date, 
+            ObservableCollection<DateTimePoint> values = CalcDailyValues(startDate.Date, endDate.Date,
                 items,
                 (item, date) => date == item.BuyInfo!.Date.Date,
                 (item, _) => item.BuyInfo!.Price);
@@ -108,7 +108,7 @@ namespace TradeOnAnalysis.Assets.WPFElements
 
         public void DisplaySells(IEnumerable<Item> items, DateTime startDate, DateTime endDate)
         {
-            ObservableCollection<DateTimePoint> values = CalcDailyValues(startDate.Date, endDate.Date, 
+            ObservableCollection<DateTimePoint> values = CalcDailyValues(startDate.Date, endDate.Date,
                 items,
                 (item, date) => date == item.SellInfo!.Date.Date,
                 (item, _) => item.SellInfo!.Price);
@@ -117,7 +117,7 @@ namespace TradeOnAnalysis.Assets.WPFElements
 
         public void DisplayProfit(IEnumerable<Item> items, DateTime startDate, DateTime endDate)
         {
-            ObservableCollection<DateTimePoint> values = CalcDailyValues(startDate.Date, endDate.Date, 
+            ObservableCollection<DateTimePoint> values = CalcDailyValues(startDate.Date, endDate.Date,
                 items,
                 (item, date) => date == item.SellInfo!.Date.Date,
                 (item, _) => item.SellInfo!.Price - item.BuyInfo!.Price);
@@ -126,7 +126,7 @@ namespace TradeOnAnalysis.Assets.WPFElements
 
         public void DisplayDailyProfit(IEnumerable<Item> items, DateTime startDate, DateTime endDate)
         {
-            ObservableCollection<DateTimePoint> values = CalcDailyValues(startDate.Date, endDate.Date, 
+            ObservableCollection<DateTimePoint> values = CalcDailyValues(startDate.Date, endDate.Date,
                 items,
                 (item, date) => item.BuyInfo!.Date.Date < date && date <= item.SellInfo!.Date.Date,
                 (item, _) => (item.SellInfo!.Price - item.BuyInfo!.Price) / (item.SellInfo!.Date - item.BuyInfo!.Date).Days);
@@ -135,7 +135,7 @@ namespace TradeOnAnalysis.Assets.WPFElements
 
         public void DisplayMarketAnalysis(IEnumerable<Item> items, DateTime startDate, DateTime endDate)
         {
-            ObservableCollection<DateTimePoint> values = CalcDailyValues(startDate.Date, endDate.Date, 
+            ObservableCollection<DateTimePoint> values = CalcDailyValues(startDate.Date, endDate.Date,
                 items,
                 (item, date) => item.History?.ContainsKey(date) ?? false,
                 (item, date) => item.History![date].AveragePrice / item.AveragePrice!.Value,

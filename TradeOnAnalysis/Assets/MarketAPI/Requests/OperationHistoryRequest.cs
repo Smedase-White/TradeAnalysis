@@ -1,9 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
-using System.Text;
-using System.Threading.Tasks;
 using TradeOnAnalysis.Assets.MarketAPI.Results;
 
 namespace TradeOnAnalysis.Assets.MarketAPI.Requests
