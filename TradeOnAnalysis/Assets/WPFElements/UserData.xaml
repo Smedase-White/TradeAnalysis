@@ -37,7 +37,6 @@
             HorizontalAlignment="Left" VerticalAlignment="Top" Margin="184,34,0,0" 
             Width="120" 
             Style="{StaticResource InputDate}" 
-            FirstDayOfWeek="Monday" 
-            Text="01.01.2024"/>
+            FirstDayOfWeek="Monday"/>
     </Grid>
 </UserControl>

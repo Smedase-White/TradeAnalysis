@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text.Json;
+using System.Threading.Tasks;
 using System.Windows;
 using TradeOnAnalysis.Assets;
 using TradeOnAnalysis.Assets.MarketAPI.Requests;
@@ -22,13 +24,15 @@ namespace TradeOnAnalysis
             InitializeComponent();
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        private async void Button_Click(object sender, RoutedEventArgs e)
         {
             if (Item.GetAllItems().Count == 0)
-                ParseItems();
+                await ParseItems();
 
             if (Item.GetAllItems().Count == 0)
                 return;
+
+            Task marketParseTask = ParseMarket();
 
             var items = from item in Item.GetAllItems()
                         where item.BuyInfo != null && item.SellInfo != null
@@ -36,10 +40,13 @@ namespace TradeOnAnalysis
                         select item;
 
             Grid.Display(items, item => (item.BuyInfo!.Date >= UserData.StartDate && item.SellInfo!.Date <= UserData.EndDate));
+
+            await marketParseTask;
+
             ChartsPanel.DisplayAll(items, UserData.StartDate, UserData.EndDate);
         }
 
-        private void ParseItems()
+        private async Task ParseItems()
         {
             OperationHistoryRequest request = new(UserData.StartDate, UserData.EndDate, UserData.MarketApi);
             HttpStatusCode status = request.ResultMessage.StatusCode;
@@ -48,9 +55,20 @@ namespace TradeOnAnalysis
             if (status != HttpStatusCode.OK)
                 return;
 
-            OperationHistoryResult? result = request.Result as OperationHistoryResult;
-            foreach (OperationHistoryElement element in result!.History)
+            OperationHistoryResult result = request.Result!;
+            foreach (OperationHistoryElement element in result.History)
                 Item.LoadFromAPI(element);
+        }
+
+        private async Task ParseMarket()
+        {
+            if (Item.GetAllItems().Count == 0)
+                return;
+
+            List<Task> tasks = new();
+            foreach (Item item in Item.GetAllItems())
+                tasks.Add(item.LoadHistory(UserData.MarketApi));
+            await Task.WhenAll(tasks);
         }
     }
 }

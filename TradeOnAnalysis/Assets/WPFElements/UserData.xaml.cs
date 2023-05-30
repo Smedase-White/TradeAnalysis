@@ -11,6 +11,7 @@ namespace TradeOnAnalysis.Assets.WPFElements
         public UserData()
         {
             InitializeComponent();
+            EndDatePicker.Text = DateTime.Now.ToShortDateString();
         }
 
         public string MarketApi => ApiBox.Text;

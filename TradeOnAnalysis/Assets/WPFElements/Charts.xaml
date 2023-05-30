@@ -17,14 +17,14 @@
             LegendPosition="Top" LegendTextPaint="{Binding LegendTextPaint}"
             ZoomMode="X"/>
         <lvc:CartesianChart 
-            x:Name="ProfitChart"
+            x:Name="DailyProfitChart"
             VerticalAlignment="Top" Margin="0,305,0,0"  
             Height="300"
             XAxes="{Binding XAxes}"
             LegendPosition="Top" LegendTextPaint="{Binding LegendTextPaint}"
             ZoomMode="X"/>
         <lvc:CartesianChart 
-            x:Name="DailyProfitChart"
+            x:Name="MarketChart"
             VerticalAlignment="Top" Margin="0,610,0,0" 
             Height="300"
             XAxes="{Binding XAxes}"

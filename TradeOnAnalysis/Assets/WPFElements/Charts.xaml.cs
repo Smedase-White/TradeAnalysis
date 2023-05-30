@@ -69,18 +69,28 @@ namespace TradeOnAnalysis.Assets.WPFElements
             chart.Series = chart.Series.Concat(new ISeries[] { line });
         }
 
-        private static ObservableCollection<DateTimePoint> CalcDailyValues(IEnumerable<Item> items, Func<Item, DateTime, bool> predicate, Func<Item, double> selection, DateTime startDate, DateTime endDate)
+        private static ObservableCollection<DateTimePoint> CalcDailyValues(DateTime startDate, DateTime endDate, 
+            IEnumerable<Item> items, 
+            Func<Item, DateTime, bool> predicate, 
+            Func<Item, DateTime, double> selection,
+            Func<IEnumerable<double>, double>? calc = null)
         {
             ObservableCollection<DateTimePoint> values = new();
             for (DateTime date = startDate; date <= endDate; date = date.AddDays(1))
             {
                 IEnumerable<double> dailyValues = from item in items
                                                   where predicate(item, date)
-                                                  select selection(item);
-                values.Add(new(date, Math.Round(dailyValues.Sum(), 2)));
+                                                  select selection(item, date);
+                double value;
+                if (calc == null)
+                    value = Math.Round(dailyValues.Sum(), 2);
+                else
+                    value = calc(dailyValues);
+                values.Add(new(date, value));
             }
             return values;
         }
+
 
         private static void Clear(CartesianChart chart)
         {
@@ -89,50 +99,61 @@ namespace TradeOnAnalysis.Assets.WPFElements
 
         public void DisplayBuys(IEnumerable<Item> items, DateTime startDate, DateTime endDate)
         {
-            ObservableCollection<DateTimePoint> values = CalcDailyValues(items,
+            ObservableCollection<DateTimePoint> values = CalcDailyValues(startDate.Date, endDate.Date, 
+                items,
                 (item, date) => date == item.BuyInfo!.Date.Date,
-                item => item.BuyInfo!.Price,
-                startDate.Date, endDate.Date);
+                (item, _) => item.BuyInfo!.Price);
             DisplayValues(BuySellChart, values, "Покупки", new SKColor(33, 150, 243));
         }
 
         public void DisplaySells(IEnumerable<Item> items, DateTime startDate, DateTime endDate)
         {
-            ObservableCollection<DateTimePoint> values = CalcDailyValues(items,
+            ObservableCollection<DateTimePoint> values = CalcDailyValues(startDate.Date, endDate.Date, 
+                items,
                 (item, date) => date == item.SellInfo!.Date.Date,
-                item => item.SellInfo!.Price,
-                startDate.Date, endDate.Date);
+                (item, _) => item.SellInfo!.Price);
             DisplayValues(BuySellChart, values, "Продажи", new SKColor(244, 67, 54));
         }
 
         public void DisplayProfit(IEnumerable<Item> items, DateTime startDate, DateTime endDate)
         {
-            ObservableCollection<DateTimePoint> values = CalcDailyValues(items,
+            ObservableCollection<DateTimePoint> values = CalcDailyValues(startDate.Date, endDate.Date, 
+                items,
                 (item, date) => date == item.SellInfo!.Date.Date,
-                item => item.SellInfo!.Price - item.BuyInfo!.Price,
-                startDate.Date, endDate.Date);
-            DisplayValues(ProfitChart, values, "Профит", new SKColor(15, 255, 131));
+                (item, _) => item.SellInfo!.Price - item.BuyInfo!.Price);
+            DisplayValues(BuySellChart, values, "Профит", new SKColor(15, 255, 131));
         }
 
         public void DisplayDailyProfit(IEnumerable<Item> items, DateTime startDate, DateTime endDate)
         {
-            ObservableCollection<DateTimePoint> values = CalcDailyValues(items,
+            ObservableCollection<DateTimePoint> values = CalcDailyValues(startDate.Date, endDate.Date, 
+                items,
                 (item, date) => item.BuyInfo!.Date.Date < date && date <= item.SellInfo!.Date.Date,
-                item => (item.SellInfo!.Price - item.BuyInfo!.Price) / (item.SellInfo!.Date - item.BuyInfo!.Date).Days,
-                startDate.Date, endDate.Date);
+                (item, _) => (item.SellInfo!.Price - item.BuyInfo!.Price) / (item.SellInfo!.Date - item.BuyInfo!.Date).Days);
             DisplayValues(DailyProfitChart, values, "Ежедневный профит", new SKColor(15, 255, 131));
+        }
+
+        public void DisplayMarketAnalysis(IEnumerable<Item> items, DateTime startDate, DateTime endDate)
+        {
+            ObservableCollection<DateTimePoint> values = CalcDailyValues(startDate.Date, endDate.Date, 
+                items,
+                (item, date) => item.History?.ContainsKey(date) ?? false,
+                (item, date) => item.History![date].AveragePrice / item.AveragePrice!.Value,
+                (enumerable) => enumerable.Count() == 0 ? 1 : enumerable.Sum() / enumerable.Count());
+            DisplayValues(MarketChart, values, "Анализ маркета", new SKColor(163, 73, 163));
         }
 
         public void DisplayAll(IEnumerable<Item> items, DateTime startDate, DateTime endDate)
         {
             Clear(BuySellChart);
-            Clear(ProfitChart);
             Clear(DailyProfitChart);
+            Clear(MarketChart);
 
             DisplayBuys(items, startDate, endDate);
             DisplaySells(items, startDate, endDate);
             DisplayProfit(items, startDate, endDate);
             DisplayDailyProfit(items, startDate, endDate);
+            DisplayMarketAnalysis(items, startDate, endDate);
         }
     }
 }
