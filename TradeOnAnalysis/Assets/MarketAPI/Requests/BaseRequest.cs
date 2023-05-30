@@ -10,7 +10,7 @@ using TradeOnAnalysis.Assets.MarketAPI.Results;
 
 namespace TradeOnAnalysis.Assets.MarketAPI.Requests
 {
-    public class BaseRequest
+    public class BaseRequest<ResultType> where ResultType : BaseResult
     {
         private const string MarketUri = "https://market.csgo.com/api/";
         private readonly static HttpClient MarketClient = new()
@@ -33,17 +33,17 @@ namespace TradeOnAnalysis.Assets.MarketAPI.Requests
         public HttpResponseMessage ResultMessage 
             => _requestTask.Result;
 
-        public virtual BaseResult? Result
-            => DeserializeMessage<BaseResult>(ResultMessage);
+        public virtual ResultType? Result
+            => DeserializeMessage(ResultMessage);
 
         public void Resend() 
             => _requestTask = MarketClient.GetAsync(_requestUri);
 
-        public static T? DeserializeMessage<T>(HttpResponseMessage message) where T : BaseResult
+        public ResultType? DeserializeMessage(HttpResponseMessage message)
         {
             StreamReader reader = new(message.Content.ReadAsStream());
             string json = reader.ReadToEnd();
-            return JsonSerializer.Deserialize<T>(json);
+            return JsonSerializer.Deserialize<ResultType>(json);
         }
     }
 }
