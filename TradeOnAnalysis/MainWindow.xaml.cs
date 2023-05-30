@@ -15,6 +15,8 @@ namespace TradeOnAnalysis
     /// </summary>
     public partial class MainWindow : Window
     {
+        public const int MaxItemHistory = 100;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -62,8 +64,13 @@ namespace TradeOnAnalysis
                 return;
 
             List<Task> tasks = new();
+            int count = 0;
             foreach (Item item in Item.GetAllItems())
+            {
                 tasks.Add(item.LoadHistory(UserData.MarketApi));
+                if (++count >= MaxItemHistory)
+                    break;
+            }
             await Task.WhenAll(tasks);
         }
     }
