@@ -139,7 +139,7 @@ namespace TradeOnAnalysis.Assets.WPFElements
                 items,
                 (item, date) => item.History?.ContainsKey(date) ?? false,
                 (item, date) => item.History![date].AveragePrice / item.AveragePrice!.Value,
-                (enumerable) => enumerable.Count() == 0 ? 1 : enumerable.Sum() / enumerable.Count());
+                (enumerable) => enumerable.Any() ? enumerable.Sum() / enumerable.Count() : 1);
             DisplayValues(MarketChart, values, "Анализ маркета", new SKColor(163, 73, 163));
         }
 
