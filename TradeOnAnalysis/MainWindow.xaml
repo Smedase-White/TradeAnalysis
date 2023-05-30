@@ -27,7 +27,7 @@
         <controls:ItemsGrid 
             x:Name="Grid" 
             HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,81,0,0" 
-            Height="910"/>
+            Height="915"/>
         <controls:Charts 
             x:Name="ChartsPanel"
             HorizontalAlignment="Left" VerticalAlignment="Top" Margin="825,81,0,0" 
