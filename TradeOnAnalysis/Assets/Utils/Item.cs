@@ -33,6 +33,7 @@ namespace TradeOnAnalysis.Assets
             ClassId = classId;
             InstanceId = instanceId;
             Name = name;
+            _allItems.Add(this);
         }
 
         public static Item? LoadFromAPI(OperationHistoryElement element)
@@ -59,15 +60,8 @@ namespace TradeOnAnalysis.Assets
                     break;
             }
 
-            if (found.Any())
-            {
-                item = found.First();
-            }
-            else
-            {
-                item = new(Convert.ToInt64(element.ClassId), Convert.ToInt64(element.InstanceId), element.MarketHashName);
-                _allItems.Add(item);
-            }
+            item = found.Any() ? found.First() :
+                new(Convert.ToInt64(element.ClassId), Convert.ToInt64(element.InstanceId), element.MarketHashName);
 
             switch (element.EventType)
             {
