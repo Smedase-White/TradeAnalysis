@@ -13,12 +13,14 @@ using System.Windows.Controls;
 
 namespace TradeOnAnalysis.Assets.WPFElements
 {
-    /// <summary>
-    /// Логика взаимодействия для ProfitChart.xaml
-    /// </summary>
     public partial class Charts : UserControl
     {
-        public static SolidColorPaint LegendTextPaint { get; set; } = new(new SKColor(255, 255, 255));
+        public static readonly SKColor LegendColor = new(255, 255, 255);
+        public static readonly SKColor BuyChartColor = new(244, 67, 54);
+        public static readonly SKColor SellChartColor = new(33, 150, 243);
+        public static readonly SKColor ProfitChartColor = new(15, 255, 131);
+        public static readonly SKColor DailyProfitChartColor = new(15, 255, 131);
+        public static readonly SKColor MarketChartColor = new(163, 73, 163);
 
         public Charts()
         {
@@ -26,7 +28,7 @@ namespace TradeOnAnalysis.Assets.WPFElements
             DataContext = this;
         }
 
-        public List<ISeries> Series { get; set; } = new();
+        public SolidColorPaint LegendTextPaint { get; set; } = new(LegendColor);
 
         public Axis[] XAxes { get; set; } =
         {
@@ -36,12 +38,6 @@ namespace TradeOnAnalysis.Assets.WPFElements
                 UnitWidth = TimeSpan.FromDays(1).Ticks,
                 MinStep = TimeSpan.FromDays(1).Ticks
             }
-        };
-
-        public ISeries[] CatesianSeries { get; set; } =
-        {
-            new LineSeries<int> { Values = new int[] { 1, 5, 4, 6 } },
-            new ColumnSeries<int> { Values = new int[] { 4, 8, 2, 4 } }
         };
 
         private static void DisplayValues(CartesianChart chart, ObservableCollection<DateTimePoint> values, string? title = null, SKColor? color = null)
@@ -103,7 +99,7 @@ namespace TradeOnAnalysis.Assets.WPFElements
                 items,
                 (item, date) => date == item.BuyInfo!.Date.Date,
                 (item, _) => item.BuyInfo!.Price);
-            DisplayValues(BuySellChart, values, "Покупки", new SKColor(244, 67, 54));
+            DisplayValues(BuySellChart, values, "Покупки", BuyChartColor);
         }
 
         public void DisplaySells(IEnumerable<Item> items, DateTime startDate, DateTime endDate)
@@ -112,7 +108,7 @@ namespace TradeOnAnalysis.Assets.WPFElements
                 items,
                 (item, date) => date == item.SellInfo!.Date.Date,
                 (item, _) => item.SellInfo!.Price);
-            DisplayValues(BuySellChart, values, "Продажи", new SKColor(33, 150, 243));
+            DisplayValues(BuySellChart, values, "Продажи", SellChartColor);
         }
 
         public void DisplayProfit(IEnumerable<Item> items, DateTime startDate, DateTime endDate)
@@ -121,7 +117,7 @@ namespace TradeOnAnalysis.Assets.WPFElements
                 items,
                 (item, date) => date == item.SellInfo!.Date.Date,
                 (item, _) => item.SellInfo!.Price - item.BuyInfo!.Price);
-            DisplayValues(BuySellChart, values, "Профит", new SKColor(15, 255, 131));
+            DisplayValues(BuySellChart, values, "Профит", ProfitChartColor);
         }
 
         public void DisplayDailyProfit(IEnumerable<Item> items, DateTime startDate, DateTime endDate)
@@ -130,7 +126,7 @@ namespace TradeOnAnalysis.Assets.WPFElements
                 items,
                 (item, date) => item.BuyInfo!.Date.Date < date && date <= item.SellInfo!.Date.Date,
                 (item, _) => (item.SellInfo!.Price - item.BuyInfo!.Price) / (item.SellInfo!.Date - item.BuyInfo!.Date).Days);
-            DisplayValues(DailyProfitChart, values, "Ежедневный профит", new SKColor(15, 255, 131));
+            DisplayValues(DailyProfitChart, values, "Ежедневный профит", DailyProfitChartColor);
         }
 
         public void DisplayMarketAnalysis(IEnumerable<Item> items, DateTime startDate, DateTime endDate)
@@ -140,7 +136,7 @@ namespace TradeOnAnalysis.Assets.WPFElements
                 (item, date) => item.History?.ContainsKey(date) ?? false,
                 (item, date) => item.History![date].AveragePrice / item.AveragePrice!.Value,
                 (enumerable) => enumerable.Any() ? enumerable.Sum() / enumerable.Count() : 1);
-            DisplayValues(MarketChart, values, "Анализ маркета", new SKColor(163, 73, 163));
+            DisplayValues(MarketChart, values, "Анализ маркета", MarketChartColor);
         }
 
         public void DisplayAll(IEnumerable<Item> items, DateTime startDate, DateTime endDate)
