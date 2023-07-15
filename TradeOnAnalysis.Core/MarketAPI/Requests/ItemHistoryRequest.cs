@@ -1,8 +1,7 @@
-﻿namespace TradeOnAnalysis.Core.MarketAPI
+﻿namespace TradeOnAnalysis.Core.MarketAPI;
+
+class ItemHistoryRequest : BaseRequest<ItemHistoryResult>
 {
-    class ItemHistoryRequest : BaseRequest<ItemHistoryResult>
-    {
-        public ItemHistoryRequest(long classId, long instanceId, string apiKey)
-            : base("ItemHistory", $"{classId}_{instanceId}", $"?key={apiKey}") { }
-    }
+    public ItemHistoryRequest(long classId, long instanceId, string apiKey)
+        : base("ItemHistory", $"{classId}_{instanceId}", $"?key={apiKey}") { }
 }

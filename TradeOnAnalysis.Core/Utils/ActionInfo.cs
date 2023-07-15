@@ -1,14 +1,13 @@
-﻿namespace TradeOnAnalysis.Core.Utils
-{
-    public class ActionInfo
-    {
-        public double Price { get; init; }
-        public DateTime Date { get; init; }
+﻿namespace TradeOnAnalysis.Core.Utils;
 
-        public ActionInfo(double price, DateTime date)
-        {
-            Price = price;
-            Date = date;
-        }
+public class ActionInfo
+{
+    public double Price { get; init; }
+    public DateTime Date { get; init; }
+
+    public ActionInfo(double price, DateTime date)
+    {
+        Price = price;
+        Date = date;
     }
 }

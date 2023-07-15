@@ -1,95 +1,94 @@
 ﻿using System.Net;
 using TradeOnAnalysis.Core.MarketAPI;
 
-namespace TradeOnAnalysis.Core.Utils
+namespace TradeOnAnalysis.Core.Utils;
+
+public class Item
 {
-    public class Item
+    private static readonly List<Item> _allItems = new();
+    public static List<Item> GetAllItems() => _allItems;
+
+    public long ClassId { get; init; }
+
+    public long InstanceId { get; init; }
+
+    public string Name { get; init; }
+
+    public ActionInfo? BuyInfo { get; private set; }
+
+    public ActionInfo? SellInfo { get; private set; }
+
+    public double? AveragePrice { get; private set; }
+
+    public Dictionary<DateTime, ItemDailyPrices>? History { get; private set; }
+
+    public Item(long classId, long instanceId, string name)
     {
-        private static readonly List<Item> _allItems = new();
-        public static List<Item> GetAllItems() => _allItems;
+        ClassId = classId;
+        InstanceId = instanceId;
+        Name = name;
+        _allItems.Add(this);
+    }
 
-        public long ClassId { get; init; }
+    public static Item? LoadFromAPI(OperationHistoryElement element)
+    {
+        if (element.EventType == EventType.Transaction)
+            return null;
 
-        public long InstanceId { get; init; }
+        if (element.TradeStage == TradeStage.TimedOut)
+            return null;
 
-        public string Name { get; init; }
+        if (element.MarketHashName!.Contains("Sealed Graffiti"))
+            return null;
 
-        public ActionInfo? BuyInfo { get; private set; }
+        Item? item;
+        IEnumerable<Item> found = _allItems.Where(item => item.Name == element.MarketHashName);
 
-        public ActionInfo? SellInfo { get; private set; }
-
-        public double? AveragePrice { get; private set; }
-
-        public Dictionary<DateTime, ItemDailyPrices>? History { get; private set; }
-
-        public Item(long classId, long instanceId, string name)
+        switch (element.EventType)
         {
-            ClassId = classId;
-            InstanceId = instanceId;
-            Name = name;
-            _allItems.Add(this);
+            case EventType.Buy:
+                found = found.Where(x => x.BuyInfo == null);
+                break;
+            case EventType.Sell:
+                found = found.Where(x => x.SellInfo == null);
+                break;
         }
 
-        public static Item? LoadFromAPI(OperationHistoryElement element)
+        item = found.Any() ? found.First() :
+            new(Convert.ToInt64(element.ClassId), Convert.ToInt64(element.InstanceId), element.MarketHashName);
+
+        switch (element.EventType)
         {
-            if (element.EventType == EventType.Transaction)
-                return null;
-
-            if (element.TradeStage == TradeStage.TimedOut)
-                return null;
-
-            if (element.MarketHashName!.Contains("Sealed Graffiti"))
-                return null;
-
-            Item? item;
-            IEnumerable<Item> found = _allItems.Where(item => item.Name == element.MarketHashName);
-
-            switch (element.EventType)
-            {
-                case EventType.Buy:
-                    found = found.Where(x => x.BuyInfo == null);
-                    break;
-                case EventType.Sell:
-                    found = found.Where(x => x.SellInfo == null);
-                    break;
-            }
-
-            item = found.Any() ? found.First() :
-                new(Convert.ToInt64(element.ClassId), Convert.ToInt64(element.InstanceId), element.MarketHashName);
-
-            switch (element.EventType)
-            {
-                case EventType.Buy:
-                    item.BuyInfo = new ActionInfo(Convert.ToInt32(element.Paid) / 100.0, element.DateTime);
-                    break;
-                case EventType.Sell:
-                    item.SellInfo = new ActionInfo(Convert.ToInt32(element.Recieved) / 100.0, element.DateTime); ;
-                    break;
-            }
-
-            return item;
+            case EventType.Buy:
+                item.BuyInfo = new ActionInfo(Convert.ToInt32(element.Paid) / 100.0, element.DateTime);
+                break;
+            case EventType.Sell:
+                item.SellInfo = new ActionInfo(Convert.ToInt32(element.Recieved) / 100.0, element.DateTime); ;
+                break;
         }
 
-        public async Task LoadHistory(string apiKey)
+        return item;
+    }
+
+    public async Task LoadHistory(string apiKey)
+    {
+        History = new();
+
+        ItemHistoryRequest request = new(ClassId, InstanceId, apiKey);
+        HttpStatusCode status = await Task.Run(() => request.ResultMessage.StatusCode);
+        if (status != HttpStatusCode.OK)
+            return;
+
+        ItemHistoryResult result = request.Result!;
+        foreach (ItemHistoryElement historyElement in result.History)
         {
-            History = new();
-
-            ItemHistoryRequest request = new(ClassId, InstanceId, apiKey);
-            HttpStatusCode status = await Task.Run(() => request.ResultMessage.StatusCode);
-            if (status != HttpStatusCode.OK)
-                return;
-
-            ItemHistoryResult result = request.Result!;
-            foreach (ItemHistoryElement historyElement in result.History)
-            {
-                DateTime date = DateTimeOffset.FromUnixTimeSeconds(Convert.ToInt64(historyElement.Time)).DateTime.Date;
-                double price = Convert.ToDouble(historyElement.Price);
-                if (History.TryGetValue(date, out ItemDailyPrices? value))
-                    value.AddPrice(price);
-                else
-                    History.Add(date, new(price));
-            }
-            AveragePrice = Convert.ToDouble(result.Average);
+            DateTime date = DateTimeOffset.FromUnixTimeSeconds(Convert.ToInt64(historyElement.Time)).DateTime.Date;
+            double price = Convert.ToDouble(historyElement.Price);
+            if (History.TryGetValue(date, out ItemDailyPrices? value))
+                value.AddPrice(price);
+            else
+                History.Add(date, new(price));
         }
+        AveragePrice = Convert.ToDouble(result.Average);
     }
 }

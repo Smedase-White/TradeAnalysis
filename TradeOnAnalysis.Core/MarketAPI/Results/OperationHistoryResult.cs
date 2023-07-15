@@ -1,10 +1,9 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace TradeOnAnalysis.Core.MarketAPI
+namespace TradeOnAnalysis.Core.MarketAPI;
+
+public class OperationHistoryResult : BaseResult
 {
-    public class OperationHistoryResult : BaseResult
-    {
-        [JsonPropertyName("history")]
-        public List<OperationHistoryElement> History { get; set; } = new();
-    }
+    [JsonPropertyName("history")]
+    public List<OperationHistoryElement> History { get; set; } = new();
 }
