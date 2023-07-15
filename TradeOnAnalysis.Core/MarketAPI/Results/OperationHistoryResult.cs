@@ -1,8 +1,6 @@
-﻿using System.Collections.Generic;
-using System.Text.Json.Serialization;
-using TradeOnAnalysis.Assets.MarketAPI.Utils;
+﻿using System.Text.Json.Serialization;
 
-namespace TradeOnAnalysis.Assets.MarketAPI.Results
+namespace TradeOnAnalysis.Core.MarketAPI
 {
     public class OperationHistoryResult : BaseResult
     {

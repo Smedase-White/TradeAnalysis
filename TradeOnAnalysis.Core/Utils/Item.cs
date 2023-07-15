@@ -1,17 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Threading.Tasks;
-using TradeOnAnalysis.Assets.MarketAPI.Requests;
-using TradeOnAnalysis.Assets.MarketAPI.Results;
-using TradeOnAnalysis.Assets.MarketAPI.Utils;
+﻿using System.Net;
+using TradeOnAnalysis.Core.MarketAPI;
 
-namespace TradeOnAnalysis.Assets
+namespace TradeOnAnalysis.Core.Utils
 {
     public class Item
     {
-        private readonly static List<Item> _allItems = new();
+        private static readonly List<Item> _allItems = new();
         public static List<Item> GetAllItems() => _allItems;
 
         public long ClassId { get; init; }
@@ -26,7 +20,7 @@ namespace TradeOnAnalysis.Assets
 
         public double? AveragePrice { get; private set; }
 
-        public Dictionary<DateTime, ItemDaylyPrices>? History { get; private set; }
+        public Dictionary<DateTime, ItemDailyPrices>? History { get; private set; }
 
         public Item(long classId, long instanceId, string name)
         {
@@ -44,11 +38,11 @@ namespace TradeOnAnalysis.Assets
             if (element.TradeStage == TradeStage.TimedOut)
                 return null;
 
-            if (element.MarketHashName.Contains("Sealed Graffiti"))
+            if (element.MarketHashName!.Contains("Sealed Graffiti"))
                 return null;
 
             Item? item;
-            var found = _allItems.Where(item => item.Name == element.MarketHashName);
+            IEnumerable<Item> found = _allItems.Where(item => item.Name == element.MarketHashName);
 
             switch (element.EventType)
             {
@@ -90,43 +84,12 @@ namespace TradeOnAnalysis.Assets
             {
                 DateTime date = DateTimeOffset.FromUnixTimeSeconds(Convert.ToInt64(historyElement.Time)).DateTime.Date;
                 double price = Convert.ToDouble(historyElement.Price);
-                if (History.TryGetValue(date, out ItemDaylyPrices? value))
+                if (History.TryGetValue(date, out ItemDailyPrices? value))
                     value.AddPrice(price);
                 else
                     History.Add(date, new(price));
             }
             AveragePrice = Convert.ToDouble(result.Average);
         }
-    }
-
-    public class ActionInfo
-    {
-        public double Price { get; init; }
-        public DateTime Date { get; init; }
-
-        public ActionInfo(double price, DateTime date)
-        {
-            Price = price;
-            Date = date;
-        }
-    }
-
-    public class ItemDaylyPrices
-    {
-        public List<double> Prices { get; } = new();
-
-        public double AveragePrice
-            => Prices.Sum() / Prices.Count;
-
-        public double Count
-            => Prices.Count;
-
-        public ItemDaylyPrices(params double[] prices)
-        {
-            foreach (double price in prices)
-                Prices.Add(price);
-        }
-
-        public void AddPrice(double price) => Prices.Add(price);
     }
 }

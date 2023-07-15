@@ -1,6 +1,4 @@
-﻿using TradeOnAnalysis.Assets.MarketAPI.Results;
-
-namespace TradeOnAnalysis.Assets.MarketAPI.Requests
+﻿namespace TradeOnAnalysis.Core.MarketAPI
 {
     class ItemHistoryRequest : BaseRequest<ItemHistoryResult>
     {

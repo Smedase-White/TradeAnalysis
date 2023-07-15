@@ -1,7 +1,4 @@
-﻿using System;
-using TradeOnAnalysis.Assets.MarketAPI.Results;
-
-namespace TradeOnAnalysis.Assets.MarketAPI.Requests
+﻿namespace TradeOnAnalysis.Core.MarketAPI
 {
     public class OperationHistoryRequest : BaseRequest<OperationHistoryResult>
     {

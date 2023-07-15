@@ -4,9 +4,8 @@ using System.Net;
 using System.Threading.Tasks;
 using System.Windows;
 using TradeOnAnalysis.Assets;
-using TradeOnAnalysis.Assets.MarketAPI.Requests;
-using TradeOnAnalysis.Assets.MarketAPI.Results;
-using TradeOnAnalysis.Assets.MarketAPI.Utils;
+using TradeOnAnalysis.Core.MarketAPI;
+using TradeOnAnalysis.Core.Utils;
 
 namespace TradeOnAnalysis
 {

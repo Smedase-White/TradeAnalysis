@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace TradeOnAnalysis.Assets.MarketAPI.Results
+namespace TradeOnAnalysis.Core.MarketAPI
 {
     public class BaseResult
     {

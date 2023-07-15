@@ -1,16 +1,12 @@
-﻿using System;
-using System.IO;
-using System.Net.Http;
-using System.Text.Json;
-using System.Threading.Tasks;
-using TradeOnAnalysis.Assets.MarketAPI.Results;
+﻿using System.Text.Json;
 
-namespace TradeOnAnalysis.Assets.MarketAPI.Requests
+namespace TradeOnAnalysis.Core.MarketAPI
 {
     public class BaseRequest<ResultType> where ResultType : BaseResult
     {
         private const string MarketUri = "https://market.csgo.com/api/";
-        private readonly static HttpClient MarketClient = new()
+
+        private static readonly HttpClient MarketClient = new()
         {
             BaseAddress = new Uri(MarketUri),
         };
