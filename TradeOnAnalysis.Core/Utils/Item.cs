@@ -5,13 +5,11 @@ namespace TradeOnAnalysis.Core.Utils;
 
 public class Item
 {
-    public long Id { get; init; }
+    public long? ClassId { get; init; }
+
+    public long? InstanceId { get; init; }
 
     public string Name { get; init; }
-
-    public long? ClassId { get; private set; }
-
-    public long? InstanceId { get; private set; }
 
     public ActionInfo? BuyInfo { get; set; }
 
@@ -21,19 +19,17 @@ public class Item
 
     public Dictionary<DateTime, ItemDailyPrices>? History { get; set; }
 
-    public Item(long id, string name)
+    public Item(long classId, long instanceId, string name)
     {
-        Id = id;
+        ClassId = classId;
+        InstanceId = instanceId;
         Name = name;
     }
 
     public static Item LoadFromAPI(OperationHistoryElement element)
     {
-        Item item = new(Convert.ToInt64(element.Id), element.MarketHashName ?? "-")
-        {
-            ClassId = Convert.ToInt64(element.ClassId),
-            InstanceId = Convert.ToInt64(element.InstanceId)
-        };
+        Item item = new(Convert.ToInt64(element.ClassId), Convert.ToInt64(element.InstanceId), 
+            element.MarketHashName ?? "-");
 
         if (element.EventType == EventType.Buy)
             item.BuyInfo = new ActionInfo(Convert.ToInt32(element.Paid) / 100.0, element.DateTime);
@@ -41,5 +37,30 @@ public class Item
             item.SellInfo = new ActionInfo(Convert.ToInt32(element.Recieved) / 100.0, element.DateTime);
 
         return item;
+    }
+
+    public async Task LoadHistory(string apiKey)
+    {
+        if (ClassId is null || InstanceId is null)
+            return;
+
+        History = new();
+
+        ItemHistoryRequest request = new(ClassId ?? 0, InstanceId ?? 0, apiKey);
+        HttpStatusCode status = await Task.Run(() => request.ResultMessage.StatusCode);
+        if (status != HttpStatusCode.OK)
+            return;
+
+        ItemHistoryResult result = request.Result!;
+        foreach (ItemHistoryElement historyElement in result.History)
+        {
+            DateTime date = DateTimeOffset.FromUnixTimeSeconds(Convert.ToInt64(historyElement.Time)).DateTime.Date;
+            double price = Convert.ToDouble(historyElement.Price);
+            if (History.TryGetValue(date, out ItemDailyPrices? value))
+                value.AddPrice(price);
+            else
+                History.Add(date, new(price));
+        }
+        AveragePrice = Convert.ToDouble(result.Average);
     }
 }
