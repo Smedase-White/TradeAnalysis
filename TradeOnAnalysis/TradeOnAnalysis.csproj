@@ -13,11 +13,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Assets\" />
-    <Folder Include="Properties\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\TradeOnAnalysis.Core\TradeOnAnalysis.Core.csproj" />
   </ItemGroup>
 
