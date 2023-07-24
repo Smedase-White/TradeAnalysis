@@ -9,6 +9,7 @@
     <SolidColorBrush x:Key="ForegroundColor" Color="White" />
 
     <SolidColorBrush x:Key="LoadColor" Color="#7ED47B" />
+    <SolidColorBrush x:Key="SaveColor" Color="#2196F3" />
     <SolidColorBrush x:Key="DeleteColor" Color="#EC7789" />
 
     <SolidColorBrush x:Key="ScrollColor" Color="#4D4D4D" />

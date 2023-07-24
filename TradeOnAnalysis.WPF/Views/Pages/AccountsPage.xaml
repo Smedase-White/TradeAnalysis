@@ -12,15 +12,42 @@
     mc:Ignorable="d">
 
     <Grid>
-        <Button
-            Width="45"
-            Height="30"
-            Margin="10,10"
-            HorizontalAlignment="Left"
+        <StackPanel
+            Height="40"
+            Margin="5,10"
             VerticalAlignment="Top"
-            Command="{Binding AddAccountCommand}"
-            Content="➕"
-            Style="{StaticResource Button}" />
+            Orientation="Horizontal">
+            <Button
+                Width="45"
+                Height="30"
+                Margin="5,0"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Command="{Binding AddAccountCommand}"
+                Content="➕"
+                Style="{StaticResource Button}" />
+            <Button
+                Width="45"
+                Height="30"
+                Margin="5,0"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Background="{StaticResource LoadColor}"
+                Command="{Binding LoadAccountsCommand}"
+                Content="⭳"
+                Style="{StaticResource Button}" />
+            <Button
+                Width="45"
+                Height="30"
+                Margin="5,0"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Background="{StaticResource SaveColor}"
+                Command="{Binding SaveAccountsCommand}"
+                Content="↥"
+                Style="{StaticResource Button}" />
+
+        </StackPanel>
         <ItemsControl
             Margin="10,40,10,10"
             ItemsSource="{Binding Accounts}"
