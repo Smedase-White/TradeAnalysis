@@ -50,7 +50,7 @@ public class AccountDataModel : ViewModelBase
 
     public RelayCommand LoadCommand
     {
-        get => _loadCommand ??= new(obj => { LoadStatistics(); });
+        get => _loadCommand ??= new(obj => LoadStatistics());
         set => ChangeProperty(ref _loadCommand, value);
     }
 

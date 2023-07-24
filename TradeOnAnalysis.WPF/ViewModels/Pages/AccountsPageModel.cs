@@ -28,11 +28,13 @@ public class AccountsPageModel : ViewModelBase
 
     public RelayCommand AddAccountCommand
     {
-        get => _addAccountCommand ??= new(obj =>
-        {
-            AccountDataModel data = new();
-            data.RemoveCommand.AddExecute(obj => { Accounts.Remove(data); });
-            Accounts.Add(data);
-        });
+        get => _addAccountCommand ??= new(obj => AddAccount());
+    }
+
+    public void AddAccount(AccountDataModel? data = null)
+    {
+        data ??= new();
+        data.RemoveCommand.AddExecute(obj => Accounts.Remove(data));
+        Accounts.Add(data);
     }
 }

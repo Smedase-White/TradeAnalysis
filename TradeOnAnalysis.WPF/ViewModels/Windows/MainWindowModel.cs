@@ -57,7 +57,7 @@ namespace TradeOnAnalysis.WPF.ViewModels
 
         public RelayCommand ExitCommand
         {
-            get => _exitCommand ??= new(obj => { Exit(obj as Window); });
+            get => _exitCommand ??= new(obj => Exit((obj as Window)!));
             set => ChangeProperty(ref _exitCommand, value);
         }
 
