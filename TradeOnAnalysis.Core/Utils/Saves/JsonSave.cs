@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Text.Json;
-using System.Threading.Tasks;
+﻿using System.Text.Json;
 
-namespace TradeOnAnalysis.WPF.Utils;
+namespace TradeOnAnalysis.Core.Utils.Saves;
 
 public static class JsonSave
 {

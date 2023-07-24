@@ -33,7 +33,7 @@ namespace TradeOnAnalysis.WPF.ViewModels
 
         public void Execute(object? parameter)
         {
-            foreach(Action<object?> execute in _executeList)
+            foreach (Action<object?> execute in _executeList)
                 execute(parameter);
         }
 

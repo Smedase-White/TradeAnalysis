@@ -76,6 +76,7 @@ public class AccountStatistics : FullStatistics<TradeStatisticElement>
                 if (tradeHistory[j].SellInfo is null)
                     continue;
 
+                tradeHistory[i] = new(tradeHistory[i]);
                 tradeHistory[i].SellInfo = tradeHistory[j].SellInfo;
                 tradeHistory[i].Profit = new(tradeHistory[i].BuyInfo!, tradeHistory[i].SellInfo!);
                 tradeHistory.RemoveAt(j);

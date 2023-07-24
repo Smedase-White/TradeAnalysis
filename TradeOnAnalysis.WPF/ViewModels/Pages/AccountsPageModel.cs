@@ -2,7 +2,7 @@
 using System.Collections.ObjectModel;
 using System.Linq;
 
-using TradeOnAnalysis.WPF.Utils;
+using TradeOnAnalysis.Core.Utils.Saves;
 
 namespace TradeOnAnalysis.WPF.ViewModels;
 

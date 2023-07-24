@@ -29,6 +29,18 @@ public class Item
         Name = name;
     }
 
+    public Item(Item item)
+    {
+        ClassId = item.ClassId;
+        InstanceId = item.InstanceId;
+        Name = item.Name;
+        BuyInfo = item.BuyInfo;
+        SellInfo = item.SellInfo;
+        Profit = item.Profit;
+        AveragePrice = item.AveragePrice;
+        History = item.History;
+    }
+
     public static Item LoadFromAPI(OperationHistoryElement element)
     {
         Item item = new(Convert.ToInt64(element.ClassId), Convert.ToInt64(element.InstanceId),

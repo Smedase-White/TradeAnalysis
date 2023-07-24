@@ -37,12 +37,12 @@ public class ChartModel : ViewModelBase
     private ObservableCollection<ISeries> _series = new();
     private readonly Func<StatisticElement, double> _selectionFunc;
 
-    public static readonly Axis XAxix = new()
+    public static readonly Axis[] _xAxes = { new()
     {
         Labeler = value => new DateTime((long)Math.Abs(value)).ToString("dd MMM"),
         UnitWidth = TimeSpan.FromDays(1).Ticks,
         MinStep = TimeSpan.FromDays(1).Ticks
-    };
+    } };
 
     public ChartModel(string title, Func<StatisticElement, double> selectionFunc)
     {
@@ -70,7 +70,10 @@ public class ChartModel : ViewModelBase
 
     public SolidColorPaint LegendTextPaint { get; set; } = new(LegendColor);
 
-    public Axis[] XAxes { get; set; } = { XAxix };
+    public Axis[] XAxes
+    {
+        get => _xAxes;
+    }
 
     public void Add(ObservableCollection<DateTimePoint> points, string title)
     {
