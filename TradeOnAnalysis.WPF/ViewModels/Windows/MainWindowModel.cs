@@ -48,7 +48,11 @@ namespace TradeOnAnalysis.WPF.ViewModels
         private void ChangePage()
         {
             if (SelectedIndex == 0)
+            {
                 _accountSelect.UpdateAccounts(AccountsPage.LoadedAccounts);
+                _tablePage.LoadTable();
+                _chartsPage.DrawCharts();
+            }
         }
 
         public RelayCommand ExitCommand

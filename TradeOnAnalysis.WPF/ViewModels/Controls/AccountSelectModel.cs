@@ -48,7 +48,7 @@ public class AccountSelectModel : ViewModelBase
 
 public class SelectionViewModel : ViewModelBase
 {
-    private bool _isSelected = false;
+    private bool _isSelected = true;
     private readonly AccountDataModel _data;
 
     public SelectionViewModel(AccountDataModel data)
