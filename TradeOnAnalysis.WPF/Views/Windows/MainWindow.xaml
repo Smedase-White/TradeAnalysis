@@ -1,0 +1,41 @@
+﻿<Window
+    x:Class="TradeOnAnalysis.WPF.Views.Windows.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:TradeOnAnalysis.WPF.Views.Windows"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:pages="clr-namespace:TradeOnAnalysis.WPF.Views.Pages"
+    xmlns:vm="clr-namespace:TradeOnAnalysis.WPF.ViewModels"
+    Title="Trade analysis"
+    Width="800"
+    Height="640"
+    Background="{StaticResource TabBackgroundColor}"
+    ResizeMode="NoResize"
+    mc:Ignorable="d">
+
+    <Window.DataContext>
+        <vm:MainWindowModel />
+    </Window.DataContext>
+
+    <TabControl
+        BorderBrush="Transparent"
+        SelectedIndex="{Binding SelectedIndex}"
+        Style="{StaticResource Tab}">
+        <TabItem Width="150" Header="Аккаунты">
+            <TabItem.Content>
+                <pages:AccountsPage DataContext="{Binding AccountsPage}" />
+            </TabItem.Content>
+        </TabItem>
+        <TabItem Header="Таблица">
+            <TabItem.Content>
+                <pages:TablePage DataContext="{Binding TablePage}" />
+            </TabItem.Content>
+        </TabItem>
+        <TabItem Header="Графики">
+            <TabItem.Content>
+                <pages:ChartsPage DataContext="{Binding ChartsPage}" />
+            </TabItem.Content>
+        </TabItem>
+    </TabControl>
+</Window>

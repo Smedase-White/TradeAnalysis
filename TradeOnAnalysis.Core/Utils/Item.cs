@@ -1,4 +1,5 @@
 ﻿using System.Net;
+
 using TradeOnAnalysis.Core.MarketAPI;
 
 namespace TradeOnAnalysis.Core.Utils;
@@ -15,6 +16,8 @@ public class Item
 
     public ActionInfo? SellInfo { get; set; }
 
+    public ProfitInfo? Profit { get; set; }
+
     public double? AveragePrice { get; set; }
 
     public Dictionary<DateTime, ItemDailyPrices>? History { get; set; }
@@ -28,7 +31,7 @@ public class Item
 
     public static Item LoadFromAPI(OperationHistoryElement element)
     {
-        Item item = new(Convert.ToInt64(element.ClassId), Convert.ToInt64(element.InstanceId), 
+        Item item = new(Convert.ToInt64(element.ClassId), Convert.ToInt64(element.InstanceId),
             element.MarketHashName ?? "-");
 
         if (element.EventType == EventType.Buy)

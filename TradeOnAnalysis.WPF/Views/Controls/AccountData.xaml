@@ -1,0 +1,79 @@
+﻿<UserControl
+    x:Class="TradeOnAnalysis.WPF.Views.Controls.AccountData"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:TradeOnAnalysis.WPF.Views.Controls"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Width="350"
+    Height="49"
+    Style="{StaticResource PanelElement}"
+    mc:Ignorable="d">
+
+    <Grid>
+        <Label
+            Width="45"
+            Height="17"
+            Margin="10,5,0,0"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top"
+            Content="Name"
+            Style="{StaticResource Label}" />
+        <TextBox
+            Width="125"
+            Height="17"
+            Margin="60,5,0,0"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top"
+            Style="{StaticResource InputElement}"
+            Text="{Binding AccountName}" />
+        <Label
+            Width="120"
+            Height="17"
+            Margin="190,5,0,0"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top"
+            HorizontalContentAlignment="Center"
+            Content="{Binding Status}"
+            Style="{StaticResource PanelLabel}" />
+        <Label
+            Width="45"
+            Height="17"
+            Margin="10,27,0,0"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top"
+            Content="API Key"
+            Style="{StaticResource Label}" />
+        <TextBox
+            Width="250"
+            Height="17"
+            Margin="60,27,0,0"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top"
+            Style="{StaticResource InputElement}"
+            Text="{Binding MarketApi}" />
+        <Button
+            Name="RemoveButton"
+            Width="30"
+            Height="17"
+            Margin="0,5,6,0"
+            Padding="0,-5,0,0"
+            HorizontalAlignment="Right"
+            VerticalAlignment="Top"
+            Background="{StaticResource DeleteColor}"
+            Command="{Binding RemoveCommand}"
+            Content="×"
+            Style="{StaticResource SmallButton}" />
+        <Button
+            Width="30"
+            Height="17"
+            Margin="0,27,6,0"
+            Padding="0,-4,0,0"
+            HorizontalAlignment="Right"
+            VerticalAlignment="Top"
+            Background="{StaticResource LoadColor}"
+            Command="{Binding LoadCommand}"
+            Content="⭳"
+            Style="{StaticResource SmallButton}" />
+    </Grid>
+</UserControl>
