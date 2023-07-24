@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.5.33627.172
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TradeOnAnalysis", "TradeOnAnalysis\TradeOnAnalysis.csproj", "{5080F741-220F-4184-A39D-2D19C92BCBFD}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TradeOnAnalysis.Core", "TradeOnAnalysis.Core\TradeOnAnalysis.Core.csproj", "{31C93D37-2238-4737-95AC-192328F505C9}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TradeOnAnalysis.Avalonia", "TradeOnAnalysis.Avalonia\TradeOnAnalysis.Avalonia.csproj", "{A798E5BA-EE5F-4993-9BA4-CB05C6334960}"
@@ -15,16 +13,14 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TradeOnAnalysis.Avalonia.Br
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TradeOnAnalysis.Avalonia.Desktop", "TradeOnAnalysis.Avalonia.Desktop\TradeOnAnalysis.Avalonia.Desktop.csproj", "{5A14409D-3CBF-4084-ABC9-180A3E3E86C7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TradeOnAnalysis.WPF", "TradeOnAnalysis.WPF\TradeOnAnalysis.WPF.csproj", "{5F592BC9-556D-4B3E-AA8A-E0CA42E39478}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{5080F741-220F-4184-A39D-2D19C92BCBFD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5080F741-220F-4184-A39D-2D19C92BCBFD}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5080F741-220F-4184-A39D-2D19C92BCBFD}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5080F741-220F-4184-A39D-2D19C92BCBFD}.Release|Any CPU.Build.0 = Release|Any CPU
 		{31C93D37-2238-4737-95AC-192328F505C9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{31C93D37-2238-4737-95AC-192328F505C9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{31C93D37-2238-4737-95AC-192328F505C9}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -45,6 +41,10 @@ Global
 		{5A14409D-3CBF-4084-ABC9-180A3E3E86C7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5A14409D-3CBF-4084-ABC9-180A3E3E86C7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5A14409D-3CBF-4084-ABC9-180A3E3E86C7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5F592BC9-556D-4B3E-AA8A-E0CA42E39478}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5F592BC9-556D-4B3E-AA8A-E0CA42E39478}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5F592BC9-556D-4B3E-AA8A-E0CA42E39478}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5F592BC9-556D-4B3E-AA8A-E0CA42E39478}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

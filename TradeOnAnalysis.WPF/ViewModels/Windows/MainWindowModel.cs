@@ -1,4 +1,6 @@
-﻿namespace TradeOnAnalysis.WPF.ViewModels
+﻿using System.Windows;
+
+namespace TradeOnAnalysis.WPF.ViewModels
 {
     public class MainWindowModel : ViewModelBase
     {
@@ -9,6 +11,8 @@
         private int _selectedIndex = 0;
 
         private AccountSelectModel _accountSelect = new();
+
+        private RelayCommand? _exitCommand;
 
         public MainWindowModel()
         {
@@ -45,6 +49,17 @@
         {
             if (SelectedIndex == 0)
                 _accountSelect.UpdateAccounts(AccountsPage.LoadedAccounts);
+        }
+
+        public RelayCommand ExitCommand
+        {
+            get => _exitCommand ??= new(obj => { Exit(obj as Window); });
+            set => ChangeProperty(ref _exitCommand, value);
+        }
+
+        public void Exit(Window window)
+        {
+            window.Close();
         }
     }
 }

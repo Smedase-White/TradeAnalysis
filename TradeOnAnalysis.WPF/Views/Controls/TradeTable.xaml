@@ -11,13 +11,12 @@
     mc:Ignorable="d">
 
     <DataGrid
-        x:Name="Grid"
         AutoGenerateColumns="False"
         ItemsSource="{Binding TableElements}"
         Style="{StaticResource Table}">
         <DataGrid.Columns>
             <DataGridTextColumn
-                Width="200"
+                Width="300"
                 Binding="{Binding Name}"
                 Header="Название" />
             <DataGridTextColumn

@@ -8,34 +8,45 @@
     xmlns:pages="clr-namespace:TradeOnAnalysis.WPF.Views.Pages"
     xmlns:vm="clr-namespace:TradeOnAnalysis.WPF.ViewModels"
     Title="Trade analysis"
-    Width="800"
-    Height="640"
     Background="{StaticResource TabBackgroundColor}"
     ResizeMode="NoResize"
+    WindowState="Maximized"
+    WindowStyle="None"
     mc:Ignorable="d">
 
     <Window.DataContext>
         <vm:MainWindowModel />
     </Window.DataContext>
 
-    <TabControl
-        BorderBrush="Transparent"
-        SelectedIndex="{Binding SelectedIndex}"
-        Style="{StaticResource Tab}">
-        <TabItem Width="150" Header="Аккаунты">
-            <TabItem.Content>
-                <pages:AccountsPage DataContext="{Binding AccountsPage}" />
-            </TabItem.Content>
-        </TabItem>
-        <TabItem Header="Таблица">
-            <TabItem.Content>
-                <pages:TablePage DataContext="{Binding TablePage}" />
-            </TabItem.Content>
-        </TabItem>
-        <TabItem Header="Графики">
-            <TabItem.Content>
-                <pages:ChartsPage DataContext="{Binding ChartsPage}" />
-            </TabItem.Content>
-        </TabItem>
-    </TabControl>
+    <Grid>
+        <TabControl
+            BorderBrush="Transparent"
+            SelectedIndex="{Binding SelectedIndex}"
+            Style="{StaticResource Tab}">
+            <TabItem Width="150" Header="Аккаунты">
+                <TabItem.Content>
+                    <pages:AccountsPage DataContext="{Binding AccountsPage}" />
+                </TabItem.Content>
+            </TabItem>
+            <TabItem Header="Таблица">
+                <TabItem.Content>
+                    <pages:TablePage DataContext="{Binding TablePage}" />
+                </TabItem.Content>
+            </TabItem>
+            <TabItem Header="Графики">
+                <TabItem.Content>
+                    <pages:ChartsPage DataContext="{Binding ChartsPage}" />
+                </TabItem.Content>
+            </TabItem>
+        </TabControl>
+        <Button
+            Width="80"
+            Height="30"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Bottom"
+            Command="{Binding ExitCommand}"
+            CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}"
+            Content="Выйти"
+            Style="{StaticResource Button}" />
+    </Grid>
 </Window>
