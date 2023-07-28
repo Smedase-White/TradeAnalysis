@@ -62,7 +62,8 @@ public class AccountsPageModel : ViewModelBase
         Accounts.Clear();
         foreach (AccountSave savedAccount in save.Accounts)
         {
-            AccountDataModel account = new() { AccountName = savedAccount.Name, MarketApi = savedAccount.MarketApi };
+            AccountDataModel account = new();
+            account.LoadSave(savedAccount);
             AddAccount(account);
             account.LoadCommand.Execute(this);
         }
@@ -72,8 +73,7 @@ public class AccountsPageModel : ViewModelBase
     {
         AccountsSave save = new()
         {
-            Accounts = Accounts.Select(
-                account => new AccountSave() { Name = account.AccountName, MarketApi = account.MarketApi }).ToList()
+            Accounts = Accounts.Select(account => account.GetSave()).ToList()
         };
         JsonSave.Save(save, SaveFilePath);
     }

@@ -68,6 +68,11 @@ public class ChartModel : ViewModelBase
         set => ChangeProperty(ref _series, value);
     }
 
+    public Func<StatisticElement, double> SelectionFunc
+    {
+        get => _selectionFunc;
+    }
+
     public SolidColorPaint LegendTextPaint { get; set; } = new(LegendColor);
 
     public Axis[] XAxes
@@ -75,50 +80,17 @@ public class ChartModel : ViewModelBase
         get => _xAxes;
     }
 
-    public void Add(ObservableCollection<DateTimePoint> points, string title)
-    {
-        SKColor color = LinesColors[Series.Count % LinesColors.Length];
-        Series.Add(CreateLineSeries(points, title, color));
-    }
-
     public void Clear()
     {
         Series.Clear();
     }
 
-    public void Add<StatisticType>(FullStatistics<StatisticType> statistics,
-        string title, Period selectPeriod, Period calcPeriod)
+    public void Add<StatisticType>(IEnumerable<StatisticType> statistics, string title, SKColor color)
         where StatisticType : StatisticElement, new()
     {
-        ObservableCollection<DateTimePoint> points = SelectValues(statistics, selectPeriod, calcPeriod);
-        Add(points, title);
-    }
-
-    private ObservableCollection<DateTimePoint> SelectValues<StatisticType>(
-        FullStatistics<StatisticType> statistics,
-        Period selectPeriod = Period.Month, Period calcPeriod = Period.Day)
-        where StatisticType : StatisticElement, new()
-    {
-        DateTime endDate = DateTime.Now.Date;
-        DateTime startDate = selectPeriod switch
-        {
-            Period.Week => endDate.AddDays(-7),
-            Period.Month => endDate.AddMonths(-1),
-            Period.HalfYear => endDate.AddMonths(-6),
-            _ => throw new ArgumentException("")
-        };
-
-        IEnumerable<StatisticType> displayedData = calcPeriod switch
-        {
-            Period.Day => statistics.DailyData!,
-            Period.Week => statistics.WeeklyData!,
-            Period.Month => statistics.MonthlyData!,
-            _ => throw new ArgumentException("")
-        };
-
-        return new(from data in displayedData
-                   where data.Date >= startDate && data.Date <= endDate
-                   select new DateTimePoint(data.Date, _selectionFunc(data)));
+        ObservableCollection<DateTimePoint> points = 
+            new(statistics.Select(data => new DateTimePoint(data.Date, _selectionFunc(data))));
+        Series.Add(CreateLineSeries(points, title, color));
     }
 
     private static LineSeries<DateTimePoint> CreateLineSeries(

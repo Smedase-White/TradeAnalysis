@@ -1,5 +1,9 @@
 ﻿using System.Net;
+using System.Security.Principal;
+using System.Windows.Controls;
+using System.Windows.Media;
 
+using TradeOnAnalysis.Core.Utils.Saves;
 using TradeOnAnalysis.Core.Utils.Statistics;
 
 namespace TradeOnAnalysis.WPF.ViewModels;
@@ -8,6 +12,8 @@ public class AccountDataModel : ViewModelBase
 {
     private string _accountName = "";
     private string _marketApi = "";
+
+    private ColorModel _color = new();
 
     private string _status = "Empty";
     private AccountStatistics? _stats;
@@ -34,6 +40,12 @@ public class AccountDataModel : ViewModelBase
             if (ChangeProperty(ref _marketApi, value))
                 Status = Statistics is null ? "Empty" : "Other";
         }
+    }
+
+    public ColorModel Color
+    {
+        get => _color;
+        set => ChangeProperty(ref _color, value);
     }
 
     public string Status
@@ -74,5 +86,22 @@ public class AccountDataModel : ViewModelBase
             return;
         }
         Statistics.CalcData();
+    }
+
+    public AccountSave GetSave()
+    {
+        return new AccountSave()
+        {
+            Name = AccountName,
+            MarketApi = MarketApi,
+            Color = Color.Hex
+        };
+    }
+
+    public void LoadSave(AccountSave save)
+    {
+        AccountName = save.Name;
+        MarketApi = save.MarketApi;
+        Color.Hex = save.Color;
     }
 }

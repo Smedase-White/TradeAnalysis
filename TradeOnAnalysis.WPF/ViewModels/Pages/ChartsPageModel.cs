@@ -1,6 +1,13 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Drawing.Drawing2D;
+using System.Linq;
+using System.Windows.Input;
 
+using SkiaSharp;
+
+using TradeOnAnalysis.Core.Utils.Statistics;
 using TradeOnAnalysis.Core.Utils.Statistics.Elements;
 
 namespace TradeOnAnalysis.WPF.ViewModels;
@@ -12,7 +19,7 @@ public class ChartsPageModel : ViewModelBase
     private Period _selectionPeriod = Period.Month;
     private Period _pointPeriod = Period.Day;
 
-    private ObservableCollection<ChartModel> _charts = new()
+    private ObservableCollection<ChartModel> _accountsCharts = new()
     {
         new("Покупки", s => (s as TradeStatisticElement)!.Buy),
         new("Продажи", s => (s as TradeStatisticElement)!.Sell),
@@ -20,8 +27,13 @@ public class ChartsPageModel : ViewModelBase
         new("Ежедневный профит", s => (s as TradeStatisticElement)!.DailyProfit),
     };
 
+    private ObservableCollection<ChartModel> _charts = new();
+
     public ChartsPageModel()
     {
+        foreach (var chart in _accountsCharts)
+            _charts.Add(chart);
+
         AccountSelect.CloseCommand.AddExecute(obj => { DrawCharts(); });
     }
 
@@ -78,15 +90,33 @@ public class ChartsPageModel : ViewModelBase
 
         foreach (AccountDataModel account in _accountSelect.SelectedAccounts)
         {
-            AddAccountChart(Charts[0], account);
-            AddAccountChart(Charts[1], account);
-            AddAccountChart(Charts[2], account);
-            AddAccountChart(Charts[3], account);
+            IEnumerable<TradeStatisticElement> accountStatistics = SelectStatistics(account.Statistics!);
+            SKColor accountColor = new(account.Color.Red, account.Color.Green, account.Color.Blue);
+            foreach (var accountChart in _accountsCharts)
+                accountChart.Add(accountStatistics, account.AccountName, accountColor);
         }
     }
 
-    private void AddAccountChart(ChartModel chart, AccountDataModel account)
+    private IEnumerable<StatisticType> SelectStatistics<StatisticType>(FullStatistics<StatisticType> statistics)
+        where StatisticType : StatisticElement, new()
     {
-        chart.Add(account.Statistics!, account.AccountName, SelectionPeriod, PointPeriod);
+        DateTime endDate = DateTime.Now.Date;
+        DateTime startDate = SelectionPeriod switch
+        {
+            Period.Week => endDate.AddDays(-7),
+            Period.Month => endDate.AddMonths(-1),
+            Period.HalfYear => endDate.AddMonths(-6),
+            _ => throw new ArgumentException("")
+        };
+
+        IEnumerable<StatisticType> displayedData = PointPeriod switch
+        {
+            Period.Day => statistics.DailyData!,
+            Period.Week => statistics.WeeklyData!,
+            Period.Month => statistics.MonthlyData!,
+            _ => throw new ArgumentException("")
+        };
+
+        return displayedData.Where(data => data.Date >= startDate && data.Date <= endDate);
     }
 }

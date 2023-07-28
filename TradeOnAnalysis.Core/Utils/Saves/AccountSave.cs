@@ -4,6 +4,7 @@ public class AccountSave
 {
     public string Name { get; set; } = "";
     public string MarketApi { get; set; } = "";
+    public string Color { get; set; } = "";
 }
 
 public class AccountsSave

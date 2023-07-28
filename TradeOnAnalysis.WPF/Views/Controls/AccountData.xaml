@@ -6,7 +6,7 @@
     xmlns:local="clr-namespace:TradeOnAnalysis.WPF.Views.Controls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Width="350"
-    Height="49"
+    Height="71"
     Style="{StaticResource PanelElement}"
     mc:Ignorable="d">
 
@@ -52,6 +52,22 @@
             VerticalAlignment="Top"
             Style="{StaticResource InputElement}"
             Text="{Binding MarketApi}" />
+        <Label
+            Width="45"
+            Height="17"
+            Margin="10,49,0,0"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top"
+            Content="Color"
+            Style="{StaticResource Label}" />
+        <local:ColorBox
+            Width="250"
+            Margin="60,49,0,0"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top"
+            DataContext="{Binding Color}" />
+
+
         <Button
             Name="RemoveButton"
             Width="30"
