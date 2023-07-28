@@ -57,7 +57,7 @@ public class ChartsPageModel : ViewModelBase
 
     public IEnumerable<Period> SelectionPeriodValues
     {
-        get => new Period[] { Period.Week, Period.Month, Period.HalfYear };
+        get => new Period[] { Period.Week, Period.Month, Period.HalfYear, Period.FourYears };
     }
 
     public Period PointPeriod
@@ -104,6 +104,7 @@ public class ChartsPageModel : ViewModelBase
             Period.Week => endDate.AddDays(-7),
             Period.Month => endDate.AddMonths(-1),
             Period.HalfYear => endDate.AddMonths(-6),
+            Period.FourYears => endDate.AddYears(-4),
             _ => throw new ArgumentException("")
         };
 
@@ -117,4 +118,13 @@ public class ChartsPageModel : ViewModelBase
 
         return displayedData.Where(data => data.Date >= startDate && data.Date <= endDate);
     }
+}
+
+public enum Period
+{
+    Day,
+    Week,
+    Month,
+    HalfYear,
+    FourYears
 }

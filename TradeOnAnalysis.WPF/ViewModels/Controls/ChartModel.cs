@@ -109,11 +109,3 @@ public class ChartModel : ViewModelBase
         };
     }
 }
-
-public enum Period
-{
-    Day,
-    Week,
-    Month,
-    HalfYear
-}
