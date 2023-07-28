@@ -23,7 +23,7 @@ public class AccountStatistics : FullStatistics<TradeStatisticElement>
     private readonly DateTime StartDate = new(2001, 1, 1);
     public HttpStatusCode LoadHistory()
     {
-        OperationHistoryRequest request = new(StartDate, DateTime.Today, MarketApi);
+        OperationHistoryRequest request = new(StartDate, DateTime.Now, MarketApi);
         HttpStatusCode status = request.ResultMessage.StatusCode;
 
         if (status != HttpStatusCode.OK)
