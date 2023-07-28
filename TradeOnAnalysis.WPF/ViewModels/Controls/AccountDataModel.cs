@@ -1,7 +1,4 @@
 ﻿using System.Net;
-using System.Security.Principal;
-using System.Windows.Controls;
-using System.Windows.Media;
 
 using TradeOnAnalysis.Core.Utils.Saves;
 using TradeOnAnalysis.Core.Utils.Statistics;

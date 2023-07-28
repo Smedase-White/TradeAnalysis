@@ -14,7 +14,6 @@ using LiveChartsCore.SkiaSharpView.VisualElements;
 
 using SkiaSharp;
 
-using TradeOnAnalysis.Core.Utils.Statistics;
 using TradeOnAnalysis.Core.Utils.Statistics.Elements;
 
 namespace TradeOnAnalysis.WPF.ViewModels;
@@ -88,7 +87,7 @@ public class ChartModel : ViewModelBase
     public void Add<StatisticType>(IEnumerable<StatisticType> statistics, string title, SKColor color)
         where StatisticType : StatisticElement, new()
     {
-        ObservableCollection<DateTimePoint> points = 
+        ObservableCollection<DateTimePoint> points =
             new(statistics.Select(data => new DateTimePoint(data.Date, _selectionFunc(data))));
         Series.Add(CreateLineSeries(points, title, color));
     }

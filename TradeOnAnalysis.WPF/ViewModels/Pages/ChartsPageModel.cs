@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Drawing.Drawing2D;
 using System.Linq;
-using System.Windows.Input;
 
 using SkiaSharp;
 
@@ -31,7 +29,7 @@ public class ChartsPageModel : ViewModelBase
 
     public ChartsPageModel()
     {
-        foreach (var chart in _accountsCharts)
+        foreach (ChartModel chart in _accountsCharts)
             _charts.Add(chart);
 
         AccountSelect.CloseCommand.AddExecute(obj => { DrawCharts(); });
@@ -92,7 +90,7 @@ public class ChartsPageModel : ViewModelBase
         {
             IEnumerable<TradeStatisticElement> accountStatistics = SelectStatistics(account.Statistics!);
             SKColor accountColor = new(account.Color.Red, account.Color.Green, account.Color.Blue);
-            foreach (var accountChart in _accountsCharts)
+            foreach (ChartModel accountChart in _accountsCharts)
                 accountChart.Add(accountStatistics, account.AccountName, accountColor);
         }
     }

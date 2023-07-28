@@ -53,7 +53,7 @@ public class ColorModel : ViewModelBase
     {
         get => _hex;
         set
-        { 
+        {
             ChangeProperty(ref _hex, value);
             (Red, Green, Blue) = HexToRgb(value);
         }
