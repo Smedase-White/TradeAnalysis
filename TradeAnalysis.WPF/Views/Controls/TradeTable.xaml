@@ -10,10 +10,7 @@
     Style="{StaticResource PanelElement}"
     mc:Ignorable="d">
 
-    <DataGrid
-        AutoGenerateColumns="False"
-        ItemsSource="{Binding TableElements}"
-        Style="{StaticResource Table}">
+    <DataGrid AutoGenerateColumns="False" ItemsSource="{Binding TableElements}">
         <DataGrid.Columns>
             <DataGridTextColumn
                 Width="4*"

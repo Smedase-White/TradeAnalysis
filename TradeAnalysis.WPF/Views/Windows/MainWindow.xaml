@@ -19,10 +19,7 @@
     </Window.DataContext>
 
     <Grid>
-        <TabControl
-            BorderBrush="Transparent"
-            SelectedIndex="{Binding SelectedIndex}"
-            Style="{StaticResource Tab}">
+        <TabControl BorderBrush="Transparent" SelectedIndex="{Binding SelectedIndex}">
             <TabItem Width="150" Header="Аккаунты">
                 <TabItem.Content>
                     <pages:AccountsPage DataContext="{Binding AccountsPage}" />
