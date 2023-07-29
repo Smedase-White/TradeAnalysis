@@ -4,7 +4,7 @@
     <SolidColorBrush x:Key="PageBackgroundColor" Color="#0F151A" />
     <SolidColorBrush x:Key="TabBackgroundColor" Color="#0E131A" />
 
-    <SolidColorBrush x:Key="BorderColor" Color="#DE8F4D" />
+    <SolidColorBrush x:Key="SecondColor" Color="#DE8F4D" />
 
     <SolidColorBrush x:Key="ForegroundColor" Color="White" />
     <SolidColorBrush x:Key="ButtonForegroundColor" Color="Black" />
