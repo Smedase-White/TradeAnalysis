@@ -20,12 +20,8 @@
         </Style.Resources>
     </Style>
 
-    <Style x:Key="Page">
-        <Setter Property="Control.Background" Value="{StaticResource MainBackgroundColor}" />
-    </Style>
-
     <Style x:Key="PanelElement" BasedOn="{StaticResource RoundedElement}">
-        <Setter Property="Control.Background" Value="{StaticResource BackgroundColor}" />
+        <Setter Property="Control.Background" Value="{StaticResource PanelBackgroundColor}" />
         <Setter Property="Control.Effect">
             <Setter.Value>
                 <DropShadowEffect ShadowDepth="2" />

@@ -42,11 +42,11 @@
         <Button
             Width="80"
             Height="30"
+            Margin="10,0,0,10"
             HorizontalAlignment="Left"
             VerticalAlignment="Bottom"
             Command="{Binding ExitCommand}"
             CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}"
-            Content="Выйти"
-            Style="{StaticResource Button}" />
+            Content="Выйти" />
     </Grid>
 </Window>

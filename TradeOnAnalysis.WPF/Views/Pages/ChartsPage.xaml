@@ -12,36 +12,37 @@
     mc:Ignorable="d">
 
     <Grid>
-        <elements:AccountSelectBox
-            Width="150"
-            Height="25"
-            Margin="10,10"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Top"
-            DataContext="{Binding AccountSelect}" />
-        <ComboBox
-            Width="80"
-            Height="25"
-            Margin="170,10"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Top"
-            ItemsSource="{Binding PointPeriodValues}"
-            SelectedItem="{Binding PointPeriod}" />
-        <ComboBox
-            Width="80"
-            Height="25"
-            Margin="260,10"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Top"
-            ItemsSource="{Binding SelectionPeriodValues}"
-            SelectedItem="{Binding SelectionPeriod}" />
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <StackPanel Grid.Row="0" Style="{StaticResource TopStackPanel}">
+            <elements:AccountSelectBox
+                Width="150"
+                Margin="10,0"
+                DataContext="{Binding AccountSelect}" />
+            <ComboBox
+                Width="80"
+                Margin="10,0"
+                ItemsSource="{Binding PointPeriodValues}"
+                SelectedItem="{Binding PointPeriod}" />
+            <ComboBox
+                Width="80"
+                Margin="10,0"
+                ItemsSource="{Binding SelectionPeriodValues}"
+                SelectedItem="{Binding SelectionPeriod}" />
+        </StackPanel>
         <ItemsControl
-            Margin="10,45,10,10"
+            Grid.Row="1"
+            Margin="10,10,10,10"
             ItemsSource="{Binding Charts}"
             Style="{StaticResource ScrollableItemsControl}">
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
-                    <elements:Chart Margin="0,5" DataContext="{Binding}" />
+                    <elements:Chart
+                        Height="300"
+                        Margin="0,5"
+                        DataContext="{Binding}" />
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ItemsControl>

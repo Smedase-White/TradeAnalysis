@@ -12,15 +12,19 @@
     mc:Ignorable="d">
 
     <Grid>
-        <elements:AccountSelectBox
-            Width="150"
-            Height="25"
-            Margin="10,10"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Top"
-            DataContext="{Binding AccountSelect}" />
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <StackPanel Grid.Row="0" Style="{StaticResource TopStackPanel}">
+            <elements:AccountSelectBox
+                Width="150"
+                Margin="10,0"
+                DataContext="{Binding AccountSelect}" />
+        </StackPanel>
         <elements:TradeTable
-            Margin="10,45,10,10"
+            Grid.Row="1"
+            Margin="10,10,10,10"
             VerticalAlignment="Top"
             DataContext="{Binding TradeTable}" />
     </Grid>

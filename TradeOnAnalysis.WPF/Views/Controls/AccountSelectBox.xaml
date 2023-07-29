@@ -18,13 +18,15 @@
         </i:Interaction.Triggers>
         <ComboBox.ItemTemplate>
             <DataTemplate>
-                <StackPanel Orientation="Horizontal">
-                    <CheckBox Width="20" IsChecked="{Binding IsSelected}" />
-                    <Label
-                        Width="100"
-                        Content="{Binding Name}"
-                        Style="{StaticResource Label}" />
-                </StackPanel>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="20" />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+
+                    <CheckBox Grid.Column="0" IsChecked="{Binding IsSelected}" />
+                    <Label Grid.Column="1" Content="{Binding Name}" />
+                </Grid>
             </DataTemplate>
         </ComboBox.ItemTemplate>
     </ComboBox>

@@ -13,7 +13,6 @@
 
     <lvc:CartesianChart
         Title="{Binding Title}"
-        Height="300"
         LegendPosition="Top"
         LegendTextPaint="{Binding LegendTextPaint}"
         Series="{Binding Series}"

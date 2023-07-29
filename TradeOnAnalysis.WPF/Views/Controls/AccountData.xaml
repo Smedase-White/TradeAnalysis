@@ -6,87 +6,79 @@
     xmlns:local="clr-namespace:TradeOnAnalysis.WPF.Views.Controls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Width="350"
-    Height="71"
+    Height="74"
     Style="{StaticResource PanelElement}"
     mc:Ignorable="d">
 
     <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="55" />
+            <ColumnDefinition />
+            <ColumnDefinition Width="120" />
+            <ColumnDefinition Width="45" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="23" />
+            <RowDefinition Height="23" />
+            <RowDefinition Height="28" />
+        </Grid.RowDefinitions>
+
         <Label
-            Width="45"
-            Height="17"
+            Grid.Row="0"
+            Grid.Column="0"
             Margin="10,5,0,0"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Top"
-            Content="Name"
-            Style="{StaticResource Label}" />
+            Content="Name" />
         <TextBox
-            Width="125"
-            Height="17"
-            Margin="60,5,0,0"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Top"
-            Style="{StaticResource InputElement}"
+            Grid.Row="0"
+            Grid.Column="1"
+            Margin="5,5,0,0"
             Text="{Binding AccountName}" />
         <Label
-            Width="120"
-            Height="17"
-            Margin="190,5,0,0"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Top"
+            Grid.Row="0"
+            Grid.Column="2"
+            Margin="5,5,0,0"
             HorizontalContentAlignment="Center"
             Content="{Binding Status}"
             Style="{StaticResource PanelLabel}" />
+
         <Label
-            Width="45"
-            Height="17"
-            Margin="10,27,0,0"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Top"
-            Content="API Key"
-            Style="{StaticResource Label}" />
+            Grid.Row="1"
+            Grid.Column="0"
+            Margin="10,5,0,0"
+            Content="API Key" />
         <TextBox
-            Width="250"
-            Height="17"
-            Margin="60,27,0,0"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Top"
-            Style="{StaticResource InputElement}"
+            Grid.Row="1"
+            Grid.Column="1"
+            Grid.ColumnSpan="2"
+            Margin="5,5,0,0"
             Text="{Binding MarketApi}" />
+
         <Label
-            Width="45"
-            Height="17"
-            Margin="10,49,0,0"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Top"
-            Content="Color"
-            Style="{StaticResource Label}" />
+            Grid.Row="2"
+            Grid.Column="0"
+            Margin="10,5,0,5"
+            Content="Color" />
         <local:ColorBox
-            Width="250"
-            Margin="60,49,0,0"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Top"
+            Grid.Row="2"
+            Grid.Column="1"
+            Grid.ColumnSpan="2"
+            Margin="5,5,0,5"
             DataContext="{Binding Color}" />
 
-
         <Button
-            Name="RemoveButton"
-            Width="30"
-            Height="17"
-            Margin="0,5,6,0"
+            Grid.Row="0"
+            Grid.Column="3"
+            Margin="5,5,10,0"
             Padding="0,-5,0,0"
-            HorizontalAlignment="Right"
-            VerticalAlignment="Top"
             Background="{StaticResource DeleteColor}"
             Command="{Binding RemoveCommand}"
             Content="×"
             Style="{StaticResource SmallButton}" />
         <Button
-            Width="30"
-            Height="17"
-            Margin="0,27,6,0"
+            Grid.Row="1"
+            Grid.Column="3"
+            Margin="5,5,10,0"
             Padding="0,-4,0,0"
-            HorizontalAlignment="Right"
-            VerticalAlignment="Top"
             Background="{StaticResource LoadColor}"
             Command="{Binding LoadCommand}"
             Content="⭳"

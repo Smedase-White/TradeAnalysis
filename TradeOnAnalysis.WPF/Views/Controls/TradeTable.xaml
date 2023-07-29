@@ -16,23 +16,23 @@
         Style="{StaticResource Table}">
         <DataGrid.Columns>
             <DataGridTextColumn
-                Width="300"
+                Width="4*"
                 Binding="{Binding Name}"
                 Header="Название" />
             <DataGridTextColumn
-                Width="90"
+                Width="*"
                 Binding="{Binding BuyDate}"
                 Header="Дата покупки" />
             <DataGridTextColumn
-                Width="90"
+                Width="*"
                 Binding="{Binding BuyPrice}"
                 Header="Цена покупки" />
             <DataGridTextColumn
-                Width="90"
+                Width="*"
                 Binding="{Binding SellDate}"
                 Header="Дата продажи" />
             <DataGridTextColumn
-                Width="90"
+                Width="*"
                 Binding="{Binding SellPrice}"
                 Header="Цена продажи" />
         </DataGrid.Columns>
