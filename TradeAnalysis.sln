@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.33627.172
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TradeAnalysis.Core", "TradeAnalysis.Core\TradeAnalysis.Core.csproj", "{D8643402-8A16-499D-89AF-A1BBB266339A}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TradeAnalysis.WPF", "TradeAnalysis.WPF\TradeAnalysis.WPF.csproj", "{5A415E86-D5C1-4C75-B8E2-D73181CF810C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D8643402-8A16-499D-89AF-A1BBB266339A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D8643402-8A16-499D-89AF-A1BBB266339A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D8643402-8A16-499D-89AF-A1BBB266339A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D8643402-8A16-499D-89AF-A1BBB266339A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5A415E86-D5C1-4C75-B8E2-D73181CF810C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5A415E86-D5C1-4C75-B8E2-D73181CF810C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5A415E86-D5C1-4C75-B8E2-D73181CF810C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5A415E86-D5C1-4C75-B8E2-D73181CF810C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {8F69AFE3-C777-4F7C-B202-6D26539BA6FE}
+	EndGlobalSection
+EndGlobal
