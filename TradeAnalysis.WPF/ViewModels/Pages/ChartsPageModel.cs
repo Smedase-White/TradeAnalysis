@@ -22,7 +22,7 @@ public class ChartsPageModel : ViewModelBase
         new("Покупки", s => (s as TradeStatisticElement)!.Buy),
         new("Продажи", s => (s as TradeStatisticElement)!.Sell),
         new("Профит", s => (s as TradeStatisticElement)!.Profit),
-        new("Ежедневный профит", s => (s as TradeStatisticElement)!.DailyProfit),
+        new("Ежедневный профит", s => (s as TradeStatisticElement)!.HourlyProfit),
     };
 
     private ObservableCollection<ChartModel> _charts = new();
@@ -57,7 +57,7 @@ public class ChartsPageModel : ViewModelBase
 
     public IEnumerable<Period> SelectionPeriodValues
     {
-        get => new Period[] { Period.Week, Period.Month, Period.HalfYear, Period.FourYears };
+        get => new Period[] { Period.Day, Period.Week, Period.Month, Period.HalfYear, Period.FourYears };
     }
 
     public Period PointPeriod
@@ -72,7 +72,7 @@ public class ChartsPageModel : ViewModelBase
 
     public IEnumerable<Period> PointPeriodValues
     {
-        get => new Period[] { Period.Day, Period.Week, Period.Month };
+        get => new Period[] { Period.Hour, Period.Day, Period.Week, Period.Month };
     }
 
     public ObservableCollection<ChartModel> Charts
@@ -101,6 +101,7 @@ public class ChartsPageModel : ViewModelBase
         DateTime endDate = DateTime.Now.Date;
         DateTime startDate = SelectionPeriod switch
         {
+            Period.Day => endDate.AddDays(-1),
             Period.Week => endDate.AddDays(-7),
             Period.Month => endDate.AddMonths(-1),
             Period.HalfYear => endDate.AddMonths(-6),
@@ -110,18 +111,20 @@ public class ChartsPageModel : ViewModelBase
 
         IEnumerable<StatisticType> displayedData = PointPeriod switch
         {
+            Period.Hour => statistics.HourlyData!,
             Period.Day => statistics.DailyData!,
             Period.Week => statistics.WeeklyData!,
             Period.Month => statistics.MonthlyData!,
             _ => throw new ArgumentException("")
         };
 
-        return displayedData.Where(data => data.Date >= startDate && data.Date <= endDate);
+        return displayedData.Where(data => data.Time >= startDate && data.Time <= endDate);
     }
 }
 
 public enum Period
 {
+    Hour,
     Day,
     Week,
     Month,

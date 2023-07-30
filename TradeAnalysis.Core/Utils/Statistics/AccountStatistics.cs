@@ -20,10 +20,10 @@ public class AccountStatistics : FullStatistics<TradeStatisticElement>
         MarketApi = marketApi;
     }
 
-    private readonly DateTime StartDate = new(2001, 1, 1);
+    private readonly DateTime StartTime = new(2001, 1, 1, 0, 0, 0);
     public HttpStatusCode LoadHistory()
     {
-        OperationHistoryRequest request = new(StartDate, DateTime.Now, MarketApi);
+        OperationHistoryRequest request = new(StartTime, DateTime.Now, MarketApi);
         HttpStatusCode status = request.ResultMessage.StatusCode;
 
         if (status != HttpStatusCode.OK)
@@ -94,84 +94,69 @@ public class AccountStatistics : FullStatistics<TradeStatisticElement>
         return tradeHistory;
     }
 
-    private static DateTime GetHistoryDate(Item item)
-        => item.BuyInfo?.Date ?? item.SellInfo!.Date;
-    private static IEnumerable<DateTime> DaysInRangeUntil(DateTime startDate, DateTime endDate)
+
+
+    private static DateTime GetHistoryTime(Item item)
     {
-        return Enumerable.Range(0, 1 + (int)(endDate - startDate).TotalDays)
-                         .Select(dt => startDate.AddDays(dt));
+        DateTime rawTime = item.BuyInfo?.Time ?? item.SellInfo!.Time;
+        return new(rawTime.Year, rawTime.Month, rawTime.Day, rawTime.Hour, 0, 0);
     }
-    private static void CalcDailyValues(IEnumerable<TradeStatisticElement> dailyData, IEnumerable<Item> items,
+    private static IEnumerable<DateTime> HoursInRangeUntil(DateTime startTime, DateTime endTime)
+    {
+        return Enumerable.Range(0, 2 + (int)(endTime - startTime).TotalHours)
+                         .Select(time => startTime.AddHours(time));
+    }
+    private static void CalcHourlyValues(IEnumerable<TradeStatisticElement> hourlyData, IEnumerable<Item> items,
         Func<Item, DateTime, bool> predicate,
         Func<Item, DateTime, double> selection,
         Action<TradeStatisticElement, double> action,
         Func<IEnumerable<double>, double>? calc = null)
     {
-        foreach (TradeStatisticElement data in dailyData)
+        foreach (TradeStatisticElement data in hourlyData)
         {
-            IEnumerable<double> dayValues = from item in items
-                                            where predicate(item, data.Date)
-                                            select selection(item, data.Date);
-            double value = calc is null ? dayValues.Sum() : calc(dayValues);
+            IEnumerable<double> hourValues = from item in items
+                                             where predicate(item, data.Time)
+                                             select selection(item, data.Time);
+            double value = calc is null ? hourValues.Sum() : calc(hourValues);
             action(data, value);
         }
     }
 
-    public override void CalcDailyData()
+    private bool TimeEquals(DateTime? a, DateTime? b)
+    {
+        if (a is null || b is null)
+            return false;
+        return a.Value.Year == b.Value.Year && a.Value.Month == b.Value.Month 
+            && a.Value.Day == b.Value.Day && a.Value.Hour == b.Value.Hour;
+    }
+    public override void CalcHourlyData()
     {
         if (History is null || History.Count == 0)
             return;
-        DateTime startDate = GetHistoryDate(History![0]), endDate = GetHistoryDate(History![^1]);
-        List<TradeStatisticElement> dailyData = (from day in DaysInRangeUntil(startDate, endDate)
-                                                 select new TradeStatisticElement() { Date = day }).ToList();
+        DateTime startTime = GetHistoryTime(History![0]), endTime = GetHistoryTime(History![^1]);
+        List<TradeStatisticElement> hourlyData = (from time in HoursInRangeUntil(startTime, endTime)
+                                                  select new TradeStatisticElement() { Time = time }).ToList();
 
-        CalcDailyValues(dailyData, History,
-            (item, date) => date == item.BuyInfo?.Date,
+        CalcHourlyValues(hourlyData, History,
+            (item, date) => TimeEquals(date, item.BuyInfo?.Time),
             (item, _) => item.BuyInfo!.Price,
-            (dayData, value) => dayData.Buy = value);
+            (hourData, value) => hourData.Buy = value);
 
-        CalcDailyValues(dailyData, History,
-            (item, date) => date == item.SellInfo?.Date,
+        CalcHourlyValues(hourlyData, History,
+            (item, date) => TimeEquals(date, item.SellInfo?.Time),
             (item, _) => item.SellInfo!.Price,
-            (dayData, value) => dayData.Sell = value);
+            (hourData, value) => hourData.Sell = value);
 
-        CalcDailyValues(dailyData, TradeHistory!,
-            (item, date) => date == item.SellInfo!.Date,
+        CalcHourlyValues(hourlyData, TradeHistory!,
+            (item, date) => TimeEquals(date, item.SellInfo?.Time),
             (item, _) => item.Profit!.Value,
-            (dayData, value) => dayData.Profit = value);
+            (hourData, value) => hourData.Profit = value);
 
-        CalcDailyValues(dailyData, TradeHistory!,
-            (item, date) => item.BuyInfo!.Date < date && date <= item.SellInfo!.Date,
-            (item, _) => item.Profit!.Daily,
-            (dayData, value) => dayData.DailyProfit = value);
+        CalcHourlyValues(hourlyData, TradeHistory!,
+            (item, date) => item.BuyInfo!.Time < date && date <= item.SellInfo!.Time,
+            (item, _) => item.Profit!.Hourly,
+            (hourData, value) => hourData.HourlyProfit = value);
 
-        CalcDailyValues(dailyData, History,
-            (item, date) => item.History?.ContainsKey(date) ?? false,
-            (item, date) => item.History![date].AveragePrice / item.AveragePrice!.Value,
-            (dayData, value) => dayData.MarketAnalisys = value,
-            (enumerable) => enumerable.Any() ? enumerable.Sum() / enumerable.Count() : 1);
-
-        DailyData = dailyData.ToImmutableList();
-
-    }
-
-    public void CalcData()
-    {
-        CalcDailyData();
-        CalcWeeklyData();
-        CalcMonthlyData();
-    }
-
-    public async Task ParseMarket()
-    {
-        List<Task> tasks = new();
-        int count = 0;
-        foreach (Item item in History!)
-        {
-            tasks.Add(item.LoadHistory(MarketApi));
-            if (++count >= MaxItemHistory)
-                break;
-        }
-        await Task.WhenAll(tasks);
+        HourlyData = hourlyData.ToImmutableList();
     }
 }

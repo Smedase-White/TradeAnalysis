@@ -5,9 +5,7 @@ public class TradeStatisticElement : StatisticElement
     public double Buy { get; set; } = 0;
     public double Sell { get; set; } = 0;
     public double Profit { get; set; } = 0;
-    public double DailyProfit { get; set; } = 0;
-
-    public double MarketAnalisys { get; set; } = 1;
+    public double HourlyProfit { get; set; } = 0;
 
     public override void Combine(CombineType combineType, IEnumerable<StatisticElement> elements)
     {
@@ -24,15 +22,13 @@ public class TradeStatisticElement : StatisticElement
                 Buy += elements.Sum(e => e.Buy);
                 Sell += elements.Sum(e => e.Sell);
                 Profit += elements.Sum(e => e.Profit);
-                DailyProfit += elements.Sum(e => e.DailyProfit);
-                MarketAnalisys = (MarketAnalisys + elements.Sum(e => e.MarketAnalisys)) / count;
+                HourlyProfit += elements.Sum(e => e.HourlyProfit);
                 break;
             case CombineType.Average:
                 Buy = (Buy + elements.Sum(e => e.Buy)) / count;
                 Sell = (Sell + elements.Sum(e => e.Sell)) / count;
                 Profit = (Profit + elements.Sum(e => e.Profit)) / count;
-                DailyProfit = (DailyProfit + elements.Sum(e => e.DailyProfit)) / count;
-                MarketAnalisys = (MarketAnalisys + elements.Sum(e => e.MarketAnalisys)) / count;
+                HourlyProfit = (HourlyProfit + elements.Sum(e => e.HourlyProfit)) / count;
                 break;
             default:
                 break;

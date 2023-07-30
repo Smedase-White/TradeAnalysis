@@ -2,19 +2,19 @@
 
 public class StatisticElement
 {
-    public DateTime Date { get; set; }
+    public DateTime Time { get; set; }
 
     public virtual void Combine(CombineType combineType, IEnumerable<StatisticElement> elements)
     {
         switch (combineType)
         {
             case CombineType.Sum:
-                DateTime maxDate = elements.OrderBy(e => e.Date).Last().Date;
-                if (maxDate > Date)
-                    Date = maxDate;
+                DateTime maxTime = elements.OrderBy(e => e.Time).Last().Time;
+                if (maxTime > Time)
+                    Time = maxTime;
                 break;
             case CombineType.Average:
-                Date.AddDays(elements.Sum(e => (e.Date - Date).Days) / (elements.Count() + 1));
+                Time.AddHours(elements.Sum(e => (e.Time - Time).Hours) / (elements.Count() + 1));
                 break;
             default:
                 break;

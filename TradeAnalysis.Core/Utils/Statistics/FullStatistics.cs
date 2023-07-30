@@ -6,18 +6,31 @@ namespace TradeAnalysis.Core.Utils.Statistics;
 
 public abstract class FullStatistics<StatisticType> where StatisticType : StatisticElement, new()
 {
+    public IImmutableList<StatisticType>? HourlyData { get; set; }
     public IImmutableList<StatisticType>? DailyData { get; set; }
     public IImmutableList<StatisticType>? WeeklyData { get; set; }
     public IImmutableList<StatisticType>? MonthlyData { get; set; }
 
-    public abstract void CalcDailyData();
+    public abstract void CalcHourlyData();
+    public virtual void CalcDailyData()
+    {
+        DailyData = CalcPeriodData(IsEndOfDay)?.ToImmutableList();
+    }
     public virtual void CalcWeeklyData()
     {
-        WeeklyData = CalcPeriodData(date => date.DayOfWeek == DayOfWeek.Sunday)?.ToImmutableList();
+        WeeklyData = CalcPeriodData(time => IsEndOfDay(time) && IsEndofWeek(time))?.ToImmutableList();
     }
     public virtual void CalcMonthlyData()
     {
-        MonthlyData = CalcPeriodData(date => date.Day == DateTime.DaysInMonth(date.Year, date.Month))?.ToImmutableList();
+        MonthlyData = CalcPeriodData(time => IsEndOfDay(time) && IsEndofMonth(time))?.ToImmutableList();
+    }
+
+    public void CalcData()
+    {
+        CalcHourlyData();
+        CalcDailyData();
+        CalcWeeklyData();
+        CalcMonthlyData();
     }
 
     private StatisticType CreateElement(List<StatisticType> periodElements)
@@ -28,15 +41,15 @@ public abstract class FullStatistics<StatisticType> where StatisticType : Statis
     }
     public List<StatisticType>? CalcPeriodData(Func<DateTime, bool> point)
     {
-        if (DailyData is null)
+        if (HourlyData is null)
             return null;
 
         List<StatisticType> periodData = new();
         List<StatisticType> periodElements = new();
-        foreach (StatisticType data in DailyData)
+        foreach (StatisticType data in HourlyData)
         {
             periodElements.Add(data);
-            if (point(data.Date) == true)
+            if (point(data.Time) == true)
             {
                 periodData.Add(CreateElement(periodElements));
                 periodElements = new();
@@ -47,4 +60,13 @@ public abstract class FullStatistics<StatisticType> where StatisticType : Statis
 
         return periodData;
     }
+
+    private static Func<DateTime, bool> IsEndOfDay
+        => time => time.Hour == 23;
+
+    private static Func<DateTime, bool> IsEndofWeek
+        => time => time.DayOfWeek == DayOfWeek.Sunday;
+
+    private static Func<DateTime, bool> IsEndofMonth
+        => time => time.Day == DateTime.DaysInMonth(time.Year, time.Month);
 }

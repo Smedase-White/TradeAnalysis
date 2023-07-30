@@ -39,9 +39,9 @@ public class ChartModel : ViewModelBase
 
     public Axis[] _xAxes = { new()
         {
-            Labeler = value => new DateTime((long)Math.Abs(value)).ToString("dd MMM"),
-            UnitWidth = TimeSpan.FromDays(1).Ticks,
-            MinStep = TimeSpan.FromDays(1).Ticks
+            Labeler = value => new DateTime((long)Math.Abs(value)).ToString("dd.MM:HH"),
+            UnitWidth = TimeSpan.FromHours(1).Ticks,
+            MinStep = TimeSpan.FromHours(1).Ticks
         } };
 
     public ChartModel(string title, Func<StatisticElement, double> selectionFunc)
@@ -89,7 +89,7 @@ public class ChartModel : ViewModelBase
         where StatisticType : StatisticElement, new()
     {
         ObservableCollection<DateTimePoint> points =
-            new(statistics.Select(data => new DateTimePoint(data.Date, _selectionFunc(data))));
+            new(statistics.Select(data => new DateTimePoint(data.Time, _selectionFunc(data))));
         Series.Add(CreateLineSeries(points, title, color));
     }
 
@@ -98,7 +98,7 @@ public class ChartModel : ViewModelBase
     {
         return new()
         {
-            YToolTipLabelFormatter = (chartPoint) => $"{new DateTime((long)chartPoint.Coordinate.SecondaryValue):dd MMMM}: {Math.Round(chartPoint.Coordinate.PrimaryValue, 2)}",
+            YToolTipLabelFormatter = (chartPoint) => $"{Math.Round(chartPoint.Coordinate.PrimaryValue, 2)}",
             GeometrySize = 6,
             LineSmoothness = 1,
             Values = points,

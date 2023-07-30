@@ -3,11 +3,11 @@
 public class ActionInfo
 {
     public double Price { get; init; }
-    public DateTime Date { get; init; }
+    public DateTime Time { get; init; }
 
-    public ActionInfo(double price, DateTime date)
+    public ActionInfo(double price, DateTime time)
     {
         Price = price;
-        Date = date;
+        Time = time;
     }
 }

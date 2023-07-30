@@ -28,7 +28,7 @@ public class TradeTableModel : ViewModelBase
         foreach (AccountDataModel account in accounts)
             totalHistory.AddRange(account.Statistics!.TradeHistory!);
         TableElements = new(from trade in totalHistory
-                            orderby trade.BuyInfo!.Date
+                            orderby trade.BuyInfo!.Time
                             select new TableElement(trade));
     }
 }
@@ -44,9 +44,9 @@ public readonly struct TableElement
     public TableElement(Item item)
     {
         Name = item.Name;
-        BuyDate = DateOnly.FromDateTime(item.BuyInfo!.Date);
+        BuyDate = DateOnly.FromDateTime(item.BuyInfo!.Time);
         BuyPrice = item.BuyInfo!.Price;
-        SellDate = DateOnly.FromDateTime(item.SellInfo!.Date);
+        SellDate = DateOnly.FromDateTime(item.SellInfo!.Time);
         SellPrice = item.SellInfo!.Price;
     }
 }
