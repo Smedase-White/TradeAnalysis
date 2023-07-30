@@ -22,9 +22,9 @@ public class OperationHistoryElement
     public string? HistoryID { get; set; }
 
     [JsonPropertyName("h_event")]
-    public string? Event { get; set; }
-    public EventType EventType
-        => Event switch
+    public string? EventString { get; set; }
+    public EventType Event
+        => EventString switch
         {
             "buy_go" => EventType.Buy,
             "sell_go" => EventType.Sell,
@@ -32,9 +32,9 @@ public class OperationHistoryElement
         };
 
     [JsonPropertyName("h_time")]
-    public string? Time { get; set; }
-    public DateTime DateTime
-        => DateTimeOffset.FromUnixTimeSeconds(Convert.ToInt64(Time)).UtcDateTime.Date;
+    public string? TimeString { get; set; }
+    public DateTime Time
+        => DateTimeOffset.FromUnixTimeSeconds(Convert.ToInt64(TimeString)).UtcDateTime.Date;
 
     [JsonPropertyName("h_event_id")]
     public string? EventID { get; set; }
@@ -73,9 +73,9 @@ public class OperationHistoryElement
     public string? Recieved { get; set; }
 
     [JsonPropertyName("stage")]
-    public string? Stage { get; set; }
-    public TradeStage TradeStage
-        => (TradeStage)Convert.ToByte(Stage);
+    public string? StageString { get; set; }
+    public TradeStage Stage
+        => (TradeStage)Convert.ToByte(StageString);
 
     [JsonPropertyName("item")]
     public string? Item { get; set; }

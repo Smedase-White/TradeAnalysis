@@ -46,10 +46,10 @@ public class Item
         Item item = new(Convert.ToInt64(element.ClassId), Convert.ToInt64(element.InstanceId),
             element.MarketHashName ?? "-");
 
-        if (element.EventType == EventType.Buy)
-            item.BuyInfo = new ActionInfo(Convert.ToInt32(element.Paid) / 100.0, element.DateTime);
-        else if (element.EventType == EventType.Sell)
-            item.SellInfo = new ActionInfo(Convert.ToInt32(element.Recieved) / 100.0, element.DateTime);
+        if (element.Event == EventType.Buy)
+            item.BuyInfo = new ActionInfo(Convert.ToInt32(element.Paid) / 100.0, element.Time);
+        else if (element.Event == EventType.Sell)
+            item.SellInfo = new ActionInfo(Convert.ToInt32(element.Recieved) / 100.0, element.Time);
 
         return item;
     }

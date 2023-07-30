@@ -34,9 +34,9 @@ public class AccountStatistics : FullStatistics<TradeStatisticElement>
         List<Item> history = new();
         foreach (OperationHistoryElement element in result.History)
         {
-            if (element.TradeStage == TradeStage.TimedOut)
+            if (element.Stage == TradeStage.TimedOut)
                 continue;
-            if (element.EventType == EventType.Transaction)
+            if (element.Event == EventType.Transaction)
                 continue;
             history.Add(Item.LoadFromAPI(element));
         }
