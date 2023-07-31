@@ -23,26 +23,24 @@ public class ChartModel : ViewModelBase
 {
     public static readonly SKColor LegendColor = new(255, 255, 255);
     public static readonly SKColor GeometryFillColor = new(255, 255, 255);
-    public static readonly SKColor[] LinesColors =
-    {
-        new SKColor(50, 200, 50),
-        new SKColor(50, 50, 200),
-        new SKColor(200, 50, 50),
-        new SKColor(200, 200, 50),
-        new SKColor(200, 50, 200),
-        new SKColor(50, 200, 200),
-    };
 
     private LabelVisual _title;
     private ObservableCollection<ISeries> _series = new();
     private readonly Func<StatisticElement, double> _selectionFunc;
 
-    public Axis[] _xAxes = { new()
-        {
-            Labeler = value => new DateTime((long)Math.Abs(value)).ToString("dd.MM:HH"),
-            UnitWidth = TimeSpan.FromHours(1).Ticks,
-            MinStep = TimeSpan.FromHours(1).Ticks
-        } };
+    public static Axis HourAxis => new()
+    {
+        Labeler = value => new DateTime((long)Math.Abs(value)).ToString("HH"),
+        UnitWidth = TimeSpan.FromHours(2).Ticks,
+        MinStep = TimeSpan.FromHours(2).Ticks
+    };
+    public static Axis DayAxis => new()
+    {
+        Labeler = value => new DateTime((long)Math.Abs(value)).ToString("dd.MM"),
+        UnitWidth = TimeSpan.FromDays(1).Ticks,
+        MinStep = TimeSpan.FromDays(1).Ticks
+    };
+    public Axis[] _xAxes = { DayAxis };
 
     public ChartModel(string title, Func<StatisticElement, double> selectionFunc)
     {
@@ -78,6 +76,7 @@ public class ChartModel : ViewModelBase
     public Axis[] XAxes
     {
         get => _xAxes;
+        set => ChangeProperty(ref _xAxes, value);
     }
 
     public void Clear()

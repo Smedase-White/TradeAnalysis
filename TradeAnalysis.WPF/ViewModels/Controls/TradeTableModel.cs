@@ -26,7 +26,7 @@ public class TradeTableModel : ViewModelBase
     {
         List<Item> totalHistory = new();
         foreach (AccountDataModel account in accounts)
-            totalHistory.AddRange(account.Statistics!.TradeHistory!);
+            totalHistory.AddRange(account.Account!.TradeHistory!);
         TableElements = new(from trade in totalHistory
                             orderby trade.BuyInfo!.Time
                             select new TableElement(trade));

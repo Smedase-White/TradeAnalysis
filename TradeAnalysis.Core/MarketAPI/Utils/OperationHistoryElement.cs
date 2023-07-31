@@ -34,7 +34,7 @@ public class OperationHistoryElement
     [JsonPropertyName("h_time")]
     public string? TimeString { get; set; }
     public DateTime Time
-        => DateTimeOffset.FromUnixTimeSeconds(Convert.ToInt64(TimeString)).UtcDateTime;
+        => DateTimeOffset.FromUnixTimeSeconds(Convert.ToInt64(TimeString)).LocalDateTime;
 
     [JsonPropertyName("h_event_id")]
     public string? EventID { get; set; }

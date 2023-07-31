@@ -1,5 +1,6 @@
 ﻿using System.Net;
 
+using TradeAnalysis.Core.Utils;
 using TradeAnalysis.Core.Utils.Saves;
 using TradeAnalysis.Core.Utils.Statistics;
 
@@ -9,14 +10,14 @@ public class AccountDataModel : ViewModelBase
 {
     private string _accountName = "";
     private string _marketApi = "";
-
     private ColorModel _color = new();
 
     private string _status = "Empty";
-    private AccountStatistics? _stats;
 
     private RelayCommand? _loadCommand;
     private RelayCommand? _removeCommand;
+
+    private Account? _account;
 
     public AccountDataModel()
     {
@@ -35,7 +36,7 @@ public class AccountDataModel : ViewModelBase
         set
         {
             if (ChangeProperty(ref _marketApi, value))
-                Status = Statistics is null ? "Empty" : "Other";
+                Status = Account?.TradeStatistics is null ? "Empty" : "Other";
         }
     }
 
@@ -51,15 +52,15 @@ public class AccountDataModel : ViewModelBase
         private set => ChangeProperty(ref _status, value);
     }
 
-    public AccountStatistics? Statistics
+    public Account? Account
     {
-        get => _stats;
-        private set => ChangeProperty(ref _stats, value);
+        get => _account;
+        private set => ChangeProperty(ref _account, value);
     }
 
     public RelayCommand LoadCommand
     {
-        get => _loadCommand ??= new(obj => LoadStatistics());
+        get => _loadCommand ??= new(obj => LoadAccount());
         set => ChangeProperty(ref _loadCommand, value);
     }
 
@@ -69,20 +70,20 @@ public class AccountDataModel : ViewModelBase
         set => ChangeProperty(ref _removeCommand, value);
     }
 
-    public void LoadStatistics()
+    public void LoadAccount()
     {
-        Statistics = new(MarketApi);
-        HttpStatusCode statusCode = Statistics.LoadHistory();
+        Account = new(MarketApi);
+        HttpStatusCode statusCode = Account.LoadHistory();
         Status = $"{statusCode}";
         if (statusCode != HttpStatusCode.OK)
             return;
-        if (Statistics.History!.Count == 0)
+        if (Account.History!.Count == 0)
         {
             Status = "Empty";
-            Statistics = null;
+            Account = null;
             return;
         }
-        Statistics.CalcData();
+        Account.CalcStatistics();
     }
 
     public AccountSave GetSave()

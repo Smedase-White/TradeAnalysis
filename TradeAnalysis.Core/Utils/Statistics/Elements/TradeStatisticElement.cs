@@ -1,9 +1,7 @@
 ﻿namespace TradeAnalysis.Core.Utils.Statistics.Elements;
 
-public class TradeStatisticElement : StatisticElement
+public class TradeStatisticElement : OperationStatisticElement
 {
-    public double Buy { get; set; } = 0;
-    public double Sell { get; set; } = 0;
     public double Profit { get; set; } = 0;
     public double HourlyProfit { get; set; } = 0;
 
@@ -19,14 +17,10 @@ public class TradeStatisticElement : StatisticElement
         switch (combineType)
         {
             case CombineType.Sum:
-                Buy += elements.Sum(e => e.Buy);
-                Sell += elements.Sum(e => e.Sell);
                 Profit += elements.Sum(e => e.Profit);
                 HourlyProfit += elements.Sum(e => e.HourlyProfit);
                 break;
             case CombineType.Average:
-                Buy = (Buy + elements.Sum(e => e.Buy)) / count;
-                Sell = (Sell + elements.Sum(e => e.Sell)) / count;
                 Profit = (Profit + elements.Sum(e => e.Profit)) / count;
                 HourlyProfit = (HourlyProfit + elements.Sum(e => e.HourlyProfit)) / count;
                 break;

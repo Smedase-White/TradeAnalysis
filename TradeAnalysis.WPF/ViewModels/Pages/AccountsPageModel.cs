@@ -29,7 +29,7 @@ public class AccountsPageModel : ViewModelBase
 
     public IEnumerable<AccountDataModel> LoadedAccounts
     {
-        get => Accounts.Where(account => account.Statistics is not null);
+        get => Accounts.Where(account => account.Account is not null);
     }
 
     public RelayCommand AddAccountCommand
