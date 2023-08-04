@@ -6,6 +6,7 @@ using System.Linq;
 using LiveChartsCore.SkiaSharpView;
 
 using SkiaSharp;
+using TradeAnalysis.Core.Utils;
 using TradeAnalysis.Core.Utils.Statistics.Base;
 using TradeAnalysis.Core.Utils.Statistics.Elements;
 
@@ -158,14 +159,4 @@ public class ChartsPageModel : ViewModelBase
             _ => new List<StatisticType>()
         };
     }
-}
-
-public enum Period
-{
-    Hour,
-    Day,
-    Week,
-    Month,
-    HalfYear,
-    FourYears
 }

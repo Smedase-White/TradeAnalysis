@@ -37,22 +37,22 @@ public class TradeStatistics : PeriodicityStatistics<TradeStatisticElement>, Sea
             return;
 
         DateTime startTime = GetHistoryTime(_account.History![0]), 
-            endTime = GetHistoryTime(_account.History![^1]).AddHours(1);
-        List<TradeStatisticElement> data = (from time in TimeUtils.HoursInRangeUntil(startTime, endTime)
+            endTime = GetHistoryTime(_account.History![^1]);
+        List<TradeStatisticElement> data = (from time in TimeUtils.GetRange(startTime, endTime, Period.Hour)
                                             select new TradeStatisticElement() { Time = time }).ToList();
 
         IStatistics.CalcStatisticValues(data, _account.History,
-            (item, date) => TimeUtils.TimeByHourEquals(date, item.BuyInfo?.Time),
+            (item, date) => date.Equals(item.BuyInfo?.Time, Period.Hour),
             (item, _) => item.BuyInfo!.Price,
             (data, value) => data.Buy = value);
 
         IStatistics.CalcStatisticValues(data, _account.History,
-            (item, date) => TimeUtils.TimeByHourEquals(date, item.SellInfo?.Time),
+            (item, date) => date.Equals(item.SellInfo?.Time, Period.Hour),
             (item, _) => item.SellInfo!.Price,
             (data, value) => data.Sell = value);
 
         IStatistics.CalcStatisticValues(data, _account.TradeHistory!,
-            (item, date) => TimeUtils.TimeByHourEquals(date, item.SellInfo?.Time),
+            (item, date) => date.Equals(item.SellInfo?.Time, Period.Hour),
             (item, _) => item.Profit!.Value,
             (data, value) => data.Profit = value);
 
@@ -70,7 +70,7 @@ public class TradeStatistics : PeriodicityStatistics<TradeStatisticElement>, Sea
             return;
 
         DateTime startTime = new(2001, 1, 1, 0, 0, 0), endTime = new(2001, 1, 1, 23, 0, 0);
-        List<OperationStatisticElement> data = (from time in TimeUtils.HoursInRangeUntil(startTime, endTime)
+        List<OperationStatisticElement> data = (from time in TimeUtils.GetRange(startTime, endTime, Period.Hour)
                                                 select new OperationStatisticElement() { Time = time }).ToList();
 
         IStatistics.CalcStatisticValues(data, _account.History,
@@ -92,7 +92,7 @@ public class TradeStatistics : PeriodicityStatistics<TradeStatisticElement>, Sea
             return;
 
         DateTime startTime = new(2001, 1, 1, 0, 0, 0), endTime = new(2001, 1, 7, 0, 0, 0);
-        List<OperationStatisticElement> data = (from time in TimeUtils.DaysInRangeUntil(startTime, endTime)
+        List<OperationStatisticElement> data = (from time in TimeUtils.GetRange(startTime, endTime, Period.Day)
                                                 select new OperationStatisticElement() { Time = time }).ToList();
 
         IStatistics.CalcStatisticValues(data, _account.History,
@@ -110,7 +110,6 @@ public class TradeStatistics : PeriodicityStatistics<TradeStatisticElement>, Sea
 
     private static DateTime GetHistoryTime(Item item)
     {
-        DateTime rawTime = item.BuyInfo?.Time ?? item.SellInfo!.Time;
-        return new(rawTime.Year, rawTime.Month, rawTime.Day, rawTime.Hour, 0, 0);
+        return item.BuyInfo?.Time ?? item.SellInfo!.Time;
     }
 }
