@@ -34,7 +34,7 @@ public static class StatisticsUtils
         foreach (DateTime time in times)
         {
             StatisticType? element = StatisticElement.Create<StatisticType>(
-                SelectDataPeriod(data, time.Floor(period), time.Ceiling(period))!, CombineType.Sum);
+                SelectDataPeriod(data, time.Floor(period), time.Ceiling(period))!);
             if (element is null)
                 continue;
             element.Time = time.Ceiling(period);
@@ -58,7 +58,7 @@ public static class StatisticsUtils
             times[element.Time.ToSeasonTime(season)].Add(element);
         foreach (KeyValuePair<DateTime, List<StatisticType>> time in times)
         {
-            StatisticType? element = StatisticElement.Create<StatisticType>(time.Value, CombineType.Sum);
+            StatisticType? element = StatisticElement.Create<StatisticType>(time.Value);
             if (element is null)
                 continue;
             element.Time = time.Key;

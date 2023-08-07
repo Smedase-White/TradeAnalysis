@@ -2,57 +2,52 @@
 
 public class StatisticElement : IComparable<StatisticElement>
 {
-    public DateTime Time { get; set; }
+    private DateTime _time;
+
+    public DateTime Time 
+    {
+        get => _time;
+        set => _time = value;
+    }
 
     public virtual bool IsEmpty
         => true;
 
-    public virtual void Combine(IEnumerable<StatisticElement> elements, CombineType combineType)
+    public virtual void Combine<StatisticType>(IEnumerable<StatisticType> elements)
+        where StatisticType : StatisticElement, new()
     {
-        switch (combineType)
-        {
-            case CombineType.Sum:
-                DateTime maxTime = elements.OrderBy(e => e.Time).Last().Time;
-                if (maxTime > Time)
-                    Time = maxTime;
-                break;
-            case CombineType.Average:
-                Time.AddHours(elements.Sum(e => (e.Time - Time).Hours) / (elements.Count() + 1));
-                break;
-            default:
-                break;
-        }
+        DateTime maxTime = elements.OrderBy(e => e.Time).Last().Time;
+        if (maxTime > Time)
+            Time = maxTime;
     }
 
-    public double GetSum(IEnumerable<StatisticElement> elements, Func<StatisticElement, double> selection)
+    public static void Sum<StatisticType>(ref double property,
+        IEnumerable<StatisticType> values, Func<StatisticType, double> selector)
+        where StatisticType : StatisticElement, new()
     {
-        return selection(this) + elements.Sum(e => selection(e));
+        property += values.Sum(selector);
     }
 
-    public double GetAverage(IEnumerable<StatisticElement> elements, Func<StatisticElement, double> selection)
+    public static void Average<StatisticType>(ref double property,
+        IEnumerable<StatisticType> values, Func<StatisticType, double> selector)
+        where StatisticType : StatisticElement, new()
     {
-        return GetSum(elements, selection) / (elements.Count() + 1);
+        property = (property + values.Sum(selector)) / (1 + values.Count());
     }
 
-    public static StatisticType? Create<StatisticType>(IEnumerable<StatisticElement> elements, CombineType combineType)
+    public static StatisticType? Create<StatisticType>(IEnumerable<StatisticElement> elements)
         where StatisticType : StatisticElement, new()
     {
         if (elements.Any() == false)
             return null;
-        StatisticType element = new();
-        element.Combine(elements, combineType);
-        return element;
 
+        StatisticType element = new();
+        element.Combine(elements);
+        return element;
     }
 
     public int CompareTo(StatisticElement? other)
     {
         return Time.CompareTo(other?.Time);
     }
-}
-
-public enum CombineType
-{
-    Sum,
-    Average
 }

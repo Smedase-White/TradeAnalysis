@@ -2,33 +2,27 @@
 
 public class TradeStatisticElement : OperationStatisticElement
 {
-    public double Profit { get; set; } = 0;
-    public double HourlyProfit { get; set; } = 0;
+    private double _profit = 0;
+    private double _hourlyProfit = 0;
+
+    public double Profit 
+    { 
+        get => _profit; 
+        set => _profit = value; 
+    }
+    public double HourlyProfit 
+    { 
+        get => _hourlyProfit; 
+        set => _hourlyProfit = value; 
+    }
 
     public override bool IsEmpty
         => base.IsEmpty && (Profit == 0 && HourlyProfit == 0);
 
-    public override void Combine(IEnumerable<StatisticElement> elements, CombineType combineType)
+    public override void Combine<StatisticType>(IEnumerable<StatisticType> elements)
     {
-        Combine((elements as IEnumerable<TradeStatisticElement>)!, combineType);
-    }
-
-    public virtual void Combine(IEnumerable<TradeStatisticElement> elements, CombineType combineType)
-    {
-        base.Combine(elements, combineType);
-        int count = elements.Count() + 1;
-        switch (combineType)
-        {
-            case CombineType.Sum:
-                Profit += elements.Sum(e => e.Profit);
-                HourlyProfit += elements.Sum(e => e.HourlyProfit);
-                break;
-            case CombineType.Average:
-                Profit = (Profit + elements.Sum(e => e.Profit)) / count;
-                HourlyProfit = (HourlyProfit + elements.Sum(e => e.HourlyProfit)) / count;
-                break;
-            default:
-                break;
-        }
+        base.Combine(elements);
+        Sum(ref _profit, elements, e => (e as TradeStatisticElement)!.Profit);
+        Sum(ref _hourlyProfit, elements, e => (e as TradeStatisticElement)!.HourlyProfit);
     }
 }
