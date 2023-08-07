@@ -1,4 +1,6 @@
-﻿using TradeAnalysis.Core.Utils.Statistics.Base;
+﻿using TradeAnalysis.Core.Utils;
+using TradeAnalysis.Core.Utils.Item;
+using TradeAnalysis.Core.Utils.Statistics.Base;
 using TradeAnalysis.Core.Utils.Statistics.Elements;
 
 using static TradeAnalysis.Core.Utils.TimeUtils;
@@ -52,7 +54,7 @@ public class TradeStatistics : Statistics<TradeStatisticElement>
             (data, value) => data.HourlyProfit = value);
     }
 
-    private static DateTime GetHistoryTime(Item item)
+    private static DateTime GetHistoryTime(MarketItem item)
     {
         return item.BuyInfo?.Time ?? item.SellInfo!.Time;
     }

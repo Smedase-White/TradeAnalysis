@@ -2,9 +2,9 @@
 
 using TradeAnalysis.Core.MarketAPI;
 
-namespace TradeAnalysis.Core.Utils;
+namespace TradeAnalysis.Core.Utils.Item;
 
-public class Item
+public class MarketItem
 {
     public long? ClassId { get; init; }
 
@@ -22,14 +22,14 @@ public class Item
 
     public Dictionary<DateTime, ItemDailyPrices>? History { get; set; }
 
-    public Item(long classId, long instanceId, string name)
+    public MarketItem(long classId, long instanceId, string name)
     {
         ClassId = classId;
         InstanceId = instanceId;
         Name = name;
     }
 
-    public Item(Item item)
+    public MarketItem(MarketItem item)
     {
         ClassId = item.ClassId;
         InstanceId = item.InstanceId;
@@ -41,9 +41,9 @@ public class Item
         History = item.History;
     }
 
-    public static Item LoadFromAPI(OperationHistoryElement element)
+    public static MarketItem LoadFromAPI(OperationHistoryElement element)
     {
-        Item item = new(Convert.ToInt64(element.ClassId), Convert.ToInt64(element.InstanceId),
+        MarketItem item = new(Convert.ToInt64(element.ClassId), Convert.ToInt64(element.InstanceId),
             element.MarketHashName ?? "-");
 
         if (element.Event == EventType.Buy)

@@ -3,18 +3,18 @@ using System.Net;
 
 using TradeAnalysis.Core.MarketAPI;
 using TradeAnalysis.Core.Utils.Statistics;
+using TradeAnalysis.Core.Utils.Item;
 
 namespace TradeAnalysis.Core.Utils
 {
     public class Account
     {
         private readonly DateTime StartTime = new(2001, 1, 1, 0, 0, 0);
-        public const int MaxItemHistory = 10;
 
         public string MarketApi { get; init; }
 
-        public IImmutableList<Item>? History { get; private set; }
-        public IImmutableList<Item>? TradeHistory { get; private set; }
+        public IImmutableList<MarketItem>? History { get; private set; }
+        public IImmutableList<MarketItem>? TradeHistory { get; private set; }
         public TradeStatistics? TradeStatistics { get; private set; }
 
         public Account(string marketApi)
@@ -32,14 +32,14 @@ namespace TradeAnalysis.Core.Utils
 
             OperationHistoryResult result = request.Result!;
 
-            List<Item> history = new();
+            List<MarketItem> history = new();
             foreach (OperationHistoryElement element in result.History)
             {
                 if (element.Stage == TradeStage.TimedOut)
                     continue;
                 if (element.Event == EventType.Transaction)
                     continue;
-                history.Add(Item.LoadFromAPI(element));
+                history.Add(MarketItem.LoadFromAPI(element));
             }
             history.Reverse();
 
@@ -54,9 +54,9 @@ namespace TradeAnalysis.Core.Utils
             TradeStatistics = new(this);
         }
 
-        private static List<Item> GetTradeHistory(List<Item> history)
+        private static List<MarketItem> GetTradeHistory(List<MarketItem> history)
         {
-            List<Item> tradeHistory = new(history);
+            List<MarketItem> tradeHistory = new(history);
 
             for (int i = 0; i < tradeHistory.Count; i++)
             {

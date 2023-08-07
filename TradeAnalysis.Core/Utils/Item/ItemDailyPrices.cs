@@ -1,4 +1,4 @@
-﻿namespace TradeAnalysis.Core.Utils;
+﻿namespace TradeAnalysis.Core.Utils.Item;
 
 public class ItemDailyPrices
 {

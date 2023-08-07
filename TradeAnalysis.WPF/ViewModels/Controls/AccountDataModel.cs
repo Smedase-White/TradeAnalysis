@@ -1,5 +1,4 @@
 ﻿using System.Net;
-
 using TradeAnalysis.Core.Utils;
 using TradeAnalysis.Core.Utils.Saves;
 
