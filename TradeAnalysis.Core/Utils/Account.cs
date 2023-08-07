@@ -9,7 +9,7 @@ namespace TradeAnalysis.Core.Utils
 {
     public class Account
     {
-        private readonly DateTime StartTime = new(2001, 1, 1, 0, 0, 0);
+        private static readonly DateTime StartTime = new(2001, 1, 1, 0, 0, 0);
 
         public string MarketApi { get; init; }
 
@@ -20,6 +20,11 @@ namespace TradeAnalysis.Core.Utils
         public Account(string marketApi)
         {
             MarketApi = marketApi;
+        }
+
+        public void CalcStatistics()
+        {
+            TradeStatistics = new(this);
         }
 
         public HttpStatusCode LoadHistory()
@@ -47,11 +52,6 @@ namespace TradeAnalysis.Core.Utils
             TradeHistory = GetTradeHistory(history).ToImmutableList();
 
             return status;
-        }
-
-        public void CalcStatistics()
-        {
-            TradeStatistics = new(this);
         }
 
         private static List<MarketItem> GetTradeHistory(List<MarketItem> history)
