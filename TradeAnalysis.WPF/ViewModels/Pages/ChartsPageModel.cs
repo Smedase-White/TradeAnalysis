@@ -141,22 +141,22 @@ public class ChartsPageModel : ViewModelBase
     private IEnumerable<StatisticType> SelectPeriodicityStatistics<StatisticType>(Statistics<StatisticType> statistics)
         where StatisticType : StatisticElement, new()
     {
-        return CalcPeriodData(SelectStatistics(statistics), PointPeriod);
+        return SelectStatistics(statistics).CalcPeriodData(PointPeriod)!.Data!;
     }
 
     private IEnumerable<StatisticType> SelectSeasonalityStatistics<StatisticType>(Statistics<StatisticType> statistics)
         where StatisticType : StatisticElement, new()
     {
-        return CalcSeasonData(SelectStatistics(statistics), PointPeriod);
+        return SelectStatistics(statistics).CalcSeasonData(PointPeriod)!.Data!;
     }
 
-    private SortedSet<StatisticType> SelectStatistics<StatisticType>(Statistics<StatisticType> statistics)
+    private Statistics<StatisticType> SelectStatistics<StatisticType>(Statistics<StatisticType> statistics)
         where StatisticType : StatisticElement, new()
     {
         return PeriodSelection switch
         {
-            PeriodSelection.Last => statistics.SelectDataPeriod(DateTime.Now.Ceiling(PointPeriod).AddPeriod(SelectionPeriod, -1), DateTime.Now.Ceiling(PointPeriod))!.Data!,
-            PeriodSelection.Current => statistics.SelectDataPeriod(DateTime.Now.Floor(SelectionPeriod), DateTime.Now.Ceiling(SelectionPeriod))!.Data!,
+            PeriodSelection.Last => statistics.SelectDataPeriod(DateTime.Now.Ceiling(PointPeriod).AddPeriod(SelectionPeriod, -1), DateTime.Now.Ceiling(PointPeriod))!,
+            PeriodSelection.Current => statistics.SelectDataPeriod(DateTime.Now.Floor(SelectionPeriod), DateTime.Now.Ceiling(SelectionPeriod))!,
             _ => throw new NotImplementedException(),
         };
     }
