@@ -1,24 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace TradeAnalysis.Core.Utils.Statistics.Elements;
+﻿namespace TradeAnalysis.Core.Utils.Statistics.Elements;
 
 public class OperationStatisticElement : StatisticElement
 {
     public double Buy { get; set; } = 0;
     public double Sell { get; set; } = 0;
 
-    public override void Combine(CombineType combineType, IEnumerable<StatisticElement> elements)
+    public override bool IsEmpty
+        => base.IsEmpty && (Buy == 0 && Sell == 0);
+
+    public override void Combine(IEnumerable<StatisticElement> elements, CombineType combineType)
     {
-        Combine(combineType, (elements as IEnumerable<OperationStatisticElement>)!);
+        Combine((elements as IEnumerable<OperationStatisticElement>)!, combineType);
     }
 
-    public virtual void Combine(CombineType combineType, IEnumerable<OperationStatisticElement> elements)
+    public virtual void Combine(IEnumerable<OperationStatisticElement> elements, CombineType combineType)
     {
-        base.Combine(combineType, elements);
+        base.Combine(elements, combineType);
         int count = elements.Count() + 1;
         switch (combineType)
         {
@@ -34,7 +31,4 @@ public class OperationStatisticElement : StatisticElement
                 break;
         }
     }
-
-    public virtual void Combine(CombineType combineType, params OperationStatisticElement[] elements)
-        => Combine(combineType, elements as IEnumerable<OperationStatisticElement>);
 }

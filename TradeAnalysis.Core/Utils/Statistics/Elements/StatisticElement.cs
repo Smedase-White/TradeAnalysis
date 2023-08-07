@@ -1,10 +1,13 @@
 ﻿namespace TradeAnalysis.Core.Utils.Statistics.Elements;
 
-public class StatisticElement
+public class StatisticElement : IComparable<StatisticElement>
 {
     public DateTime Time { get; set; }
 
-    public virtual void Combine(CombineType combineType, IEnumerable<StatisticElement> elements)
+    public virtual bool IsEmpty
+        => true;
+
+    public virtual void Combine(IEnumerable<StatisticElement> elements, CombineType combineType)
     {
         switch (combineType)
         {
@@ -21,9 +24,6 @@ public class StatisticElement
         }
     }
 
-    public virtual void Combine(CombineType combineType, params StatisticElement[] elements)
-        => Combine(combineType, elements as IEnumerable<StatisticElement>);
-
     public double GetSum(IEnumerable<StatisticElement> elements, Func<StatisticElement, double> selection)
     {
         return selection(this) + elements.Sum(e => selection(e));
@@ -32,6 +32,22 @@ public class StatisticElement
     public double GetAverage(IEnumerable<StatisticElement> elements, Func<StatisticElement, double> selection)
     {
         return GetSum(elements, selection) / (elements.Count() + 1);
+    }
+
+    public static StatisticType? Create<StatisticType>(IEnumerable<StatisticElement> elements, CombineType combineType)
+        where StatisticType : StatisticElement, new()
+    {
+        if (elements.Any() == false)
+            return null;
+        StatisticType element = new();
+        element.Combine(elements, combineType);
+        return element;
+
+    }
+
+    public int CompareTo(StatisticElement? other)
+    {
+        return Time.CompareTo(other?.Time);
     }
 }
 

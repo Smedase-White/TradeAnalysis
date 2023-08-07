@@ -2,7 +2,6 @@
 
 using TradeAnalysis.Core.Utils;
 using TradeAnalysis.Core.Utils.Saves;
-using TradeAnalysis.Core.Utils.Statistics;
 
 namespace TradeAnalysis.WPF.ViewModels;
 
@@ -76,7 +75,10 @@ public class AccountDataModel : ViewModelBase
         HttpStatusCode statusCode = Account.LoadHistory();
         Status = $"{statusCode}";
         if (statusCode != HttpStatusCode.OK)
+        {
+            Account = null;
             return;
+        }
         if (Account.History!.Count == 0)
         {
             Status = "Empty";

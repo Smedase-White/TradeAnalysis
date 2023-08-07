@@ -1,14 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-
-using LiveChartsCore.SkiaSharpView;
 
 using SkiaSharp;
+
 using TradeAnalysis.Core.Utils;
 using TradeAnalysis.Core.Utils.Statistics.Base;
 using TradeAnalysis.Core.Utils.Statistics.Elements;
+
+using static TradeAnalysis.Core.Utils.Statistics.Base.StatisticsUtils;
+using static TradeAnalysis.Core.Utils.TimeUtils;
 
 namespace TradeAnalysis.WPF.ViewModels;
 
@@ -19,18 +20,26 @@ public class ChartsPageModel : ViewModelBase
     private Period _selectionPeriod = Period.Month;
     private Period _pointPeriod = Period.Day;
 
-    private ObservableCollection<ChartModel> _accountsPeriodicityCharts = new()
+    private PeriodSelection _periodSelection = PeriodSelection.Last;
+
+    private readonly ObservableCollection<ChartModel> _accountsPeriodicityCharts = new()
     {
-        new("Покупки", s => (s as TradeStatisticElement)!.Buy),
-        new("Продажи", s => (s as TradeStatisticElement)!.Sell),
-        new("Профит", s => (s as TradeStatisticElement)!.Profit),
-        new("Ежедневный профит", s => (s as TradeStatisticElement)!.HourlyProfit),
+        new("Покупки",
+            e => (e is TradeStatisticElement t) ? t.IsEmpty == false ? t.Buy: null : 0),
+        new("Продажи",
+            e => (e is TradeStatisticElement t) ? t.IsEmpty == false ? t.Sell: null : 0),
+        new("Профит",
+            e =>(e is TradeStatisticElement t) ? t.IsEmpty == false ? t.Profit : null : 0),
+        new("Ежедневный профит",
+            e =>(e is TradeStatisticElement t) ? t.IsEmpty == false ? t.HourlyProfit: null : 0),
     };
 
-    private ObservableCollection<ChartModel> _accountsSeasonalityCharts = new()
+    private readonly ObservableCollection<ChartModel> _accountsSeasonalityCharts = new()
     {
-        new("Покупки в определённое время", s => (s as OperationStatisticElement)!.Buy),
-        new("Продажи в определённое время", s => (s as OperationStatisticElement)!.Sell),
+        new("Покупки в определённое время",
+            e => (e as OperationStatisticElement)!.Buy),
+        new("Продажи в определённое время",
+            e => (e as OperationStatisticElement)!.Sell),
     };
 
     private ObservableCollection<ChartModel> _charts = new();
@@ -85,6 +94,21 @@ public class ChartsPageModel : ViewModelBase
         get => new Period[] { Period.Hour, Period.Day, Period.Week, Period.Month };
     }
 
+    public PeriodSelection PeriodSelection
+    {
+        get => _periodSelection;
+        set
+        {
+            ChangeProperty(ref _periodSelection, value);
+            DrawCharts();
+        }
+    }
+
+    public IEnumerable<PeriodSelection> PeriodSelectionValues
+    {
+        get => new PeriodSelection[] { PeriodSelection.Last, PeriodSelection.Current };
+    }
+
     public ObservableCollection<ChartModel> Charts
     {
         get => _charts;
@@ -97,66 +121,49 @@ public class ChartsPageModel : ViewModelBase
         foreach (ChartModel chart in Charts)
             chart.Clear();
 
+        foreach (ChartModel periodicityChart in _accountsPeriodicityCharts)
+            periodicityChart.ChangeAxes(SelectionPeriod);
+        foreach (ChartModel seasonalityChart in _accountsSeasonalityCharts)
+            seasonalityChart.ChangeAxes(PointPeriod);
+
         foreach (AccountDataModel account in _accountSelect.SelectedAccounts)
         {
             IEnumerable<TradeStatisticElement> periodicityStatistics = SelectPeriodicityStatistics(account.Account!.TradeStatistics!);
             IEnumerable<OperationStatisticElement> seasonalityStatistics = SelectSeasonalityStatistics(account.Account!.TradeStatistics!);
             SKColor accountColor = new(account.Color.Red, account.Color.Green, account.Color.Blue);
             foreach (ChartModel accountChart in _accountsPeriodicityCharts)
-            {
                 accountChart.Add(periodicityStatistics, account.AccountName, accountColor);
-                accountChart.XAxes = SelectionPeriod switch
-                {
-                    Period.Hour => new Axis[] { ChartModel.HourAxis },
-                    _ => new Axis[] { ChartModel.DayAxis }
-                };
-            }
             foreach (ChartModel accountChart in _accountsSeasonalityCharts)
-            {
                 accountChart.Add(seasonalityStatistics, account.AccountName, accountColor);
-                accountChart.XAxes = SelectionPeriod switch
-                {
-                    Period.Day => new Axis[] { ChartModel.HourAxis },
-                    _ => new Axis[] { ChartModel.DayAxis }
-                };
-            }
         }
     }
 
-    private IEnumerable<StatisticType> SelectPeriodicityStatistics<StatisticType>(PeriodicityStatistics<StatisticType> statistics)
+    private IEnumerable<StatisticType> SelectPeriodicityStatistics<StatisticType>(Statistics<StatisticType> statistics)
         where StatisticType : StatisticElement, new()
     {
-        DateTime endDate = DateTime.Now.AddHours(6);
-        DateTime startDate = SelectionPeriod switch
-        {
-            Period.Day => endDate.AddDays(-1),
-            Period.Week => endDate.AddDays(-7),
-            Period.Month => endDate.AddMonths(-1),
-            Period.HalfYear => endDate.AddMonths(-6),
-            Period.FourYears => endDate.AddYears(-4),
-            _ => throw new ArgumentException("")
-        };
-
-        IEnumerable<StatisticType> displayedData = PointPeriod switch
-        {
-            Period.Hour => statistics.HourlyData!,
-            Period.Day => statistics.DailyData!,
-            Period.Week => statistics.WeeklyData!,
-            Period.Month => statistics.MonthlyData!,
-            _ => throw new ArgumentException("")
-        };
-
-        return displayedData.Where(data => data.Time >= startDate && data.Time <= endDate);
+        return CalcPeriodData(SelectStatistics(statistics), PointPeriod);
     }
 
-    private IEnumerable<StatisticType> SelectSeasonalityStatistics<StatisticType>(SeasonalityStatistics<StatisticType> statistics)
+    private IEnumerable<StatisticType> SelectSeasonalityStatistics<StatisticType>(Statistics<StatisticType> statistics)
         where StatisticType : StatisticElement, new()
     {
-        return SelectionPeriod switch
+        return CalcSeasonData(SelectStatistics(statistics), PointPeriod);
+    }
+
+    private SortedSet<StatisticType> SelectStatistics<StatisticType>(Statistics<StatisticType> statistics)
+        where StatisticType : StatisticElement, new()
+    {
+        return PeriodSelection switch
         {
-            Period.Day => statistics.HourOfDayData!,
-            Period.Week => statistics.DayOfWeekData!,
-            _ => new List<StatisticType>()
+            PeriodSelection.Last => statistics.SelectDataPeriod(DateTime.Now.Ceiling(PointPeriod).AddPeriod(SelectionPeriod, -1), DateTime.Now.Ceiling(PointPeriod))!.Data!,
+            PeriodSelection.Current => statistics.SelectDataPeriod(DateTime.Now.Floor(SelectionPeriod), DateTime.Now.Ceiling(SelectionPeriod))!.Data!,
+            _ => throw new NotImplementedException(),
         };
     }
+}
+
+public enum PeriodSelection
+{
+    Last,
+    Current
 }

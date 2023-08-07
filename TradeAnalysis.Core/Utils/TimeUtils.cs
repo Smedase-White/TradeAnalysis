@@ -12,42 +12,35 @@ public enum Period
 
 public static class TimeUtils
 {
-    public static DateTime BestTime
-        => new(2001, 1, 1);
+    public const Period SmallestPeriod = Period.Hour;
+    public static DateTime SeasonTime
+        => new(2012, 1, 1);
+    public static readonly (DateTime, DateTime) NullTime
+        = (new(), new());
 
-    public static DateTime GetNow(Period period = Period.Hour)
-    {
-        return DateTime.Now.RoundByPeriod(period);
-    }
+    public static DateTime Floor(this DateTime time, Period period = SmallestPeriod)
+        => (period switch
+        {
+            Period.Hour => new DateTime(time.Year, time.Month, time.Day, time.Hour, 0, 0),
+            Period.Day => new DateTime(time.Year, time.Month, time.Day, 0, 0, 0),
+            Period.Week => new DateTime(time.Year, time.Month, time.Day, 0, 0, 0).AddDays(-(int)time.DayOfWeek),
+            Period.Month => new DateTime(time.Year, time.Month, 1, 0, 0, 0),
+            Period.HalfYear => new DateTime(time.Year, time.Month <= 6 ? 0 : 7, 1, 0, 0, 0),
+            Period.FourYears => new DateTime(time.Year - time.Year % 4, 1, 1, 0, 0, 0),
+            _ => time
+        });
 
-    public static ICollection<DateTime> GetRange(DateTime startTime, DateTime endTime, Period period)
-    {
-        startTime = startTime.RoundByPeriod(period);
-        endTime = endTime.RoundByPeriod(period);
-        List<DateTime> dateList = new();
-        for (; startTime <= endTime; startTime = startTime.AddPeriod(period))
-            dateList.Add(startTime);
-        return dateList;
-    }
-
-    public static bool Equals(this DateTime a, DateTime? b, Period period = Period.Hour)
-    {
-        if (b is null)
-            return false;
-        return a.RoundByPeriod(period) == b.Value.RoundByPeriod(period);
-    }
-
-    public static DateTime RoundByPeriod(this DateTime time, Period period = Period.Hour)
+    public static DateTime Ceiling(this DateTime time, Period period = SmallestPeriod)
         => (period switch
         {
             Period.Hour => new DateTime(time.Year, time.Month, time.Day, time.Hour, 0, 0).AddHours(1),
-            Period.Day => new DateTime(time.Year, time.Month, time.Day).AddDays(1),
-            Period.Week => new DateTime(time.Year, time.Month, time.Day).AddDays(7 - (int)time.DayOfWeek),
-            Period.Month => new DateTime(time.Year, time.Month, 0).AddMonths(1),
-            Period.HalfYear => new DateTime(time.Year, time.Month <= 5 ? 5 : 11, 0).AddMonths(1),
-            Period.FourYears => new DateTime(time.Year - time.Year % 4, 0, 0).AddYears(4),
-            _ => throw new ArgumentException("")
-        }).AddHours(-1);
+            Period.Day => new DateTime(time.Year, time.Month, time.Day, 23, 0, 0),
+            Period.Week => new DateTime(time.Year, time.Month, time.Day, 23, 0, 0).AddDays(6 - (int)time.DayOfWeek),
+            Period.Month => new DateTime(time.Year, time.Month, DateTime.DaysInMonth(time.Year, time.Month), 23, 0, 0),
+            Period.HalfYear => new DateTime(time.Year, time.Month <= 6 ? 6 : 12, DateTime.DaysInMonth(time.Year, time.Month), 23, 0, 0),
+            Period.FourYears => new DateTime(time.Year - time.Year % 4 + 3, 12, 31, 23, 0, 0),
+            _ => time
+        });
 
     public static DateTime AddPeriod(this DateTime time, Period period, int count = 1)
         => period switch
@@ -58,6 +51,50 @@ public static class TimeUtils
             Period.Month => time.AddMonths(1 * count),
             Period.HalfYear => time.AddMonths(6 * count),
             Period.FourYears => time.AddYears(4 * count),
-            _ => throw new ArgumentException("")
+            _ => time
         };
+
+    public static DateTime ToSeasonTime(this DateTime time, Period season)
+        => (season switch
+        {
+            Period.Day => new DateTime(SeasonTime.Year, SeasonTime.Month, SeasonTime.Day, time.Hour, 0, 0),
+            Period.Week => new DateTime(SeasonTime.Year, SeasonTime.Month, (int)time.DayOfWeek + 1),
+            Period.Month => new DateTime(SeasonTime.Year, SeasonTime.Month, time.Day),
+            Period.HalfYear => new DateTime(SeasonTime.Year, time.Month - (time.Month <= 6 ? 0 : 6), 1),
+            Period.FourYears => new DateTime(SeasonTime.Year + time.Year % 4, time.Month, 1),
+            _ => SeasonTime
+        });
+
+    public static Period GetSeasonDuration(this Period season)
+        => season switch
+        {
+            Period.Hour => Period.Hour,
+            Period.Day => Period.Hour,
+            Period.Week => Period.Day,
+            Period.Month => Period.Day,
+            Period.HalfYear => Period.Month,
+            Period.FourYears => Period.Month,
+            _ => throw new NotImplementedException(),
+        };
+
+    public static (DateTime, DateTime) ToInterval(this DateTime time)
+        => (time.Ceiling(), time.Ceiling());
+
+    public static ICollection<DateTime> GetTimeCollection(DateTime startTime, DateTime endTime, Period period)
+    {
+        startTime = startTime.Floor(period);
+        endTime = endTime.Ceiling(period);
+
+        List<DateTime> dateList = new();
+        for (; startTime <= endTime; startTime = startTime.AddPeriod(period))
+            dateList.Add(startTime);
+        return dateList;
+    }
+
+    public static bool InOnePeriod(this DateTime a, DateTime? b, Period period = SmallestPeriod)
+    {
+        if (b is null)
+            return false;
+        return a.Floor(period) == b.Value.Floor(period);
+    }
 }

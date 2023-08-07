@@ -5,14 +5,17 @@ public class TradeStatisticElement : OperationStatisticElement
     public double Profit { get; set; } = 0;
     public double HourlyProfit { get; set; } = 0;
 
-    public override void Combine(CombineType combineType, IEnumerable<StatisticElement> elements)
+    public override bool IsEmpty
+        => base.IsEmpty && (Profit == 0 && HourlyProfit == 0);
+
+    public override void Combine(IEnumerable<StatisticElement> elements, CombineType combineType)
     {
-        Combine(combineType, (elements as IEnumerable<TradeStatisticElement>)!);
+        Combine((elements as IEnumerable<TradeStatisticElement>)!, combineType);
     }
 
-    public virtual void Combine(CombineType combineType, IEnumerable<TradeStatisticElement> elements)
+    public virtual void Combine(IEnumerable<TradeStatisticElement> elements, CombineType combineType)
     {
-        base.Combine(combineType, elements);
+        base.Combine(elements, combineType);
         int count = elements.Count() + 1;
         switch (combineType)
         {
@@ -28,7 +31,4 @@ public class TradeStatisticElement : OperationStatisticElement
                 break;
         }
     }
-
-    public virtual void Combine(CombineType combineType, params TradeStatisticElement[] elements)
-        => Combine(combineType, elements as IEnumerable<TradeStatisticElement>);
 }
