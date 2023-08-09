@@ -20,17 +20,17 @@
 
     <Grid>
         <TabControl BorderBrush="Transparent" SelectedIndex="{Binding SelectedIndex}">
-            <TabItem Width="150" Header="Аккаунты">
+            <TabItem Width="150" Header="📰  Аккаунты">
                 <TabItem.Content>
                     <pages:AccountsPage DataContext="{Binding AccountsPage}" />
                 </TabItem.Content>
             </TabItem>
-            <TabItem Header="Таблица">
+            <TabItem Header="📃  Таблица">
                 <TabItem.Content>
                     <pages:TablePage DataContext="{Binding TablePage}" />
                 </TabItem.Content>
             </TabItem>
-            <TabItem Header="Графики">
+            <TabItem Header="📈  Графики">
                 <TabItem.Content>
                     <pages:ChartsPage DataContext="{Binding ChartsPage}" />
                 </TabItem.Content>
