@@ -10,6 +10,7 @@ namespace TradeAnalysis.Core.Utils
     public class Account
     {
         private static readonly DateTime StartTime = new(2001, 1, 1, 0, 0, 0);
+        private const int TradeDaysLimit = 100;
 
         public string MarketApi { get; init; }
 
@@ -80,6 +81,9 @@ namespace TradeAnalysis.Core.Utils
                         continue;
 
                     if (tradeHistory[j].SellInfo is null)
+                        continue;
+
+                    if ((tradeHistory[j].SellInfo!.Time - tradeHistory[i].BuyInfo!.Time).TotalDays > TradeDayLimit)
                         continue;
 
                     tradeHistory[i] = new(tradeHistory[i]);
