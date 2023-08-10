@@ -97,4 +97,21 @@ public static class TimeUtils
             return false;
         return a.Floor(period) == b.Value.Floor(period);
     }
+
+    public static DateTime Min(params DateTime?[] times)
+    {
+        DateTime min = DateTime.MaxValue;
+        foreach(DateTime? time in times)
+            if (time < min) min = time.Value;
+        return min;
+    }
+
+    public static DateTime Max(params DateTime?[] times)
+    {
+        DateTime max = DateTime.MinValue;
+        foreach (DateTime? time in times)
+            if (time > max) max = time.Value;
+        return max;
+    }
+
 }

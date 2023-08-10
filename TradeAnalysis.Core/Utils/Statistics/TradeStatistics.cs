@@ -28,8 +28,9 @@ public class TradeStatistics : Statistics<TradeStatisticElement>
         if (_account.History is null || _account.History.Count == 0)
             return;
 
-        DateTime startTime = GetHistoryTime(_account.History![0]),
-            endTime = GetHistoryTime(_account.History![^1]);
+        MarketItem first = _account.History![0], last = _account.History![^1];
+        DateTime startTime = Min(first.BuyInfo?.Time, first.SellInfo?.Time),
+            endTime = Max(last.BuyInfo?.Time, last.SellInfo?.Time);
         Data = new(from time in GetTimeCollection(startTime, endTime, Period.Hour)
                    select new TradeStatisticElement() { Time = time });
 
@@ -52,10 +53,5 @@ public class TradeStatistics : Statistics<TradeStatisticElement>
             item => (item.BuyInfo!.Time, item.SellInfo!.Time),
             (item, _) => item.Profit!.Hourly,
             (data, value) => data.HourlyProfit = value);
-    }
-
-    private static DateTime GetHistoryTime(MarketItem item)
-    {
-        return item.BuyInfo?.Time ?? item.SellInfo!.Time;
     }
 }
