@@ -83,5 +83,14 @@
             Command="{Binding LoadCommand}"
             Content="⭳"
             Style="{StaticResource SmallButton}" />
+        <Button
+            Grid.Row="2"
+            Grid.Column="3"
+            Margin="5,5,10,5"
+            Padding="0,-4,0,0"
+            Background="{StaticResource SaveColor}"
+            Command="{Binding ParseCommand}"
+            Content="🛒"
+            Style="{StaticResource SmallButton}" />
     </Grid>
 </UserControl>

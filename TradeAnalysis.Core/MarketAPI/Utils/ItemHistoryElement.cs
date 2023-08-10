@@ -8,5 +8,7 @@ class ItemHistoryElement
     public string? Price { get; set; }
 
     [JsonPropertyName("l_time")]
-    public string? Time { get; set; }
+    public string? TimeString { get; set; }
+    public DateTime Time
+        => DateTimeOffset.FromUnixTimeSeconds(Convert.ToInt64(TimeString)).LocalDateTime;
 }

@@ -10,21 +10,31 @@ namespace TradeAnalysis.Core.Utils
     public class Account
     {
         private static readonly DateTime StartTime = new(2001, 1, 1, 0, 0, 0);
+        private const int ParseItemsCount = 500;
 
         public string MarketApi { get; init; }
 
         public IImmutableList<MarketItem>? History { get; private set; }
         public IImmutableList<MarketItem>? TradeHistory { get; private set; }
+
+        public IImmutableList<MarketItem>? ParsedItems { get; private set; }
+
         public TradeStatistics? TradeStatistics { get; private set; }
+        public MarketStatistics? MarketStatistics { get; private set; }
 
         public Account(string marketApi)
         {
             MarketApi = marketApi;
         }
 
-        public void CalcStatistics()
+        public void CalcTradeStatistics()
         {
             TradeStatistics = new(this);
+        }
+
+        public void CalcMarketStatistics()
+        {
+            MarketStatistics = new(this);
         }
 
         public HttpStatusCode LoadHistory()
@@ -82,6 +92,9 @@ namespace TradeAnalysis.Core.Utils
                     if (tradeHistory[j].SellInfo is null)
                         continue;
 
+                    if ((tradeHistory[j].SellInfo!.Time - tradeHistory[i].BuyInfo!.Time).TotalDays > 100)
+                        continue;
+
                     tradeHistory[i] = new(tradeHistory[i]);
                     tradeHistory[i].SellInfo = tradeHistory[j].SellInfo;
                     tradeHistory[i].Profit = new(tradeHistory[i].BuyInfo!, tradeHistory[i].SellInfo!);
@@ -98,6 +111,23 @@ namespace TradeAnalysis.Core.Utils
             }
 
             return tradeHistory;
+        }
+
+        public HttpStatusCode ParseItems()
+        {
+            Random rand = new();
+            List<MarketItem> selectedItems = new();
+            for (int i = 0; i < ParseItemsCount; i++)
+                selectedItems.Add(History![rand.Next(History.Count)]);
+
+            List<Task> parseTasks = new();
+            foreach (MarketItem item in selectedItems)
+                parseTasks.Add(item.LoadHistory(MarketApi));
+            Task.WaitAll(parseTasks.ToArray());
+
+            ParsedItems = selectedItems.ToImmutableList();
+
+            return HttpStatusCode.OK;
         }
     }
 }

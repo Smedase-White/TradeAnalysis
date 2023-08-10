@@ -8,7 +8,6 @@ using TradeAnalysis.Core.Utils;
 using TradeAnalysis.Core.Utils.Statistics.Base;
 using TradeAnalysis.Core.Utils.Statistics.Elements;
 
-using static TradeAnalysis.Core.Utils.Statistics.Base.StatisticsUtils;
 using static TradeAnalysis.Core.Utils.TimeUtils;
 
 namespace TradeAnalysis.WPF.ViewModels;
@@ -25,13 +24,13 @@ public class ChartsPageModel : ViewModelBase
     private readonly ObservableCollection<ChartModel> _accountsPeriodicityCharts = new()
     {
         new("Покупки",
-            e => (e is TradeStatisticElement t) ? t.IsEmpty == false ? t.Buy: null : 0),
+            e => (e is TradeStatisticElement s) ? s.IsEmpty == false ? s.Buy: null : 0),
         new("Продажи",
-            e => (e is TradeStatisticElement t) ? t.IsEmpty == false ? t.Sell: null : 0),
+            e => (e is TradeStatisticElement s) ? s.IsEmpty == false ? s.Sell: null : 0),
         new("Профит",
-            e =>(e is TradeStatisticElement t) ? t.IsEmpty == false ? t.Profit : null : 0),
+            e =>(e is TradeStatisticElement s) ? s.IsEmpty == false ? s.Profit : null : 0),
         new("Ежедневный профит",
-            e =>(e is TradeStatisticElement t) ? t.IsEmpty == false ? t.HourlyProfit: null : 0),
+            e =>(e is TradeStatisticElement s) ? s.IsEmpty == false ? s.HourlyProfit : null : 0),
     };
 
     private readonly ObservableCollection<ChartModel> _accountsSeasonalityCharts = new()
@@ -42,6 +41,18 @@ public class ChartsPageModel : ViewModelBase
             e => (e as OperationStatisticElement)!.Sell),
     };
 
+    private readonly ObservableCollection<ChartModel> _marketPeriodicityCharts = new()
+    {
+        new("Цены",
+            e => (e as MarketStatisticElement)!.Price)
+    };
+
+    private readonly ObservableCollection<ChartModel> _marketSeasonalityCharts = new()
+    {
+        new("Цены в определённое время",
+            e => (e as MarketStatisticElement)!.Price)
+    };
+
     private ObservableCollection<ChartModel> _charts = new();
 
     public ChartsPageModel()
@@ -49,6 +60,11 @@ public class ChartsPageModel : ViewModelBase
         foreach (ChartModel chart in _accountsPeriodicityCharts)
             _charts.Add(chart);
         foreach (ChartModel chart in _accountsSeasonalityCharts)
+            _charts.Add(chart);
+
+        foreach (ChartModel chart in _marketPeriodicityCharts)
+            _charts.Add(chart);
+        foreach (ChartModel chart in _marketSeasonalityCharts)
             _charts.Add(chart);
 
         AccountSelect.CloseCommand.AddExecute(obj => { DrawCharts(); });
@@ -125,17 +141,34 @@ public class ChartsPageModel : ViewModelBase
             periodicityChart.ChangeAxes(SelectionPeriod);
         foreach (ChartModel seasonalityChart in _accountsSeasonalityCharts)
             seasonalityChart.ChangeAxes(PointPeriod);
+        foreach (ChartModel periodicityChart in _marketPeriodicityCharts)
+            periodicityChart.ChangeAxes(SelectionPeriod);
+        foreach (ChartModel seasonalityChart in _marketSeasonalityCharts)
+            seasonalityChart.ChangeAxes(PointPeriod);
 
         foreach (AccountDataModel account in _accountSelect.SelectedAccounts)
         {
-            IEnumerable<TradeStatisticElement> periodicityStatistics = SelectPeriodicityStatistics(account.Account!.TradeStatistics!);
-            IEnumerable<OperationStatisticElement> seasonalityStatistics = SelectSeasonalityStatistics(account.Account!.TradeStatistics!);
             SKColor accountColor = new(account.Color.Red, account.Color.Green, account.Color.Blue);
-            foreach (ChartModel accountChart in _accountsPeriodicityCharts)
-                accountChart.Add(periodicityStatistics, account.AccountName, accountColor);
-            foreach (ChartModel accountChart in _accountsSeasonalityCharts)
-                accountChart.Add(seasonalityStatistics, account.AccountName, accountColor);
+            DrawChartsType(SelectPeriodicityStatistics(account.Account!.TradeStatistics!), account.AccountName, accountColor, _accountsPeriodicityCharts);
+            DrawChartsType(SelectSeasonalityStatistics(account.Account!.TradeStatistics!), account.AccountName, accountColor, _accountsSeasonalityCharts);
         }
+
+        foreach (AccountDataModel account in _accountSelect.SelectedAccounts)
+        {
+            if (account.Account?.MarketStatistics is null)
+                continue;
+
+            SKColor accountColor = new(account.Color.Red, account.Color.Green, account.Color.Blue);
+            DrawChartsType(SelectPeriodicityStatistics(account.Account.MarketStatistics), account.AccountName, accountColor, _marketPeriodicityCharts);
+            DrawChartsType(SelectSeasonalityStatistics(account.Account.MarketStatistics), account.AccountName, accountColor, _marketSeasonalityCharts);
+        }
+    }
+
+    private static void DrawChartsType<StatisticType>(IEnumerable<StatisticType> statistics, string title, SKColor color, IEnumerable<ChartModel> charts)
+        where StatisticType : StatisticElement, new()
+    {
+        foreach (ChartModel chart in charts)
+            chart.Add(statistics, title, color);
     }
 
     private IEnumerable<StatisticType> SelectPeriodicityStatistics<StatisticType>(Statistics<StatisticType> statistics)

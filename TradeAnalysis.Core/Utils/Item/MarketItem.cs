@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System.Collections.Immutable;
+using System.Net;
 
 using TradeAnalysis.Core.MarketAPI;
 
@@ -20,7 +21,7 @@ public class MarketItem
 
     public double? AveragePrice { get; set; }
 
-    public Dictionary<DateTime, ItemDailyPrices>? History { get; set; }
+    public IImmutableList<OperationInfo>? History { get; set; }
 
     public MarketItem(long classId, long instanceId, string name)
     {
@@ -59,23 +60,42 @@ public class MarketItem
         if (ClassId is null || InstanceId is null)
             return;
 
-        History = new();
-
         ItemHistoryRequest request = new(ClassId ?? 0, InstanceId ?? 0, apiKey);
-        HttpStatusCode status = await Task.Run(() => request.ResultMessage.StatusCode);
+        HttpStatusCode status = request.ResultMessage.StatusCode;
+        int tries = 1;
+        //HttpStatusCode status = await Task.Run(() => request.ResultMessage.StatusCode);
+        while (status != HttpStatusCode.OK)
+        {
+            request = new(ClassId ?? 0, InstanceId ?? 0, apiKey);
+            status = request.ResultMessage.StatusCode;
+            tries++;
+            if (tries >= 5)
+                break;
+        }
+
         if (status != HttpStatusCode.OK)
             return;
 
+        List<OperationInfo> history = new();
         ItemHistoryResult result = request.Result!;
-        foreach (ItemHistoryElement historyElement in result.History)
-        {
-            DateTime date = DateTimeOffset.FromUnixTimeSeconds(Convert.ToInt64(historyElement.Time)).DateTime.Date;
-            double price = Convert.ToDouble(historyElement.Price);
-            if (History.TryGetValue(date, out ItemDailyPrices? value))
-                value.AddPrice(price);
-            else
-                History.Add(date, new(price));
-        }
         AveragePrice = Convert.ToDouble(result.Average);
+        foreach (ItemHistoryElement historyElement in result.History)
+            history.Add(new()
+            {
+                Time = historyElement.Time,
+                Price = Convert.ToDouble(historyElement.Price) / AveragePrice.Value,
+            });
+
+        for (int i = 1; i < history.Count - 1; i++)
+        {
+            double avg = (history[i - 1].Price + history[i + 1].Price) / 2;
+            if (history[i].Price < avg / 1.125 || history[i].Price > avg * 1.125)
+            {
+                history.RemoveAt(i);
+                i--;
+            }
+        }
+
+        History = history.ToImmutableList();
     }
 }
