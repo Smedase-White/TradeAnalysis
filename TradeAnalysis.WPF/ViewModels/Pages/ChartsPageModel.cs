@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 
 using SkiaSharp;
 
@@ -128,14 +129,17 @@ public class ChartsPageModel : ViewModelBase
 
         foreach (AccountDataModel account in _accountSelect.SelectedAccounts)
         {
-            IEnumerable<TradeStatisticElement> periodicityStatistics = SelectPeriodicityStatistics(account.Account!.TradeStatistics!);
-            IEnumerable<OperationStatisticElement> seasonalityStatistics = SelectSeasonalityStatistics(account.Account!.TradeStatistics!);
             SKColor accountColor = new(account.Color.Red, account.Color.Green, account.Color.Blue);
-            foreach (ChartModel accountChart in _accountsPeriodicityCharts)
-                accountChart.Add(periodicityStatistics, account.AccountName, accountColor);
-            foreach (ChartModel accountChart in _accountsSeasonalityCharts)
-                accountChart.Add(seasonalityStatistics, account.AccountName, accountColor);
+            DrawChartsType(SelectPeriodicityStatistics(account.Account!.TradeStatistics!), account.AccountName, accountColor, _accountsPeriodicityCharts);
+            DrawChartsType(SelectSeasonalityStatistics(account.Account!.TradeStatistics!), account.AccountName, accountColor, _accountsSeasonalityCharts);
         }
+    }
+
+    private static void DrawChartsType<StatisticType>(IEnumerable<StatisticType> statistics, string title, SKColor color, IEnumerable<ChartModel> charts)
+        where StatisticType : StatisticElement, new()
+    {
+        foreach (ChartModel chart in charts)
+            chart.Add(statistics, $"{title} ({Math.Round(statistics.Sum(e => chart.SelectionFunc(e)) ?? 0, 2)} ₽)", color);
     }
 
     private IEnumerable<StatisticType> SelectPeriodicityStatistics<StatisticType>(Statistics<StatisticType> statistics)
