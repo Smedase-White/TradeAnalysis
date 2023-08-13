@@ -101,7 +101,7 @@ public static class TimeUtils
     public static DateTime Min(params DateTime?[] times)
     {
         DateTime min = DateTime.MaxValue;
-        foreach(DateTime? time in times)
+        foreach (DateTime? time in times)
             if (time < min) min = time.Value;
         return min;
     }

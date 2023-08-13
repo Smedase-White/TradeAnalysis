@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using TradeAnalysis.Core.Utils.Item;
+
+using TradeAnalysis.Core.Utils.MarketItems;
 
 namespace TradeAnalysis.WPF.ViewModels;
 
@@ -44,8 +45,8 @@ public readonly struct TableElement
     {
         Name = item.Name;
         BuyDate = DateOnly.FromDateTime(item.BuyInfo!.Time);
-        BuyPrice = item.BuyInfo!.Price;
+        BuyPrice = item.BuyInfo!.Amount;
         SellDate = DateOnly.FromDateTime(item.SellInfo!.Time);
-        SellPrice = item.SellInfo!.Price;
+        SellPrice = item.SellInfo!.Amount;
     }
 }

@@ -11,6 +11,11 @@ public class BaseRequest<ResultType> where ResultType : BaseResult
         BaseAddress = new Uri(MarketUri),
     };
 
+    private static JsonSerializerOptions JsonOptions = new()
+    {
+        Converters = { new OperationHistoryConverter() }
+    };
+
     private readonly string _requestUri;
     private Task<HttpResponseMessage> _requestTask;
 
@@ -36,6 +41,6 @@ public class BaseRequest<ResultType> where ResultType : BaseResult
     {
         StreamReader reader = new(message.Content.ReadAsStream());
         string json = reader.ReadToEnd();
-        return JsonSerializer.Deserialize<ResultType>(json);
+        return JsonSerializer.Deserialize<ResultType>(json, JsonOptions);
     }
 }

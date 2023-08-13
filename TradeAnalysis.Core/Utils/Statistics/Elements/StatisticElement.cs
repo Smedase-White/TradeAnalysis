@@ -4,7 +4,7 @@ public class StatisticElement : IComparable<StatisticElement>
 {
     private DateTime _time;
 
-    public DateTime Time 
+    public DateTime Time
     {
         get => _time;
         set => _time = value;

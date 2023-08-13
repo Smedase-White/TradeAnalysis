@@ -2,106 +2,166 @@
 using System.Net;
 
 using TradeAnalysis.Core.MarketAPI;
+using TradeAnalysis.Core.Utils.MarketItems;
 using TradeAnalysis.Core.Utils.Statistics;
-using TradeAnalysis.Core.Utils.Item;
 
 namespace TradeAnalysis.Core.Utils
 {
     public class Account
     {
-        private static readonly DateTime StartTime = new(2001, 1, 1, 0, 0, 0);
+        private static readonly DateTime StartTime = new(2021, 1, 1, 0, 0, 0);
         private const int TradeDaysLimit = 100;
+        private static readonly string[] IgnoredItems = { "Sealed Graffiti" };
 
-        public string MarketApi { get; init; }
+        private readonly string _marketApi;
 
-        public IImmutableList<MarketItem>? History { get; private set; }
-        public IImmutableList<MarketItem>? TradeHistory { get; private set; }
-        public TradeStatistics? TradeStatistics { get; private set; }
+        private IImmutableList<MarketItem>? _itemsHistory;
+        private IImmutableList<MarketTransaction>? _transactionsHistory;
+
+        private IImmutableList<MarketItem>? _tradeHistory;
+        private IImmutableList<MarketItem>? _depositItemsHistory;
+
+        private AccountStatistics? _statistics;
 
         public Account(string marketApi)
         {
-            MarketApi = marketApi;
+            _marketApi = marketApi;
         }
 
-        public void CalcStatistics()
+        public string MarketApi
         {
-            TradeStatistics = new(this);
+            get => _marketApi;
+        }
+
+        public IImmutableList<MarketItem>? ItemsHistory
+        {
+            get => _itemsHistory;
+            private set
+            {
+                _itemsHistory = value;
+                if (_itemsHistory is null)
+                    return;
+                AnalisysItemsHistory(_itemsHistory);
+            }
+        }
+
+        public IImmutableList<MarketTransaction>? TransactionsHistory
+        {
+            get => _transactionsHistory;
+            private set => _transactionsHistory = value;
+        }
+
+        public IImmutableList<MarketItem>? TradeHistory
+        {
+            get => _tradeHistory;
+            private set => _tradeHistory = value;
+        }
+
+        public IImmutableList<MarketItem>? DepositItemsHistory
+        {
+            get => _depositItemsHistory;
+            private set => _depositItemsHistory = value;
+        }
+
+        public AccountStatistics? Statistics
+        {
+            get => _statistics;
+            private set => _statistics = value;
         }
 
         public HttpStatusCode LoadHistory()
         {
             OperationHistoryRequest request = new(StartTime, DateTime.Now, MarketApi);
             HttpStatusCode status = request.ResultMessage.StatusCode;
-
             if (status != HttpStatusCode.OK)
                 return status;
 
-            OperationHistoryResult result = request.Result!;
+            List<OperationHistoryBase> results = request.Result!.History;
+            results.Reverse();
 
-            List<MarketItem> history = new();
-            foreach (OperationHistoryElement element in result.History)
+            List<MarketItem> itemHistory = new();
+            List<MarketTransaction> transactionHistory = new();
+            foreach (OperationHistoryBase element in results)
             {
-                if (element.Stage == TradeStage.TimedOut)
-                    continue;
-                if (element.Event == EventType.Transaction)
-                    continue;
-                history.Add(MarketItem.LoadFromAPI(element));
+                if (element is OperationHistoryItem item)
+                {
+                    if (item.Stage == Stage.TimedOut)
+                        continue;
+                    itemHistory.Add(new(item));
+                }
+                else if (element is OperationHistoryPay pay)
+                {
+                    transactionHistory.Add(new(pay));
+                }
+                else if (element is OperationHistoryTransfer transfer)
+                {
+                    transactionHistory.Add(new(transfer));
+                }
             }
-            history.Reverse();
 
-            History = history.ToImmutableList();
-            TradeHistory = GetTradeHistory(history).ToImmutableList();
+            foreach (string ignoredItem in IgnoredItems)
+                itemHistory = itemHistory.Where(item => IsIgnored(item.Name) == false).ToList();
+
+            ItemsHistory = itemHistory.ToImmutableList();
+            TransactionsHistory = transactionHistory.ToImmutableList();
+
+            Statistics = new(this);
 
             return status;
         }
 
-        private static List<MarketItem> GetTradeHistory(List<MarketItem> history)
+        private static bool IsIgnored(string name)
         {
-            List<MarketItem> tradeHistory = new(history);
-
-            for (int i = 0; i < tradeHistory.Count; i++)
+            foreach (string ignoredItem in IgnoredItems)
             {
-                if (tradeHistory[i].Name.Contains("Sealed Graffiti"))
+                if (name.Contains(ignoredItem))
+                    return true;
+            }
+            return false;
+        }
+
+        private void AnalisysItemsHistory(IImmutableList<MarketItem> history)
+        {
+            List<MarketItem> trades = new(history);
+            List<MarketItem> depositItems = new();
+
+            for (int i = 0; i < trades.Count; i++)
+            {
+                if (trades[i].BuyInfo is null)
                 {
-                    tradeHistory.RemoveAt(i);
+                    depositItems.Add(trades[i]);
+                    trades.RemoveAt(i);
                     i--;
                     continue;
                 }
 
-                if (tradeHistory[i].BuyInfo is null)
+                for (int j = i + 1; j < trades.Count; j++)
                 {
-                    tradeHistory.RemoveAt(i);
-                    i--;
-                    continue;
-                }
-
-                for (int j = i + 1; j < tradeHistory.Count; j++)
-                {
-                    if (tradeHistory[i].Name != tradeHistory[j].Name)
+                    if (trades[i].Name != trades[j].Name)
                         continue;
 
-                    if (tradeHistory[j].SellInfo is null)
+                    if (trades[j].SellInfo is null)
                         continue;
 
-                    if ((tradeHistory[j].SellInfo!.Time - tradeHistory[i].BuyInfo!.Time).TotalDays > TradeDayLimit)
+                    if ((trades[j].SellInfo!.Time - trades[i].BuyInfo!.Time).TotalDays > TradeDaysLimit)
                         continue;
 
-                    tradeHistory[i] = new(tradeHistory[i]);
-                    tradeHistory[i].SellInfo = tradeHistory[j].SellInfo;
-                    tradeHistory[i].Profit = new(tradeHistory[i].BuyInfo!, tradeHistory[i].SellInfo!);
-                    tradeHistory.RemoveAt(j);
+                    trades[i] = new(trades[i]);
+                    trades[i].SellInfo = trades[j].SellInfo;
+                    trades.RemoveAt(j);
                     break;
                 }
 
-                if (tradeHistory[i].SellInfo is null)
+                if (trades[i].SellInfo is null)
                 {
-                    tradeHistory.RemoveAt(i);
+                    trades.RemoveAt(i);
                     i--;
                     continue;
                 }
             }
 
-            return tradeHistory;
+            TradeHistory = trades.ToImmutableList();
+            DepositItemsHistory = depositItems.ToImmutableList();
         }
     }
 }

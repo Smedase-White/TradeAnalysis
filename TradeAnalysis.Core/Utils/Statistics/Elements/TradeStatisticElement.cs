@@ -5,15 +5,15 @@ public class TradeStatisticElement : OperationStatisticElement
     private double _profit = 0;
     private double _hourlyProfit = 0;
 
-    public double Profit 
-    { 
-        get => _profit; 
-        set => _profit = value; 
+    public double Profit
+    {
+        get => _profit;
+        set => _profit = value;
     }
-    public double HourlyProfit 
-    { 
-        get => _hourlyProfit; 
-        set => _hourlyProfit = value; 
+    public double HourlyProfit
+    {
+        get => _hourlyProfit;
+        set => _hourlyProfit = value;
     }
 
     public override bool IsEmpty

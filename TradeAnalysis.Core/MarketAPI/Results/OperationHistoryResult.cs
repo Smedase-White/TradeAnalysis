@@ -5,5 +5,5 @@ namespace TradeAnalysis.Core.MarketAPI;
 public class OperationHistoryResult : BaseResult
 {
     [JsonPropertyName("history")]
-    public List<OperationHistoryElement> History { get; set; } = new();
+    public List<OperationHistoryBase> History { get; set; } = new();
 }

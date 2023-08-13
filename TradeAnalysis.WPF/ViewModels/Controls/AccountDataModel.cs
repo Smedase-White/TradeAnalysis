@@ -1,4 +1,5 @@
 ﻿using System.Net;
+
 using TradeAnalysis.Core.Utils;
 using TradeAnalysis.Core.Utils.Saves;
 
@@ -34,7 +35,7 @@ public class AccountDataModel : ViewModelBase
         set
         {
             if (ChangeProperty(ref _marketApi, value))
-                Status = Account?.TradeStatistics is null ? "Empty" : "Other";
+                Status = Account?.Statistics is null ? "Empty" : "Other";
         }
     }
 
@@ -78,13 +79,12 @@ public class AccountDataModel : ViewModelBase
             Account = null;
             return;
         }
-        if (Account.History!.Count == 0)
+        if (Account.ItemsHistory!.Count == 0)
         {
             Status = "Empty";
             Account = null;
             return;
         }
-        Account.CalcStatistics();
     }
 
     public AccountSave GetSave()

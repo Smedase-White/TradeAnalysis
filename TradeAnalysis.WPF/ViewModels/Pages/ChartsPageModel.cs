@@ -9,7 +9,6 @@ using TradeAnalysis.Core.Utils;
 using TradeAnalysis.Core.Utils.Statistics.Base;
 using TradeAnalysis.Core.Utils.Statistics.Elements;
 
-using static TradeAnalysis.Core.Utils.Statistics.Base.StatisticsUtils;
 using static TradeAnalysis.Core.Utils.TimeUtils;
 
 namespace TradeAnalysis.WPF.ViewModels;
@@ -26,13 +25,19 @@ public class ChartsPageModel : ViewModelBase
     private readonly ObservableCollection<ChartModel> _accountsPeriodicityCharts = new()
     {
         new("Покупки",
-            e => (e is TradeStatisticElement t) ? t.IsEmpty == false ? t.Buy: null : 0),
+            e => (e is OperationStatisticElement t) ? t.IsEmpty == false ? t.Buy: null : 0),
         new("Продажи",
-            e => (e is TradeStatisticElement t) ? t.IsEmpty == false ? t.Sell: null : 0),
+            e => (e is OperationStatisticElement t) ? t.IsEmpty == false ? t.Sell: null : 0),
+        new("Транзакции",
+            e => (e is OperationStatisticElement t) ? t.IsEmpty == false ? t.Transaction : null : 0),
+        new("Депозит предметами",
+            e => (e is OperationStatisticElement t) ? t.IsEmpty == false ? t.DepositInItems : null : 0),
         new("Профит",
-            e =>(e is TradeStatisticElement t) ? t.IsEmpty == false ? t.Profit : null : 0),
+            e => (e is TradeStatisticElement t) ? t.IsEmpty == false ? t.Profit : null : 0),
         new("Ежедневный профит",
-            e =>(e is TradeStatisticElement t) ? t.IsEmpty == false ? t.HourlyProfit: null : 0),
+            e => (e is TradeStatisticElement t) ? t.IsEmpty == false ? t.HourlyProfit: null : 0),
+        new("Стоимость инвентаря",
+            e => (e is AccountStatisticElement t) ? t.IsEmpty == false ? t.Cost : null : 0)
     };
 
     private readonly ObservableCollection<ChartModel> _accountsSeasonalityCharts = new()
@@ -130,8 +135,8 @@ public class ChartsPageModel : ViewModelBase
         foreach (AccountDataModel account in _accountSelect.SelectedAccounts)
         {
             SKColor accountColor = new(account.Color.Red, account.Color.Green, account.Color.Blue);
-            DrawChartsType(SelectPeriodicityStatistics(account.Account!.TradeStatistics!), account.AccountName, accountColor, _accountsPeriodicityCharts);
-            DrawChartsType(SelectSeasonalityStatistics(account.Account!.TradeStatistics!), account.AccountName, accountColor, _accountsSeasonalityCharts);
+            DrawChartsType(SelectPeriodicityStatistics(account.Account!.Statistics!), account.AccountName, accountColor, _accountsPeriodicityCharts);
+            DrawChartsType(SelectSeasonalityStatistics(account.Account!.Statistics!), account.AccountName, accountColor, _accountsSeasonalityCharts);
         }
     }
 
