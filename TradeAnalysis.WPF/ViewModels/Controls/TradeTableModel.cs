@@ -45,7 +45,7 @@ public readonly struct TableElement
     {
         Name = item.Name;
         BuyDate = DateOnly.FromDateTime(item.BuyInfo!.Time);
-        BuyPrice = item.BuyInfo!.Amount;
+        BuyPrice = -item.BuyInfo!.Amount;
         SellDate = DateOnly.FromDateTime(item.SellInfo!.Time);
         SellPrice = item.SellInfo!.Amount;
     }
