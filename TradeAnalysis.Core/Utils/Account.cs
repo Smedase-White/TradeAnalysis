@@ -83,19 +83,19 @@ namespace TradeAnalysis.Core.Utils
             List<MarketTransaction> transactionHistory = new();
             foreach (OperationHistoryBase element in results)
             {
-                if (element is OperationHistoryItem item)
+                switch (element)
                 {
-                    if (item.Stage == Stage.TimedOut)
-                        continue;
-                    itemHistory.Add(new(item));
-                }
-                else if (element is OperationHistoryPay pay)
-                {
-                    transactionHistory.Add(new(pay));
-                }
-                else if (element is OperationHistoryTransfer transfer)
-                {
-                    transactionHistory.Add(new(transfer));
+                    case OperationHistoryItem item: 
+                        if (item.Stage == Stage.TimedOut)
+                            continue;
+                        itemHistory.Add(new(item)); 
+                        break;
+                    case OperationHistoryPay pay:
+                        transactionHistory.Add(new(pay));
+                        break;
+                    case OperationHistoryTransfer transfer:
+                        transactionHistory.Add(new(transfer));
+                        break;
                 }
             }
 
