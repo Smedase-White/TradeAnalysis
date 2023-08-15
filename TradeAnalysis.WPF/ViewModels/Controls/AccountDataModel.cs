@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using System.Threading.Tasks;
 
 using TradeAnalysis.Core.Utils;
 using TradeAnalysis.Core.Utils.Saves;
@@ -71,20 +72,23 @@ public class AccountDataModel : ViewModelBase
 
     public void LoadAccount()
     {
-        Account = new(MarketApi);
-        HttpStatusCode statusCode = Account.LoadHistory();
-        Status = $"{statusCode}";
-        if (statusCode != HttpStatusCode.OK)
-        {
-            Account = null;
-            return;
-        }
-        if (Account.ItemsHistory!.Count == 0)
-        {
-            Status = "Empty";
-            Account = null;
-            return;
-        }
+        Status = "Load";
+        Task.Run(() => {
+            Account = new(MarketApi);
+            HttpStatusCode statusCode = Account.LoadHistory();
+            Status = $"{statusCode}";
+            if (statusCode != HttpStatusCode.OK)
+            {
+                Account = null;
+                return;
+            }
+            if (Account.ItemsHistory!.Count == 0)
+            {
+                Status = "Empty";
+                Account = null;
+                return;
+            }
+        });
     }
 
     public AccountSave GetSave()
