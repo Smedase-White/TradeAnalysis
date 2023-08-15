@@ -60,7 +60,7 @@ public class AccountDataModel : ViewModelBase
 
     public RelayCommand LoadCommand
     {
-        get => _loadCommand ??= new(obj => LoadAccount());
+        get => _loadCommand ??= new(obj => Task.Run(() => LoadAccount()));
         set => ChangeProperty(ref _loadCommand, value);
     }
 
@@ -73,22 +73,20 @@ public class AccountDataModel : ViewModelBase
     public void LoadAccount()
     {
         Status = "Load";
-        Task.Run(() => {
-            Account = new(MarketApi);
-            HttpStatusCode statusCode = Account.LoadHistory();
-            Status = $"{statusCode}";
-            if (statusCode != HttpStatusCode.OK)
-            {
-                Account = null;
-                return;
-            }
-            if (Account.ItemsHistory!.Count == 0)
-            {
-                Status = "Empty";
-                Account = null;
-                return;
-            }
-        });
+        Account = new(MarketApi);
+        HttpStatusCode statusCode = Account.LoadHistory();
+        Status = $"{statusCode}";
+        if (statusCode != HttpStatusCode.OK)
+        {
+            Account = null;
+            return;
+        }
+        if (Account.ItemsHistory!.Count == 0)
+        {
+            Status = "Empty";
+            Account = null;
+            return;
+        }
     }
 
     public AccountSave GetSave()
