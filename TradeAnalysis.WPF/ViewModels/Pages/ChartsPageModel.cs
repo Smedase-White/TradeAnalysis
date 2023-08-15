@@ -150,13 +150,13 @@ public class ChartsPageModel : ViewModelBase
     private IEnumerable<StatisticType> SelectPeriodicityStatistics<StatisticType>(Statistics<StatisticType> statistics)
         where StatisticType : StatisticElement, new()
     {
-        return SelectStatistics(statistics).CalcPeriodData(PointPeriod)!.Data!;
+        return SelectStatistics(statistics.CalcPeriodData(PointPeriod)!).Data!;
     }
 
     private IEnumerable<StatisticType> SelectSeasonalityStatistics<StatisticType>(Statistics<StatisticType> statistics)
         where StatisticType : StatisticElement, new()
     {
-        return SelectStatistics(statistics).CalcSeasonData(PointPeriod)!.Data!;
+        return SelectStatistics(statistics.CalcSeasonData(PointPeriod)!).Data!;
     }
 
     private Statistics<StatisticType> SelectStatistics<StatisticType>(Statistics<StatisticType> statistics)
