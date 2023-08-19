@@ -86,7 +86,7 @@ namespace TradeAnalysis.Core.Utils
                 switch (element)
                 {
                     case OperationHistoryItem item: 
-                        if (item.Stage == Stage.TimedOut)
+                        if (item.Stage != Stage.Given)
                             continue;
                         itemHistory.Add(new(item)); 
                         break;
@@ -146,8 +146,7 @@ namespace TradeAnalysis.Core.Utils
                     if ((trades[j].SellInfo!.Time - trades[i].BuyInfo!.Time).TotalDays > TradeDaysLimit)
                         continue;
 
-                    trades[i] = new(trades[i]);
-                    trades[i].SellInfo = trades[j].SellInfo;
+                    trades[i] = new(trades[i]){ SellInfo = trades[j].SellInfo };
                     trades.RemoveAt(j);
                     break;
                 }
