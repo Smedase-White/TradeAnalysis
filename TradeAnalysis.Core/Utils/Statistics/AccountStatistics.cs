@@ -39,9 +39,21 @@ public class AccountStatistics : Statistics<AccountStatisticElement>
             (data, value) => data.Buy = value);
 
         FillStatisticValues(_account.ItemsHistory,
+            item => item.BuyInfo is null ? NullTime : item.BuyInfo.Time.ToInterval(),
+            (item, _) => -item.BuyInfo!.Amount,
+            (data, value) => data.BuyCount = value,
+            values => values.Count());
+
+        FillStatisticValues(_account.ItemsHistory,
             item => item.SellInfo is null ? NullTime : item.SellInfo.Time.ToInterval(),
             (item, _) => item.SellInfo!.Amount,
             (data, value) => data.Sell = value);
+
+        FillStatisticValues(_account.ItemsHistory,
+            item => item.SellInfo is null ? NullTime : item.SellInfo.Time.ToInterval(),
+            (item, _) => item.SellInfo!.Amount,
+            (data, value) => data.SellCount = value,
+            values => values.Count());
 
         FillStatisticValues(_account.TradeHistory!,
             item => item.SellInfo is null ? NullTime : item.SellInfo.Time.ToInterval(),

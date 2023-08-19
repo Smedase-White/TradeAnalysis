@@ -25,10 +25,14 @@ public class ChartsPageModel : ViewModelBase
 
     private readonly ObservableCollection<ChartModel> _accountsPeriodicityCharts = new()
     {
-        new("Покупки", LegendValueType.Sum, ChartUnit.Currency,
+        new("Сумма покупок", LegendValueType.Sum, ChartUnit.Currency,
             e => (e is OperationStatisticElement t) ? t.IsEmpty == false ? t.Buy: null : 0),
-        new("Продажи", LegendValueType.Sum, ChartUnit.Currency,
+        new("Количество покупок", LegendValueType.Sum, ChartUnit.Count,
+            e => (e is OperationStatisticElement t) ? t.IsEmpty == false ? t.BuyCount: null : 0),
+        new("Сумма продаж", LegendValueType.Sum, ChartUnit.Currency,
             e => (e is OperationStatisticElement t) ? t.IsEmpty == false ? t.Sell: null : 0),
+        new("Количество продаж", LegendValueType.Sum, ChartUnit.Count,
+            e => (e is OperationStatisticElement t) ? t.IsEmpty == false ? t.SellCount: null : 0),
         new("Транзакции", LegendValueType.Sum, ChartUnit.Currency,
             e => (e is OperationStatisticElement t) ? t.IsEmpty == false ? t.Transaction : null : 0),
         new("Депозит предметами", LegendValueType.Sum, ChartUnit.Currency,
