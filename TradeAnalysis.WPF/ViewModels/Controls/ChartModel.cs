@@ -17,59 +17,44 @@ using SkiaSharp;
 using TradeAnalysis.Core.Utils;
 using TradeAnalysis.Core.Utils.Statistics.Elements;
 
+using static TradeAnalysis.WPF.ViewModels.ChartUtils;
+
 namespace TradeAnalysis.WPF.ViewModels;
 
 public class ChartModel : ViewModelBase
 {
-    public static readonly SKColor LegendColor = new(255, 255, 255);
-    public static readonly SKColor GeometryFillColor = new(255, 255, 255);
-
-    private LabelVisual _title;
-    private ObservableCollection<ISeries> _series = new();
+    private readonly LabelVisual _title;
+    private readonly LegendValueType _legendValueType;
+    private readonly ChartUnit _unit;
+    private readonly Axis[] _yAxes;
     private readonly Func<StatisticElement, double?> _selectionFunc;
 
-    public static Axis HourAxis => new()
-    {
-        Labeler = value => new DateTime((long)Math.Abs(value)).ToString("HH"),
-        UnitWidth = TimeSpan.FromHours(2).Ticks,
-        MinStep = TimeSpan.FromHours(2).Ticks
-    };
-    public static Axis DayAxis => new()
-    {
-        Labeler = value => new DateTime((long)Math.Abs(value)).ToString("dd MMM"),
-        UnitWidth = TimeSpan.FromDays(1).Ticks,
-        MinStep = TimeSpan.FromDays(1).Ticks
-    };
-    public static Axis MonthAxis => new()
-    {
-        Labeler = value => new DateTime((long)Math.Abs(value)).ToString("MMM yy"),
-        UnitWidth = TimeSpan.FromDays(30).Ticks,
-        MinStep = TimeSpan.FromDays(30).Ticks
-    };
     public Axis[] _xAxes = { DayAxis };
 
-    public ChartModel(string title, Func<StatisticElement, double?> selectionFunc)
+    private ObservableCollection<ISeries> _series = new();
+
+    public ChartModel(string title, LegendValueType legendValueType, ChartUnit unit, Func<StatisticElement, double?> selectionFunc)
     {
-        _title = new LabelVisual
-        {
-            Text = title,
-            TextSize = 16,
-            Padding = new Padding(15),
-            Paint = new SolidColorPaint(LegendColor)
-        };
+        _title = CreateTitle(title);
+        _legendValueType = legendValueType;
+        _unit = unit;
+        _yAxes = new[] { GetAxisByValueType(unit) };
         _selectionFunc = selectionFunc;
     }
 
     public LabelVisual Title
     {
         get => _title;
-        set => ChangeProperty(ref _title, value);
     }
 
-    public ObservableCollection<ISeries> Series
+    public LegendValueType LegendValueType
     {
-        get => _series;
-        set => ChangeProperty(ref _series, value);
+        get => _legendValueType;
+    }
+
+    public Axis[] YAxes
+    {
+        get => _yAxes;
     }
 
     public Func<StatisticElement, double?> SelectionFunc
@@ -85,6 +70,12 @@ public class ChartModel : ViewModelBase
         set => ChangeProperty(ref _xAxes, value);
     }
 
+    public ObservableCollection<ISeries> Series
+    {
+        get => _series;
+        set => ChangeProperty(ref _series, value);
+    }
+
     public void Clear()
     {
         Series.Clear();
@@ -95,36 +86,13 @@ public class ChartModel : ViewModelBase
     {
         ObservableCollection<DateTimePoint> points =
             new(statistics.Select(data => new DateTimePoint(data.Time, _selectionFunc(data))));
-        Series.Add(CreateLineSeries(points, title, color));
-    }
-
-    public void ChangeAxes(Period period)
-        => _ = period switch
+        title = $"{title} ({Math.Round(_legendValueType switch
         {
-            Period.Hour => XAxes = new Axis[] { HourAxis },
-            Period.Day => XAxes = new Axis[] { HourAxis },
-            Period.Week => XAxes = new Axis[] { DayAxis },
-            Period.Month => XAxes = new Axis[] { DayAxis },
-            Period.HalfYear => XAxes = new Axis[] { MonthAxis },
-            Period.FourYears => XAxes = new Axis[] { MonthAxis },
+            LegendValueType.Sum => statistics.Sum(e => _selectionFunc(e)) ?? 0,
+            LegendValueType.Avg => statistics.Average(e => _selectionFunc(e)) ?? 0,
+            LegendValueType.Last => _selectionFunc(statistics.Last()) ?? 0,
             _ => throw new NotImplementedException(),
-        };
-
-
-    private static LineSeries<DateTimePoint> CreateLineSeries(
-        ObservableCollection<DateTimePoint> points, string title, SKColor color)
-    {
-        return new()
-        {
-            YToolTipLabelFormatter = (chartPoint) => $"{Math.Round(chartPoint.Coordinate.PrimaryValue, 2)}",
-            GeometrySize = 6,
-            LineSmoothness = 1,
-            Values = points,
-            Name = title,
-            Stroke = new SolidColorPaint(color, 3) { PathEffect = new DashEffect(new float[] { 6, 4 }) },
-            Fill = new SolidColorPaint(color.WithAlpha(110)),
-            GeometryStroke = new SolidColorPaint(color, 2),
-            GeometryFill = new SolidColorPaint(GeometryFillColor)
-        };
+        }, 2)} {GetUnitString(_unit)})";
+        Series.Add(CreateLineSeries(points, title, color));
     }
 }

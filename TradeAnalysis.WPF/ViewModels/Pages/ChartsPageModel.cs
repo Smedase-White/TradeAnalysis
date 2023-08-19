@@ -10,6 +10,7 @@ using TradeAnalysis.Core.Utils.Statistics.Base;
 using TradeAnalysis.Core.Utils.Statistics.Elements;
 
 using static TradeAnalysis.Core.Utils.TimeUtils;
+using static TradeAnalysis.WPF.ViewModels.ChartUtils;
 
 namespace TradeAnalysis.WPF.ViewModels;
 
@@ -24,27 +25,29 @@ public class ChartsPageModel : ViewModelBase
 
     private readonly ObservableCollection<ChartModel> _accountsPeriodicityCharts = new()
     {
-        new("Покупки",
+        new("Покупки", LegendValueType.Sum, ChartUnit.Currency,
             e => (e is OperationStatisticElement t) ? t.IsEmpty == false ? t.Buy: null : 0),
-        new("Продажи",
+        new("Продажи", LegendValueType.Sum, ChartUnit.Currency,
             e => (e is OperationStatisticElement t) ? t.IsEmpty == false ? t.Sell: null : 0),
-        new("Транзакции",
+        new("Транзакции", LegendValueType.Sum, ChartUnit.Currency,
             e => (e is OperationStatisticElement t) ? t.IsEmpty == false ? t.Transaction : null : 0),
-        new("Депозит предметами",
+        new("Депозит предметами", LegendValueType.Sum, ChartUnit.Currency,
             e => (e is OperationStatisticElement t) ? t.IsEmpty == false ? t.DepositInItems : null : 0),
-        new("Профит",
+        new("Профит", LegendValueType.Sum, ChartUnit.Currency,
             e => (e is TradeStatisticElement t) ? t.IsEmpty == false ? t.Profit : null : 0),
-        new("Ежедневный профит",
+        new("Ежедневный профит", LegendValueType.Sum, ChartUnit.Currency,
             e => (e is TradeStatisticElement t) ? t.IsEmpty == false ? t.HourlyProfit: null : 0),
-        new("Стоимость инвентаря",
-            e => (e is AccountStatisticElement t) ? t.IsEmpty == false ? t.Cost : null : 0)
+        new("Стоимость инвентаря", LegendValueType.Last, ChartUnit.Currency,
+            e => (e is AccountStatisticElement t) ? t.IsEmpty == false ? t.Cost : null : 0),
+        new("Увеличение стоимости", LegendValueType.Avg, ChartUnit.Percent,
+            e => (e is AccountStatisticElement t) ? t.IsEmpty == false ? 100 * (t.Profit / t.Cost) : null : 0)
     };
 
     private readonly ObservableCollection<ChartModel> _accountsSeasonalityCharts = new()
     {
-        new("Покупки в определённое время",
+        new("Покупки в определённое время", LegendValueType.Sum, ChartUnit.Currency,
             e => (e as OperationStatisticElement)!.Buy),
-        new("Продажи в определённое время",
+        new("Продажи в определённое время", LegendValueType.Sum, ChartUnit.Currency,
             e => (e as OperationStatisticElement)!.Sell),
     };
 
@@ -128,9 +131,9 @@ public class ChartsPageModel : ViewModelBase
             chart.Clear();
 
         foreach (ChartModel periodicityChart in _accountsPeriodicityCharts)
-            periodicityChart.ChangeAxes(SelectionPeriod);
+            periodicityChart.XAxes = new[] { GetAxisByPeriod(SelectionPeriod) };
         foreach (ChartModel seasonalityChart in _accountsSeasonalityCharts)
-            seasonalityChart.ChangeAxes(PointPeriod);
+            seasonalityChart.XAxes = new[] { GetAxisByPeriod(PointPeriod) };
 
         foreach (AccountDataModel account in _accountSelect.SelectedAccounts)
         {
@@ -144,7 +147,7 @@ public class ChartsPageModel : ViewModelBase
         where StatisticType : StatisticElement, new()
     {
         foreach (ChartModel chart in charts)
-            chart.Add(statistics, $"{title} ({Math.Round(statistics.Sum(e => chart.SelectionFunc(e)) ?? 0, 2)} ₽)", color);
+            chart.Add(statistics, title, color);
     }
 
     private IEnumerable<StatisticType> SelectPeriodicityStatistics<StatisticType>(Statistics<StatisticType> statistics)
@@ -156,7 +159,7 @@ public class ChartsPageModel : ViewModelBase
     private IEnumerable<StatisticType> SelectSeasonalityStatistics<StatisticType>(Statistics<StatisticType> statistics)
         where StatisticType : StatisticElement, new()
     {
-        return SelectStatistics(statistics.CalcSeasonData(PointPeriod)!).Data!;
+        return SelectStatistics(statistics).CalcSeasonData(PointPeriod)!.Data!;
     }
 
     private Statistics<StatisticType> SelectStatistics<StatisticType>(Statistics<StatisticType> statistics)

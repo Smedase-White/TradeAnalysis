@@ -45,7 +45,7 @@
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
                     <elements:Chart
-                        Height="300"
+                        Height="700"
                         Margin="0,5"
                         DataContext="{Binding}" />
                 </DataTemplate>

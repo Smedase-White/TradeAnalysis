@@ -16,5 +16,6 @@
         LegendPosition="Top"
         LegendTextPaint="{Binding LegendTextPaint}"
         Series="{Binding Series}"
-        XAxes="{Binding XAxes}" />
+        XAxes="{Binding XAxes}"
+        YAxes="{Binding YAxes}" />
 </UserControl>
