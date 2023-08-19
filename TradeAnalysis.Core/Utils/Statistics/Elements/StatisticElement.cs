@@ -3,11 +3,18 @@
 public class StatisticElement : IComparable<StatisticElement>
 {
     private DateTime _time;
+    private StatisticElement? _prev;
 
     public DateTime Time
     {
         get => _time;
         set => _time = value;
+    }
+
+    public StatisticElement? Prev
+    {
+        get => _prev;
+        set => _prev = value;
     }
 
     public virtual bool IsEmpty
@@ -35,7 +42,7 @@ public class StatisticElement : IComparable<StatisticElement>
         property = (property + values.Sum(selector)) / (1 + values.Count());
     }
 
-    public static StatisticType? Create<StatisticType>(IEnumerable<StatisticElement> elements)
+    public static StatisticType? Create<StatisticType>(IEnumerable<StatisticElement> elements, StatisticElement? prev = null)
         where StatisticType : StatisticElement, new()
     {
         if (elements.Any() == false)
@@ -43,6 +50,7 @@ public class StatisticElement : IComparable<StatisticElement>
 
         StatisticType element = new();
         element.Combine(elements);
+        element.Prev = prev;
         return element;
     }
 

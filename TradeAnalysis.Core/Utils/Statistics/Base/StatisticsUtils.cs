@@ -31,14 +31,15 @@ public static class StatisticsUtils
 
         SortedSet<StatisticType> periodData = new();
         ICollection<DateTime> times = GetTimeCollection(data.Min!.Time, data.Max!.Time, period);
+        StatisticType? statistic = null;
         foreach (DateTime time in times)
         {
-            StatisticType? element = StatisticElement.Create<StatisticType>(
-                SelectDataPeriod(data, time.Floor(period), time.Ceiling(period))!);
-            if (element is null)
+            statistic = StatisticElement.Create<StatisticType>(
+                SelectDataPeriod(data, time.Floor(period), time.Ceiling(period))!, statistic);
+            if (statistic is null)
                 continue;
-            element.Time = time.Ceiling(period);
-            periodData.Add(element);
+            statistic.Time = time.Ceiling(period);
+            periodData.Add(statistic);
         }
         return periodData;
     }
@@ -56,13 +57,14 @@ public static class StatisticsUtils
             .ToDictionary(time => time, _ => new List<StatisticType>()));
         foreach (StatisticType element in data)
             times[element.Time.ToSeasonTime(season)].Add(element);
+        StatisticType? statistic = null;
         foreach (KeyValuePair<DateTime, List<StatisticType>> time in times)
         {
-            StatisticType? element = StatisticElement.Create<StatisticType>(time.Value);
-            if (element is null)
+            statistic = StatisticElement.Create<StatisticType>(time.Value, statistic);
+            if (statistic is null)
                 continue;
-            element.Time = time.Key;
-            seasonData.Add(element);
+            statistic.Time = time.Key;
+            seasonData.Add(statistic);
         }
 
         return seasonData;
