@@ -97,8 +97,8 @@ public static class ChartUtils
             LineSmoothness = 1,
             Values = points,
             Name = title,
-            Stroke = new SolidColorPaint(color, 3) { PathEffect = new DashEffect(new float[] { 6, 4 }) },
-            Fill = new SolidColorPaint(color.WithAlpha(110)),
+            Stroke = new SolidColorPaint(color, 3),
+            Fill = new SolidColorPaint(color.WithAlpha(51)),
             GeometryStroke = new SolidColorPaint(color, 2),
             GeometryFill = new SolidColorPaint(GeometryFillColor)
         };
