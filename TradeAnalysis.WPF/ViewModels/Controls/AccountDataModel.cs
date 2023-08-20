@@ -13,6 +13,7 @@ public class AccountDataModel : ViewModelBase
     private ColorModel _color = new();
 
     private string _status = "Empty";
+    private string _marketStatus = "Empty";
 
     private RelayCommand? _loadCommand; 
     private RelayCommand? _parseCommand;
@@ -37,7 +38,10 @@ public class AccountDataModel : ViewModelBase
         set
         {
             if (ChangeProperty(ref _marketApi, value))
+            {
                 Status = Account?.Statistics is null ? "Empty" : "Other";
+                MarketStatus = Account?.MarketStatistics is null ? "Empty" : "Other";
+            }
         }
     }
 
@@ -51,6 +55,12 @@ public class AccountDataModel : ViewModelBase
     {
         get => _status;
         private set => ChangeProperty(ref _status, value);
+    }
+
+    public string MarketStatus
+    {
+        get => _marketStatus;
+        private set => ChangeProperty(ref _marketStatus, value);
     }
 
     public Account? Account
@@ -101,7 +111,9 @@ public class AccountDataModel : ViewModelBase
         if (Account is null)
             return;
 
+        MarketStatus = "Load";
         Account.ParseItems();
+        MarketStatus = "OK";
     }
 
     public AccountSave GetSave()
