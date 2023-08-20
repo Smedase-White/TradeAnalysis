@@ -17,7 +17,7 @@ public class OperationStatisticElement : StatisticElement
 
     public double BuyCount
     {
-        get => _buyCount; 
+        get => _buyCount;
         set => _buyCount = value;
     }
 

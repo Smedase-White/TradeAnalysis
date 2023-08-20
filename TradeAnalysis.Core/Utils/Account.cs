@@ -80,8 +80,8 @@ namespace TradeAnalysis.Core.Utils
             private set => _statistics = value;
         }
 
-        public MarketStatistics? MarketStatistics 
-        { 
+        public MarketStatistics? MarketStatistics
+        {
             get => _marketStatistics;
             private set => _marketStatistics = value;
         }
@@ -102,10 +102,10 @@ namespace TradeAnalysis.Core.Utils
             {
                 switch (element)
                 {
-                    case OperationHistoryItem item: 
+                    case OperationHistoryItem item:
                         if (item.Stage != Stage.Given)
                             continue;
-                        itemHistory.Add(new(item)); 
+                        itemHistory.Add(new(item));
                         break;
                     case OperationHistoryPay pay:
                         transactionHistory.Add(new(pay));
@@ -163,13 +163,13 @@ namespace TradeAnalysis.Core.Utils
                     if ((trades[j].SellInfo!.Time - trades[i].BuyInfo!.Time).TotalDays > TradeDaysLimit)
                         continue;
 
-                    trades[i] = new(trades[i]){ SellInfo = trades[j].SellInfo };
+                    trades[i] = new(trades[i]) { SellInfo = trades[j].SellInfo };
                     trades.RemoveAt(j);
                     break;
                 }
 
                 if (trades[i].SellInfo is null)
-                {   
+                {
                     trades.RemoveAt(i);
                     i--;
                     continue;

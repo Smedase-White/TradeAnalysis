@@ -1,14 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-using static TradeAnalysis.Core.Utils.TimeUtils;
-
-using TradeAnalysis.Core.Utils.MarketItems;
+﻿using TradeAnalysis.Core.Utils.MarketItems;
 using TradeAnalysis.Core.Utils.Statistics.Base;
 using TradeAnalysis.Core.Utils.Statistics.Elements;
+
+using static TradeAnalysis.Core.Utils.TimeUtils;
 
 namespace TradeAnalysis.Core.Utils.Statistics;
 

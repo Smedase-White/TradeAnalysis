@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace TradeAnalysis.Core.MarketAPI;
+﻿namespace TradeAnalysis.Core.MarketAPI;
 
 public enum EventType
 {

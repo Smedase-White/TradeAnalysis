@@ -15,7 +15,7 @@ public class AccountDataModel : ViewModelBase
     private string _status = "Empty";
     private string _marketStatus = "Empty";
 
-    private RelayCommand? _loadCommand; 
+    private RelayCommand? _loadCommand;
     private RelayCommand? _parseCommand;
     private RelayCommand? _removeCommand;
 
