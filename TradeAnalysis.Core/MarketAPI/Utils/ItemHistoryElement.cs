@@ -1,12 +1,18 @@
 ﻿using System.Text.Json.Serialization;
 
+using static TradeAnalysis.Core.MarketAPI.TypeUtils;
+
 namespace TradeAnalysis.Core.MarketAPI;
 
 class ItemHistoryElement
 {
     [JsonPropertyName("l_price")]
-    public string? Price { get; set; }
+    public string? PriceString { get; set; }
+    public long? Price
+        => GetLong(PriceString);
 
     [JsonPropertyName("l_time")]
-    public string? Time { get; set; }
+    public string? TimeString { get; set; }
+    public DateTime? Time
+        => GetTime(TimeString);
 }

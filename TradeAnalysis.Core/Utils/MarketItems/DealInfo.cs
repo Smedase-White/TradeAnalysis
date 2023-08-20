@@ -15,7 +15,7 @@ public class DealInfo
 
     public DealInfo(OperationHistoryItem item)
     {
-        _time = item.Time;
+        _time = item.Time!.Value;
         _amount = item.Event switch
         {
             EventType.Sell => item.Recieved * item.SellerRate,
@@ -26,7 +26,7 @@ public class DealInfo
 
     public DealInfo(OperationHistoryPay pay)
     {
-        _time = pay.Time;
+        _time = pay.Time!.Value;
         _amount = pay.Event switch
         {
             EventType.PayIn => pay.AmountIn * pay.Rate,
@@ -37,7 +37,7 @@ public class DealInfo
 
     public DealInfo(OperationHistoryTransfer transfer)
     {
-        _time = transfer.Time;
+        _time = transfer.Time!.Value;
         _amount = transfer.Event switch
         {
             EventType.TransferIn => transfer.AmountTo * transfer.RateTo,
