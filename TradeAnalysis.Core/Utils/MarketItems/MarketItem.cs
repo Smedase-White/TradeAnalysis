@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System.Collections.Immutable;
+using System.Net;
 
 using TradeAnalysis.Core.MarketAPI;
 
@@ -6,6 +7,9 @@ namespace TradeAnalysis.Core.Utils.MarketItems;
 
 public class MarketItem
 {
+    private const int MaxParseTries = 5;
+    private const double PeakValue = 1.15;
+
     private readonly long _classId;
     private readonly long _instanceId;
     private readonly string _name;
@@ -14,7 +18,7 @@ public class MarketItem
     private DealInfo? _sellInfo;
     private ProfitInfo? _profit;
 
-    private Dictionary<DateTime, ItemDailyPrices> _history = new();
+    private IImmutableList<DealInfo>? _history;
     private double? _averagePrice;
 
     public MarketItem(long classId, long instanceId, string name)
@@ -89,7 +93,7 @@ public class MarketItem
         private set => _profit = value;
     }
 
-    public Dictionary<DateTime, ItemDailyPrices> History
+    public IImmutableList<DealInfo>? History
     {
         get => _history;
         private set => _history = value;
@@ -101,28 +105,42 @@ public class MarketItem
         private set => _averagePrice = value;
     }
 
-    public async Task LoadHistory(string apiKey)
+    public HttpStatusCode LoadHistory(string apiKey)
     {
         if (ClassId == 0 || InstanceId == 0)
-            return;
-
-        History = new();
+            return HttpStatusCode.BadRequest;
 
         ItemHistoryRequest request = new(ClassId, InstanceId, apiKey);
-        HttpStatusCode status = await Task.Run(() => request.ResultMessage.StatusCode);
-        if (status != HttpStatusCode.OK)
-            return;
+        HttpStatusCode status = request.ResultMessage.StatusCode;
+        int tries = 1;
+        while (status != HttpStatusCode.OK)
+        {
+            request = new(ClassId, InstanceId, apiKey);
+            status = request.ResultMessage.StatusCode;
+            if (tries++ == MaxParseTries)
+                return status;
+        }
 
         ItemHistoryResult result = request.Result!;
-        foreach (ItemHistoryElement historyElement in result.History)
-        {
-            DateTime date = DateTimeOffset.FromUnixTimeSeconds(Convert.ToInt64(historyElement.Time)).DateTime.Date;
-            double price = Convert.ToDouble(historyElement.Price);
-            if (History.TryGetValue(date, out ItemDailyPrices? value))
-                value.AddPrice(price);
-            else
-                History.Add(date, new(price));
-        }
+
         AveragePrice = Convert.ToDouble(result.Average);
+
+        List<DealInfo> history = new();
+        foreach (ItemHistoryElement historyElement in result.History)
+            history.Add(new(historyElement.Time!.Value, historyElement.Price / AveragePrice ?? 0));
+
+        for (int i = 1; i < history.Count - 1; i++)
+        {
+            double near = (history[i - 1].Amount + history[i + 1].Amount) / 2;
+            if (history[i].Amount < near / PeakValue || history[i].Amount > near * PeakValue)
+            {
+                history.RemoveAt(i);
+                i--;
+            }
+        }
+
+        History = history.ToImmutableList();
+
+        return status;
     }
 }

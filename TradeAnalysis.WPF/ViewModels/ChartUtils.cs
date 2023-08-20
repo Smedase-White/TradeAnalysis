@@ -69,7 +69,7 @@ public static class ChartUtils
         };
 
     public static Axis GetAxisByValueType(ChartUnit unit)
-        => new() { Labeler = value => $"{value} {GetUnitString(unit)}" };
+        => new() { Labeler = value => $"{Math.Round(value, 2)} {GetUnitString(unit)}" };
     public static string GetUnitString(ChartUnit unit)
         => unit switch
         {

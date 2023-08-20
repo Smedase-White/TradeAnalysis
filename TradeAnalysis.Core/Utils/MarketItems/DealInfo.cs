@@ -46,6 +46,12 @@ public class DealInfo
         } ?? 0;
     }
 
+    public DealInfo(ItemHistoryElement history)
+    {
+        _time = history.Time!.Value;
+        _amount = history.Price ?? 0;
+    }
+
     public DateTime Time
     {
         get => _time;

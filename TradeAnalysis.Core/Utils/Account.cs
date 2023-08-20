@@ -12,6 +12,8 @@ namespace TradeAnalysis.Core.Utils
         private static readonly DateTime StartTime = new(2021, 1, 1, 0, 0, 0);
         private const int TradeDaysLimit = 100;
         private static readonly string[] IgnoredItems = { "Sealed Graffiti" };
+        private const int MaxParseCount = 500;
+        private const int MaxParallelRequestCount = 5;
 
         private readonly string _marketApi;
 
@@ -21,7 +23,10 @@ namespace TradeAnalysis.Core.Utils
         private IImmutableList<MarketItem>? _tradeHistory;
         private IImmutableList<MarketItem>? _depositItemsHistory;
 
+        private IImmutableList<MarketItem>? _parsedItems;
+
         private AccountStatistics? _statistics;
+        private MarketStatistics? _marketStatistics;
 
         public Account(string marketApi)
         {
@@ -63,10 +68,22 @@ namespace TradeAnalysis.Core.Utils
             private set => _depositItemsHistory = value;
         }
 
+        public IImmutableList<MarketItem>? ParsedItems
+        {
+            get => _parsedItems;
+            private set => _parsedItems = value;
+        }
+
         public AccountStatistics? Statistics
         {
             get => _statistics;
             private set => _statistics = value;
+        }
+
+        public MarketStatistics? MarketStatistics 
+        { 
+            get => _marketStatistics;
+            private set => _marketStatistics = value;
         }
 
         public HttpStatusCode LoadHistory()
@@ -152,7 +169,7 @@ namespace TradeAnalysis.Core.Utils
                 }
 
                 if (trades[i].SellInfo is null)
-                {
+                {   
                     trades.RemoveAt(i);
                     i--;
                     continue;
@@ -161,6 +178,34 @@ namespace TradeAnalysis.Core.Utils
 
             TradeHistory = trades.ToImmutableList();
             DepositItemsHistory = depositItems.ToImmutableList();
+        }
+
+        public void ParseItems()
+        {
+            if (ItemsHistory is null || ItemsHistory.Count == 0)
+                return;
+
+            List<MarketItem> parsedItems = new();
+            if (ItemsHistory.Count < MaxParseCount)
+            {
+                parsedItems.AddRange(ItemsHistory);
+            }
+            else
+            {
+                Random rand = new();
+                for (int i = 0; i < MaxParseCount; i++)
+                    parsedItems.Add(ItemsHistory![rand.Next(ItemsHistory.Count)]);
+            }
+
+            List<Action> parseActions = new();
+            foreach (MarketItem item in parsedItems)
+                parseActions.Add(() => item.LoadHistory(MarketApi));
+            ParallelOptions options = new() { MaxDegreeOfParallelism = MaxParallelRequestCount };
+            Parallel.Invoke(options, parseActions.ToArray());
+
+            ParsedItems = parsedItems.ToImmutableList();
+
+            MarketStatistics = new(this);
         }
     }
 }

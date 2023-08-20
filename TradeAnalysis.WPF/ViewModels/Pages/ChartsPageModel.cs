@@ -55,14 +55,28 @@ public class ChartsPageModel : ViewModelBase
             e => (e as OperationStatisticElement)!.Sell),
     };
 
+    private readonly ObservableCollection<ChartModel> _marketPeriodicityCharts = new()
+    {
+        new("Средние цены", LegendValueType.Avg, ChartUnit.Percent,
+            e => (e as MarketStatisticElement)!.Price * 100),
+        new("Среднее число покупок", LegendValueType.Avg, ChartUnit.Count,
+            e => (e as MarketStatisticElement)!.Count)
+    };
+
+    private readonly ObservableCollection<ChartModel> _marketSeasonalityCharts = new()
+    {
+        new("Цены в определённое время", LegendValueType.Avg, ChartUnit.Percent,
+            e => (e as MarketStatisticElement)!.Price)
+    };
+
     private ObservableCollection<ChartModel> _charts = new();
 
     public ChartsPageModel()
     {
-        foreach (ChartModel chart in _accountsPeriodicityCharts)
-            _charts.Add(chart);
-        foreach (ChartModel chart in _accountsSeasonalityCharts)
-            _charts.Add(chart);
+        AddCharts(_accountsPeriodicityCharts);
+        AddCharts(_accountsSeasonalityCharts);
+        AddCharts(_marketPeriodicityCharts);
+        AddCharts(_marketSeasonalityCharts);
 
         AccountSelect.CloseCommand.AddExecute(obj => { DrawCharts(); });
     }
@@ -130,14 +144,13 @@ public class ChartsPageModel : ViewModelBase
 
     public void DrawCharts()
     {
-
         foreach (ChartModel chart in Charts)
             chart.Clear();
 
-        foreach (ChartModel periodicityChart in _accountsPeriodicityCharts)
-            periodicityChart.XAxes = new[] { GetAxisByPeriod(SelectionPeriod) };
-        foreach (ChartModel seasonalityChart in _accountsSeasonalityCharts)
-            seasonalityChart.XAxes = new[] { GetAxisByPeriod(PointPeriod) };
+        ChangeChartAxes(_accountsPeriodicityCharts, SelectionPeriod);
+        ChangeChartAxes(_accountsSeasonalityCharts, PointPeriod);
+        ChangeChartAxes(_marketPeriodicityCharts, SelectionPeriod);
+        ChangeChartAxes(_marketSeasonalityCharts, PointPeriod);
 
         foreach (AccountDataModel account in _accountSelect.SelectedAccounts)
         {
@@ -145,6 +158,27 @@ public class ChartsPageModel : ViewModelBase
             DrawChartsType(SelectPeriodicityStatistics(account.Account!.Statistics!), account.AccountName, accountColor, _accountsPeriodicityCharts);
             DrawChartsType(SelectSeasonalityStatistics(account.Account!.Statistics!), account.AccountName, accountColor, _accountsSeasonalityCharts);
         }
+        foreach (AccountDataModel account in _accountSelect.SelectedAccounts)
+        {
+            if (account.Account?.MarketStatistics is null)
+                continue;
+
+            SKColor accountColor = new(account.Color.Red, account.Color.Green, account.Color.Blue);
+            DrawChartsType(SelectPeriodicityStatistics(account.Account.MarketStatistics), account.AccountName, accountColor, _marketPeriodicityCharts);
+            DrawChartsType(SelectSeasonalityStatistics(account.Account.MarketStatistics), account.AccountName, accountColor, _marketSeasonalityCharts);
+        }
+    }
+
+    private void AddCharts(IEnumerable<ChartModel> charts)
+    {
+        foreach (ChartModel chart in charts)
+            _charts.Add(chart);
+    }
+
+    private static void ChangeChartAxes(IEnumerable<ChartModel> charts, Period period)
+    {
+        foreach (ChartModel chart in charts)
+            chart.XAxes = new[] { GetAxisByPeriod(period) };
     }
 
     private static void DrawChartsType<StatisticType>(IEnumerable<StatisticType> statistics, string title, SKColor color, IEnumerable<ChartModel> charts)

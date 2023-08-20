@@ -14,7 +14,8 @@ public class AccountDataModel : ViewModelBase
 
     private string _status = "Empty";
 
-    private RelayCommand? _loadCommand;
+    private RelayCommand? _loadCommand; 
+    private RelayCommand? _parseCommand;
     private RelayCommand? _removeCommand;
 
     private Account? _account;
@@ -64,6 +65,12 @@ public class AccountDataModel : ViewModelBase
         set => ChangeProperty(ref _loadCommand, value);
     }
 
+    public RelayCommand ParseCommand
+    {
+        get => _parseCommand ??= new(obj => Task.Run(() => ParseMarket()));
+        set => ChangeProperty(ref _parseCommand, value);
+    }
+
     public RelayCommand RemoveCommand
     {
         get => _removeCommand ??= new();
@@ -87,6 +94,14 @@ public class AccountDataModel : ViewModelBase
             Account = null;
             return;
         }
+    }
+
+    public void ParseMarket()
+    {
+        if (Account is null)
+            return;
+
+        Account.ParseItems();
     }
 
     public AccountSave GetSave()

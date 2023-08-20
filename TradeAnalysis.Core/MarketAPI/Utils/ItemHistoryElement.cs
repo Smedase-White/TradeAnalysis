@@ -4,7 +4,7 @@ using static TradeAnalysis.Core.MarketAPI.TypeUtils;
 
 namespace TradeAnalysis.Core.MarketAPI;
 
-class ItemHistoryElement
+public class ItemHistoryElement
 {
     [JsonPropertyName("l_price")]
     public string? PriceString { get; set; }
