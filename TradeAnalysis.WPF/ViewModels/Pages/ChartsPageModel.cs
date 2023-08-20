@@ -66,7 +66,7 @@ public class ChartsPageModel : ViewModelBase
     private readonly ObservableCollection<ChartModel> _marketSeasonalityCharts = new()
     {
         new("Цены в определённое время", LegendValueType.Avg, ChartUnit.Percent,
-            e => (e as MarketStatisticElement)!.Price)
+            e => (e as MarketStatisticElement)!.Price * 100)
     };
 
     private ObservableCollection<ChartModel> _charts = new();
