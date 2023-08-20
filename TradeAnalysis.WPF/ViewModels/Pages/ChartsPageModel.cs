@@ -44,7 +44,7 @@ public class ChartsPageModel : ViewModelBase
         new("Стоимость инвентаря", LegendValueType.Last, ChartUnit.Currency,
             e => (e is AccountStatisticElement t) ? t.IsEmpty == false ? t.Cost : null : 0),
         new("Профит от стоимости", LegendValueType.Avg, ChartUnit.Percent,
-            e => (e is AccountStatisticElement t) ? t.IsEmpty == false ? 100 * (t.Profit / (t.Prev as AccountStatisticElement)?.Cost) : null : 0)
+            e => (e is AccountStatisticElement t) ? t.IsEmpty == false ? (t.Profit / (t.Prev as AccountStatisticElement)?.Cost) * 100 : null : 0)
     };
 
     private readonly ObservableCollection<ChartModel> _accountsSeasonalityCharts = new()
