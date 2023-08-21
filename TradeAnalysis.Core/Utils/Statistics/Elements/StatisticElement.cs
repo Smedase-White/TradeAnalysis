@@ -41,7 +41,10 @@ public class StatisticElement : IComparable<StatisticElement>
         IEnumerable<StatisticType> elements, Func<StatisticType, double?> selector)
         where StatisticType : StatisticElement, new()
     {
-        elements = elements.Where(e => e.IsEmpty == false);
+        elements = elements.Where(e => selector(e) is not null);
+        if (elements.Any() == false)
+            return;
+
         if (property is null)
             property = elements.Sum(selector) / elements.Count();
         else

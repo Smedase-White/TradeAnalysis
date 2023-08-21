@@ -16,6 +16,11 @@ public class MarketStatisticElement : StatisticElement
         get => _count ?? 0;
         set => _count = value;
     }
+    public new MarketStatisticElement? Prev
+    {
+        get => base.Prev as MarketStatisticElement;
+        set => base.Prev = value;
+    }
 
     public override bool IsEmpty
         => base.IsEmpty && (Count == 0);

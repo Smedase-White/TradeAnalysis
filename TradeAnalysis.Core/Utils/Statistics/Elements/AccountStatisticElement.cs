@@ -10,6 +10,12 @@ public class AccountStatisticElement : TradeStatisticElement
         set => _cost = value;
     }
 
+    public new AccountStatisticElement? Prev
+    {
+        get => base.Prev as AccountStatisticElement;
+        set => base.Prev = value;
+    }
+
     public override bool IsEmpty
         => base.IsEmpty;
 

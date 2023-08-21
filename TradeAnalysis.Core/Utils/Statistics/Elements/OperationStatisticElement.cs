@@ -45,6 +45,12 @@ public class OperationStatisticElement : StatisticElement
         set => _depositInItems = value;
     }
 
+    public new OperationStatisticElement? Prev
+    {
+        get => base.Prev as OperationStatisticElement;
+        set => base.Prev = value;
+    }
+
     public override bool IsEmpty
         => base.IsEmpty && (BuyCount == 0 && SellCount == 0 && Transaction == 0);
 

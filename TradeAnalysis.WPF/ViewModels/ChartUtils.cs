@@ -17,7 +17,8 @@ public enum ChartUnit
 {
     Currency,
     Count,
-    Percent
+    Percent,
+    Days
 }
 
 public enum LegendValueType
@@ -70,6 +71,7 @@ public static class ChartUtils
             ChartUnit.Currency => "₽",
             ChartUnit.Count => "шт.",
             ChartUnit.Percent => "%",
+            ChartUnit.Days => "дней",
             _ => throw new NotImplementedException(),
         };
 

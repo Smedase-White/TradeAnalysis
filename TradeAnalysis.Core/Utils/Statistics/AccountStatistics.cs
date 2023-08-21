@@ -56,7 +56,7 @@ public class AccountStatistics : Statistics<AccountStatisticElement>
             values => values.Count());
 
         FillStatisticValues(_account.TradeHistory!,
-            item => item.SellInfo is null ? NullTime : item.SellInfo.Time.ToInterval(),
+            item => item.SellInfo!.Time.ToInterval(),
             (item, _) => item.Profit!.Value,
             (data, value) => data.Profit = value);
 
@@ -64,6 +64,12 @@ public class AccountStatistics : Statistics<AccountStatisticElement>
             item => (item.BuyInfo!.Time, item.SellInfo!.Time),
             (item, _) => item.Profit!.Hourly,
             (data, value) => data.HourlyProfit = value);
+
+        FillStatisticValues(_account.TradeHistory!,
+            item => item.SellInfo!.Time.ToInterval(),
+            (item, _) => item.Profit!.Duration,
+            (data, value) => data.SellDuration = value,
+            values => values.Average());
 
         FillStatisticValues(_account.TransactionsHistory!,
             item => item.Info.Time.ToInterval(),

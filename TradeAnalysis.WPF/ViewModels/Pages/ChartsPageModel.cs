@@ -25,47 +25,49 @@ public class ChartsPageModel : ViewModelBase
     private readonly ObservableCollection<ChartModel> _accountsPeriodicityCharts = new()
     {
         new("Сумма покупок", LegendValueType.Sum, ChartUnit.Currency,
-            e => (e is OperationStatisticElement t) ? t.IsEmpty == false ? t.Buy: null : 0),
+            SelectValue<OperationStatisticElement>(e => e.Buy)),
         new("Количество покупок", LegendValueType.Sum, ChartUnit.Count,
-            e => (e is OperationStatisticElement t) ? t.IsEmpty == false ? t.BuyCount: null : 0),
+            SelectValue<OperationStatisticElement>(e => e.BuyCount)),
         new("Сумма продаж", LegendValueType.Sum, ChartUnit.Currency,
-            e => (e is OperationStatisticElement t) ? t.IsEmpty == false ? t.Sell: null : 0),
+            SelectValue<OperationStatisticElement>(e => e.Sell)),
         new("Количество продаж", LegendValueType.Sum, ChartUnit.Count,
-            e => (e is OperationStatisticElement t) ? t.IsEmpty == false ? t.SellCount: null : 0),
+            SelectValue<OperationStatisticElement>(e => e.SellCount)),
         new("Транзакции", LegendValueType.Sum, ChartUnit.Currency,
-            e => (e is OperationStatisticElement t) ? t.IsEmpty == false ? t.Transaction : null : 0),
+            SelectValue<OperationStatisticElement>(e => e.Transaction)),
         new("Депозит предметами", LegendValueType.Sum, ChartUnit.Currency,
-            e => (e is OperationStatisticElement t) ? t.IsEmpty == false ? t.DepositInItems : null : 0),
+            SelectValue<OperationStatisticElement>(e => e.DepositInItems)),
         new("Профит", LegendValueType.Sum, ChartUnit.Currency,
-            e => (e is TradeStatisticElement t) ? t.IsEmpty == false ? t.Profit : null : 0),
+            SelectValue<TradeStatisticElement>(e => e.Profit)),
         new("Ежедневный профит", LegendValueType.Sum, ChartUnit.Currency,
-            e => (e is TradeStatisticElement t) ? t.IsEmpty == false ? t.HourlyProfit: null : 0),
+            SelectValue<TradeStatisticElement>(e => e.HourlyProfit)),
+        new("Длительность продажи", LegendValueType.Avg, ChartUnit.Days,
+            SelectValue<TradeStatisticElement>(e => e.SellDuration, true)),
         new("Стоимость инвентаря", LegendValueType.Last, ChartUnit.Currency,
-            e => (e is AccountStatisticElement t) ? t.IsEmpty == false ? t.Cost : null : 0),
+            SelectValue<AccountStatisticElement>(e => e.Cost)),
         new("Профит от стоимости", LegendValueType.Avg, ChartUnit.Percent,
-            e => (e is AccountStatisticElement t) ? t.IsEmpty == false ? (t.Profit / (t.Prev as AccountStatisticElement)?.Cost) * 100 : null : 0)
+            SelectValue<AccountStatisticElement>(e => e.Profit / e.Prev?.Cost * 100)),
     };
 
     private readonly ObservableCollection<ChartModel> _accountsSeasonalityCharts = new()
     {
         new("Покупки в определённое время", LegendValueType.Sum, ChartUnit.Currency,
-            e => (e as OperationStatisticElement)!.Buy),
+            SelectValue<OperationStatisticElement>(e => e.Buy)),
         new("Продажи в определённое время", LegendValueType.Sum, ChartUnit.Currency,
-            e => (e as OperationStatisticElement)!.Sell),
+            SelectValue<OperationStatisticElement>(e => e.Sell)),
     };
 
     private readonly ObservableCollection<ChartModel> _marketPeriodicityCharts = new()
     {
         new("Средние цены", LegendValueType.Avg, ChartUnit.Percent,
-            e => (e as MarketStatisticElement)!.Price * 100),
+            SelectValue<MarketStatisticElement>(e => e.Price * 100)),
         new("Среднее число покупок", LegendValueType.Avg, ChartUnit.Count,
-            e => (e as MarketStatisticElement)!.Count)
+            SelectValue<MarketStatisticElement>(e => e.Count))
     };
 
     private readonly ObservableCollection<ChartModel> _marketSeasonalityCharts = new()
     {
         new("Цены в определённое время", LegendValueType.Avg, ChartUnit.Percent,
-            e => (e as MarketStatisticElement)!.Price * 100)
+            SelectValue<MarketStatisticElement>(e => e.Price * 100)),
     };
 
     private ObservableCollection<ChartModel> _charts = new();
@@ -166,6 +168,21 @@ public class ChartsPageModel : ViewModelBase
             DrawChartsType(SelectPeriodicityStatistics(account.Account.MarketStatistics), account.AccountName, accountColor, _marketPeriodicityCharts);
             DrawChartsType(SelectSeasonalityStatistics(account.Account.MarketStatistics), account.AccountName, accountColor, _marketSeasonalityCharts);
         }
+    }
+
+    private static Func<StatisticElement, double?> SelectValue<StatisticType>(Func<StatisticType, double?> selection, bool zeroNullable = false)
+        where StatisticType : StatisticElement
+    {
+        return element =>
+        {
+            if (element.IsEmpty == true)
+                return null;
+            StatisticType converted = (element as StatisticType)!;
+            double? value = selection(converted);
+            if (value == 0 && zeroNullable == true)
+                return null;
+            return value;
+        };
     }
 
     private void AddCharts(IEnumerable<ChartModel> charts)
