@@ -2,28 +2,28 @@
 
 public class MarketStatisticElement : StatisticElement
 {
-    private double _price = 1;
-    private double _count = 0;
+    private double? _price;
+    private double? _count;
 
     public double Price
     {
-        get => _price;
+        get => _price ?? 1;
         set => _price = value;
     }
 
     public double Count
     {
-        get => _count;
+        get => _count ?? 0;
         set => _count = value;
     }
 
     public override bool IsEmpty
-        => base.IsEmpty && (Price == 1 && Count == 0);
+        => base.IsEmpty && (Count == 0);
 
     public override void Combine<StatisticType>(IEnumerable<StatisticType> elements)
     {
         base.Combine(elements);
-        Average(ref _price, elements, e => (e as MarketStatisticElement)!.Price);
-        Sum(ref _count, elements, e => (e as MarketStatisticElement)!.Count);
+        Average(ref _price, elements, e => (e as MarketStatisticElement)!._price);
+        Sum(ref _count, elements, e => (e as MarketStatisticElement)!._count);
     }
 }

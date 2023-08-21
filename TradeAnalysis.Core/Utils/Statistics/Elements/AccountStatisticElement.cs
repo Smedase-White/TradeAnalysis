@@ -2,20 +2,20 @@
 
 public class AccountStatisticElement : TradeStatisticElement
 {
-    private double _cost = 0;
+    private double? _cost;
 
     public double Cost
     {
-        get => _cost;
+        get => _cost ?? 0;
         set => _cost = value;
     }
 
     public override bool IsEmpty
-        => base.IsEmpty && (Cost == 0);
+        => base.IsEmpty;
 
     public override void Combine<StatisticType>(IEnumerable<StatisticType> elements)
     {
         base.Combine(elements);
-        Cost = (elements.Last() as AccountStatisticElement)!.Cost;
+        _cost = (elements.Last() as AccountStatisticElement)!._cost;
     }
 }

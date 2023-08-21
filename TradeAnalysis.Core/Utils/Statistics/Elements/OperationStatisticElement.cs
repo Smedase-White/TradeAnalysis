@@ -2,60 +2,60 @@
 
 public class OperationStatisticElement : StatisticElement
 {
-    private double _buy = 0;
-    private double _buyCount = 0;
-    private double _sell = 0;
-    private double _sellCount = 0;
-    private double _transaction = 0;
-    private double _depositInItems = 0;
+    private double? _buy;
+    private double? _buyCount;
+    private double? _sell;
+    private double? _sellCount;
+    private double? _transaction;
+    private double? _depositInItems;
 
     public double Buy
     {
-        get => _buy;
+        get => _buy ?? 0;
         set => _buy = value;
     }
 
     public double BuyCount
     {
-        get => _buyCount;
+        get => _buyCount ?? 0;
         set => _buyCount = value;
     }
 
     public double Sell
     {
-        get => _sell;
+        get => _sell ?? 0;
         set => _sell = value;
     }
 
     public double SellCount
     {
-        get => _sellCount;
+        get => _sellCount ?? 0;
         set => _sellCount = value;
     }
 
     public double Transaction
     {
-        get => _transaction;
+        get => _transaction ?? 0;
         set => _transaction = value;
     }
 
     public double DepositInItems
     {
-        get => _depositInItems;
+        get => _depositInItems ?? 0;
         set => _depositInItems = value;
     }
 
     public override bool IsEmpty
-        => base.IsEmpty && (Buy == 0 && Sell == 0 && Transaction == 0 && DepositInItems == 0);
+        => base.IsEmpty && (BuyCount == 0 && SellCount == 0 && Transaction == 0);
 
     public override void Combine<StatisticType>(IEnumerable<StatisticType> elements)
     {
         base.Combine(elements);
-        Sum(ref _buy, elements, e => (e as OperationStatisticElement)!.Buy);
-        Sum(ref _buyCount, elements, e => (e as OperationStatisticElement)!.BuyCount);
-        Sum(ref _sell, elements, e => (e as OperationStatisticElement)!.Sell);
-        Sum(ref _sellCount, elements, e => (e as OperationStatisticElement)!.SellCount);
-        Sum(ref _transaction, elements, e => (e as OperationStatisticElement)!.Transaction);
-        Sum(ref _depositInItems, elements, e => (e as OperationStatisticElement)!.DepositInItems);
+        Sum(ref _buy, elements, e => (e as OperationStatisticElement)!._buy);
+        Sum(ref _buyCount, elements, e => (e as OperationStatisticElement)!._buyCount);
+        Sum(ref _sell, elements, e => (e as OperationStatisticElement)!._sell);
+        Sum(ref _sellCount, elements, e => (e as OperationStatisticElement)!._sellCount);
+        Sum(ref _transaction, elements, e => (e as OperationStatisticElement)!._transaction);
+        Sum(ref _depositInItems, elements, e => (e as OperationStatisticElement)!._depositInItems);
     }
 }

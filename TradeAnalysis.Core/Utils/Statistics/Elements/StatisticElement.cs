@@ -1,4 +1,6 @@
-﻿namespace TradeAnalysis.Core.Utils.Statistics.Elements;
+﻿using System.Collections.Generic;
+
+namespace TradeAnalysis.Core.Utils.Statistics.Elements;
 
 public class StatisticElement : IComparable<StatisticElement>
 {
@@ -28,21 +30,25 @@ public class StatisticElement : IComparable<StatisticElement>
             Time = maxTime;
     }
 
-    public static void Sum<StatisticType>(ref double property,
-        IEnumerable<StatisticType> values, Func<StatisticType, double> selector)
+    public static void Sum<StatisticType>(ref double? property,
+        IEnumerable<StatisticType> elements, Func<StatisticType, double?> selector)
         where StatisticType : StatisticElement, new()
     {
-        property += values.Sum(selector);
+        property = property.GetValueOrDefault() + elements.Sum(selector);
     }
 
-    public static void Average<StatisticType>(ref double property,
-        IEnumerable<StatisticType> values, Func<StatisticType, double> selector)
+    public static void Average<StatisticType>(ref double? property,
+        IEnumerable<StatisticType> elements, Func<StatisticType, double?> selector)
         where StatisticType : StatisticElement, new()
     {
-        property = (property + values.Sum(selector)) / (1 + values.Count());
+        elements = elements.Where(e => e.IsEmpty == false);
+        if (property is null)
+            property = elements.Sum(selector) / elements.Count();
+        else
+            property = (property + elements.Sum(selector)) / (1 + elements.Count());
     }
 
-    public static StatisticType? Create<StatisticType>(IEnumerable<StatisticElement> elements, StatisticElement? prev = null)
+    public static StatisticType? Create<StatisticType>(IEnumerable<StatisticType> elements, StatisticType? prev = null)
         where StatisticType : StatisticElement, new()
     {
         if (elements.Any() == false)

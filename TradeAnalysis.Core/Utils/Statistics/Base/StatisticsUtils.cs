@@ -34,7 +34,7 @@ public static class StatisticsUtils
         StatisticType? statistic = null;
         foreach (DateTime time in times)
         {
-            statistic = StatisticElement.Create<StatisticType>(
+            statistic = StatisticElement.Create(
                 SelectDataPeriod(data, time.Floor(period), time.Ceiling(period))!, statistic);
             if (statistic is null)
                 continue;
@@ -60,7 +60,7 @@ public static class StatisticsUtils
         StatisticType? statistic = null;
         foreach (KeyValuePair<DateTime, List<StatisticType>> time in times)
         {
-            statistic = StatisticElement.Create<StatisticType>(time.Value, statistic);
+            statistic = StatisticElement.Create(time.Value, statistic);
             if (statistic is null)
                 continue;
             statistic.Time = time.Key;
