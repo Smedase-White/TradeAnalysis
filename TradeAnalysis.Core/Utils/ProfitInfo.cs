@@ -6,14 +6,14 @@ namespace TradeAnalysis.Core.Utils
     {
         private readonly double _value;
         private readonly double _percent;
-        private readonly int _duration;
+        private readonly double _duration;
         private readonly double _hourly;
 
         public ProfitInfo(DealInfo buyInfo, DealInfo sellInfo)
         {
             _value = sellInfo.Amount + buyInfo.Amount;
             _percent = _value / buyInfo.Amount;
-            _duration = (int)(sellInfo.Time - buyInfo.Time).TotalHours;
+            _duration = (sellInfo.Time - buyInfo.Time).TotalHours;
             _hourly = _value / _duration;
         }
 
@@ -27,7 +27,7 @@ namespace TradeAnalysis.Core.Utils
             get => _percent;
         }
 
-        public int Duration
+        public double Duration
         {
             get => _duration;
         }
