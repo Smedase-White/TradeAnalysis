@@ -10,7 +10,7 @@ public static class JsonSave
     public static T? Load<T>(string path)
     {
         if (File.Exists(path) == false)
-            File.Create(path);
+            return default;
         using FileStream stream = File.OpenRead(path);
         return JsonSerializer.Deserialize<T>(stream, _options);
     }
