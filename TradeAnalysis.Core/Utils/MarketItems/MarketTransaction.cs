@@ -15,8 +15,8 @@ public class MarketTransaction
         : this(new DealInfo(pay))
     { }
 
-    public MarketTransaction(OperationHistoryTransfer pay)
-        : this(new DealInfo(pay))
+    public MarketTransaction(OperationHistoryTransfer transfer)
+        : this(new DealInfo(transfer))
     { }
 
     public DealInfo Info
