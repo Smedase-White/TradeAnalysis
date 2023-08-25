@@ -14,9 +14,9 @@ using SkiaSharp;
 
 using TradeAnalysis.Core.Utils.Statistics.Elements;
 
-using static TradeAnalysis.WPF.ViewModels.ChartUtils;
-
 namespace TradeAnalysis.WPF.ViewModels;
+
+using static ChartUtils;
 
 public class ChartModel : ViewModelBase
 {

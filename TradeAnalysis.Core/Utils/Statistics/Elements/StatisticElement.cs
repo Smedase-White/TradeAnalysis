@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace TradeAnalysis.Core.Utils.Statistics.Elements;
+﻿namespace TradeAnalysis.Core.Utils.Statistics.Elements;
 
 public class StatisticElement : IComparable<StatisticElement>
 {

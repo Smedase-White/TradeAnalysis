@@ -2,9 +2,9 @@
 using System.Text.Json.Nodes;
 using System.Text.Json.Serialization;
 
-using static TradeAnalysis.Core.MarketAPI.TypeUtils;
-
 namespace TradeAnalysis.Core.MarketAPI;
+
+using static TypeUtils;
 
 public class OperationHistoryConverter : JsonConverter<OperationHistoryBase>
 {

@@ -1,8 +1,9 @@
 ﻿using TradeAnalysis.Core.Utils.Statistics.Elements;
 
-using static TradeAnalysis.Core.Utils.Statistics.Base.StatisticsUtils;
 
 namespace TradeAnalysis.Core.Utils.Statistics.Base;
+
+using static StatisticsUtils;
 
 public class Statistics<StatisticType> where StatisticType : StatisticElement, new()
 {

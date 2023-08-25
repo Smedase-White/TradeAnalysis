@@ -17,10 +17,10 @@ public class TradeStatisticElement : OperationStatisticElement
         set => _hourlyProfit = value;
     }
 
-    public double SellDuration 
-    { 
-        get => _sellDuration ?? 0; 
-        set => _sellDuration = value; 
+    public double SellDuration
+    {
+        get => _sellDuration ?? 0;
+        set => _sellDuration = value;
     }
 
     public new TradeStatisticElement? Prev

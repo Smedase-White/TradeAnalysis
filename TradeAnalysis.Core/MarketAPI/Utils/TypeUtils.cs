@@ -25,6 +25,9 @@ public static class TypeUtils
     public static DateTime? GetTime(string? timeString)
         => DateTimeOffset.FromUnixTimeSeconds(Convert.ToInt64(timeString)).LocalDateTime;
 
+    public static long GetUnixTime(DateTime time)
+        => ((DateTimeOffset)time).ToUnixTimeSeconds();
+
     public static EventType? GetEvent(string? eventString)
         => eventString switch
         {
