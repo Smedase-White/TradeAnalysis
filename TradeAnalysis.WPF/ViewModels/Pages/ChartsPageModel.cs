@@ -18,8 +18,9 @@ public class ChartsPageModel : ViewModelBase
 {
     private AccountSelectModel _accountSelect = new();
 
-    private Period _selectionPeriod = Period.Month;
     private Period _pointPeriod = Period.Day;
+    private int _selectionLength = 1;
+    private Period _selectionPeriod = Period.Month;
 
     private PeriodSelection _periodSelection = PeriodSelection.Last;
 
@@ -93,21 +94,6 @@ public class ChartsPageModel : ViewModelBase
         }
     }
 
-    public Period SelectionPeriod
-    {
-        get => _selectionPeriod;
-        set
-        {
-            ChangeProperty(ref _selectionPeriod, value);
-            DrawCharts();
-        }
-    }
-
-    public IEnumerable<Period> SelectionPeriodValues
-    {
-        get => new Period[] { Period.Day, Period.Week, Period.Month, Period.HalfYear, Period.FourYears };
-    }
-
     public Period PointPeriod
     {
         get => _pointPeriod;
@@ -121,6 +107,31 @@ public class ChartsPageModel : ViewModelBase
     public IEnumerable<Period> PointPeriodValues
     {
         get => new Period[] { Period.Hour, Period.Day, Period.Week, Period.Month };
+    }
+
+    public int SelectionLength
+    {
+        get => _selectionLength;
+        set
+        {
+            ChangeProperty(ref _selectionLength, value);
+            DrawCharts();
+        }
+    }
+
+    public Period SelectionPeriod
+    {
+        get => _selectionPeriod;
+        set
+        {
+            ChangeProperty(ref _selectionPeriod, value);
+            DrawCharts();
+        }
+    }
+
+    public IEnumerable<Period> SelectionPeriodValues
+    {
+        get => new Period[] { Period.Day, Period.Week, Period.Month, Period.Year };
     }
 
     public PeriodSelection PeriodSelection
@@ -222,8 +233,8 @@ public class ChartsPageModel : ViewModelBase
     {
         return PeriodSelection switch
         {
-            PeriodSelection.Last => statistics.SelectDataPeriod(DateTime.Now.Ceiling(PointPeriod).AddPeriod(SelectionPeriod, -1), DateTime.Now.Ceiling(PointPeriod))!,
-            PeriodSelection.Current => statistics.SelectDataPeriod(DateTime.Now.Floor(SelectionPeriod), DateTime.Now.Ceiling(SelectionPeriod))!,
+            PeriodSelection.Last => statistics.SelectDataPeriod(DateTime.Now.Ceiling(PointPeriod).AddPeriod(SelectionPeriod, -_selectionLength), DateTime.Now.Ceiling(PointPeriod))!,
+            PeriodSelection.Current => statistics.SelectDataPeriod(DateTime.Now.Floor(SelectionPeriod).AddPeriod(SelectionPeriod, -_selectionLength + 1), DateTime.Now.Ceiling(SelectionPeriod))!,
             _ => throw new NotImplementedException(),
         };
     }

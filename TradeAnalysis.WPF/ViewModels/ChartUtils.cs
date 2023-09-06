@@ -58,8 +58,7 @@ public static class ChartUtils
             Period.Day => HourAxis,
             Period.Week => DayAxis,
             Period.Month => DayAxis,
-            Period.HalfYear => MonthAxis,
-            Period.FourYears => MonthAxis,
+            Period.Year => MonthAxis,
             _ => throw new NotImplementedException(),
         };
 

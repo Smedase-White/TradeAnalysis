@@ -1,6 +1,5 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
-
     <Style x:Key="Page" TargetType="UserControl">
         <Setter Property="Background" Value="{StaticResource PageBackgroundColor}" />
     </Style>
@@ -16,6 +15,16 @@
         </Setter>
     </Style>
 
+    <Style x:Key="TopStackPanelInput" TargetType="TextBox">
+        <Setter Property="Control.BorderBrush" Value="{StaticResource SecondColor}" />
+        <Setter Property="Control.Foreground" Value="{StaticResource ForegroundColor}" />
+        <Setter Property="Control.Background" Value="Transparent" />
+        <Setter Property="Height" Value="25" />
+        <Setter Property="HorizontalContentAlignment" Value="Center" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="Padding" Value="0" />
+    </Style>
+    
     <Style
         x:Key="CorolComponent"
         BasedOn="{StaticResource InputElement}"
@@ -24,9 +33,6 @@
         <Setter Property="FontWeight" Value="Bold" />
         <Setter Property="Padding" Value="0" />
     </Style>
-
-
-    <!--  ScrollableItemsControl  -->
 
     <Style x:Key="ScrollableItemsControl" TargetType="ItemsControl">
         <Setter Property="Background" Value="Transparent" />
@@ -41,8 +47,6 @@
             </Setter.Value>
         </Setter>
     </Style>
-
-    <!--  AccountSelectBox  -->
 
     <Style x:Key="AccountSelectBox" TargetType="{x:Type ComboBox}">
         <Setter Property="UIElement.SnapsToDevicePixels" Value="True" />

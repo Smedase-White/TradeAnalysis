@@ -26,9 +26,15 @@
                 Margin="10,0"
                 ItemsSource="{Binding PointPeriodValues}"
                 SelectedItem="{Binding PointPeriod}" />
+            <TextBox
+                Width="30"
+                Margin="10,5,0,5"
+                Text="{Binding SelectionLength}"
+                Style="{StaticResource TopStackPanelInput}"
+                />
             <ComboBox
                 Width="80"
-                Margin="10,0"
+                Margin="5,0,10,0"
                 ItemsSource="{Binding SelectionPeriodValues}"
                 SelectedItem="{Binding SelectionPeriod}" />
             <ComboBox
@@ -45,7 +51,7 @@
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
                     <elements:Chart
-                        Height="700"
+                        Height="500"
                         Margin="0,5"
                         DataContext="{Binding}" />
                 </DataTemplate>
