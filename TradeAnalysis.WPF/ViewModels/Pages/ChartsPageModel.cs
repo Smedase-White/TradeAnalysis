@@ -42,13 +42,13 @@ public class ChartsPageModel : ViewModelBase
             SelectValue<TradeStatisticElement>(e => e.Profit)),
         new("Ежедневный профит", LegendValueType.Avg, ChartUnit.Currency,
             SelectValue<TradeStatisticElement>(e => e.HourlyProfit)),
-        new("Средний процент профита", LegendValueType.Avg, ChartUnit.Percent,
+        new("Процент профита от стоимости вещи", LegendValueType.Avg, ChartUnit.Percent,
             SelectValue<TradeStatisticElement>(e => e.AverageProfitPercent * 100)),
         new("Длительность продажи", LegendValueType.Avg, ChartUnit.Days,
             SelectValue<TradeStatisticElement>(e => e.SellDuration / 24, true)),
         new("Стоимость инвентаря", LegendValueType.Last, ChartUnit.Currency,
             SelectValue<AccountStatisticElement>(e => e.Cost)),
-        new("Профит от стоимости", LegendValueType.Avg, ChartUnit.Percent,
+        new("Процент профита от стоимости инвентаря", LegendValueType.Avg, ChartUnit.Percent,
             SelectValue<AccountStatisticElement>(e => e.Profit / e.Prev?.Cost * 100)),
     };
 
