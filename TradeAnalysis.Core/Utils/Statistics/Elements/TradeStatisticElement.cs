@@ -4,6 +4,7 @@ public class TradeStatisticElement : OperationStatisticElement
 {
     private double? _profit;
     private double? _hourlyProfit;
+    private double? _averageProfitPercent;
     private double? _sellDuration;
 
     public double Profit
@@ -11,10 +12,17 @@ public class TradeStatisticElement : OperationStatisticElement
         get => _profit ?? 0;
         set => _profit = value;
     }
+
     public double HourlyProfit
     {
         get => _hourlyProfit ?? 0;
         set => _hourlyProfit = value;
+    }
+
+    public double AverageProfitPercent
+    {
+        get => _averageProfitPercent ?? 0;
+        set => _averageProfitPercent = value;
     }
 
     public double SellDuration
@@ -37,6 +45,7 @@ public class TradeStatisticElement : OperationStatisticElement
         base.Combine(elements);
         Sum(ref _profit, elements, e => (e as TradeStatisticElement)!._profit);
         Sum(ref _hourlyProfit, elements, e => (e as TradeStatisticElement)!._hourlyProfit);
+        Average(ref _averageProfitPercent, elements, e => (e as TradeStatisticElement)!._averageProfitPercent);
         Average(ref _sellDuration, elements, e => (e as TradeStatisticElement)!._sellDuration);
     }
 }

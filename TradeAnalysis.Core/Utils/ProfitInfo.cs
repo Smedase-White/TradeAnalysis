@@ -12,7 +12,7 @@ namespace TradeAnalysis.Core.Utils
         public ProfitInfo(DealInfo buyInfo, DealInfo sellInfo)
         {
             _value = sellInfo.Amount + buyInfo.Amount;
-            _percent = _value / buyInfo.Amount;
+            _percent = _value / -buyInfo.Amount;
             _duration = (sellInfo.Time - buyInfo.Time).TotalHours;
             _hourly = _value / _duration;
         }
