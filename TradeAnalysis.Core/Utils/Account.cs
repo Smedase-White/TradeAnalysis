@@ -10,20 +10,21 @@ namespace TradeAnalysis.Core.Utils
     public class Account
     {
         private static readonly DateTime StartTime = new(2021, 1, 1, 0, 0, 0);
-        private const int TradeDaysLimit = 100;
+        private const int TradelessDaysLimit = 100;
         private static readonly string[] IgnoredItems = { "Sealed Graffiti" };
         private const int MaxParseCount = 500;
         private const int MaxParallelRequestCount = 5;
 
         private readonly string _marketApi;
 
-        private IImmutableList<MarketItem>? _itemsHistory;
-        private IImmutableList<MarketTransaction>? _transactionsHistory;
+        private ImmutableList<MarketItem>? _itemsHistory;
+        private ImmutableList<MarketItem>? _faultsHistory;
+        private ImmutableList<MarketTransaction>? _transactionsHistory;
 
-        private IImmutableList<MarketItem>? _tradeHistory;
-        private IImmutableList<MarketItem>? _depositItemsHistory;
+        private ImmutableList<MarketItem>? _tradeHistory;
+        private ImmutableList<MarketItem>? _depositItemsHistory;
 
-        private IImmutableList<MarketItem>? _parsedItems;
+        private ImmutableList<MarketItem>? _parsedItems;
 
         private AccountStatistics? _statistics;
         private MarketStatistics? _marketStatistics;
@@ -38,7 +39,7 @@ namespace TradeAnalysis.Core.Utils
             get => _marketApi;
         }
 
-        public IImmutableList<MarketItem>? ItemsHistory
+        public ImmutableList<MarketItem>? ItemsHistory
         {
             get => _itemsHistory;
             private set
@@ -46,29 +47,45 @@ namespace TradeAnalysis.Core.Utils
                 _itemsHistory = value;
                 if (_itemsHistory is null)
                     return;
-                AnalisysItemsHistory(_itemsHistory);
+                AnalisysItemsHistory();
             }
         }
 
-        public IImmutableList<MarketTransaction>? TransactionsHistory
+        public IEnumerable<MarketItem>? IgnoredItemsHistory
+        {
+            get => _itemsHistory?.Where(item => IsIgnored(item.Name) == true);
+        }
+
+        public IEnumerable<MarketItem>? NotIgnoredItemsHistory
+        {
+            get => _itemsHistory?.Where(item => IsIgnored(item.Name) == false);
+        }
+
+        public ImmutableList<MarketItem>? FaultsHistory 
+        { 
+            get => _faultsHistory; 
+            private set => _faultsHistory = value; 
+        }
+
+        public ImmutableList<MarketTransaction>? TransactionsHistory
         {
             get => _transactionsHistory;
             private set => _transactionsHistory = value;
         }
 
-        public IImmutableList<MarketItem>? TradeHistory
+        public ImmutableList<MarketItem>? TradeHistory
         {
             get => _tradeHistory;
             private set => _tradeHistory = value;
         }
 
-        public IImmutableList<MarketItem>? DepositItemsHistory
+        public ImmutableList<MarketItem>? DepositItemsHistory
         {
             get => _depositItemsHistory;
             private set => _depositItemsHistory = value;
         }
 
-        public IImmutableList<MarketItem>? ParsedItems
+        public ImmutableList<MarketItem>? ParsedItems
         {
             get => _parsedItems;
             private set => _parsedItems = value;
@@ -97,15 +114,24 @@ namespace TradeAnalysis.Core.Utils
             results.Reverse();
 
             List<MarketItem> itemHistory = new();
+            List<MarketItem> faultsHistory = new();
             List<MarketTransaction> transactionHistory = new();
             foreach (OperationHistoryBase element in results)
             {
                 switch (element)
                 {
                     case OperationHistoryItem item:
-                        if (item.Stage != Stage.Given)
-                            continue;
-                        itemHistory.Add(new(item));
+                        switch (item.Stage)
+                        {
+                            case Stage.New:
+                                break;
+                            case Stage.Given:
+                                itemHistory.Add(new(item));
+                                break;
+                            case Stage.TimedOut:
+                                faultsHistory.Add(new(item));
+                                break;
+                        }
                         break;
                     case OperationHistoryPay pay:
                         transactionHistory.Add(new(pay));
@@ -116,9 +142,6 @@ namespace TradeAnalysis.Core.Utils
                 }
             }
 
-            foreach (string ignoredItem in IgnoredItems)
-                itemHistory = itemHistory.Where(item => IsIgnored(item.Name) == false).ToList();
-
             ItemsHistory = itemHistory.ToImmutableList();
             TransactionsHistory = transactionHistory.ToImmutableList();
 
@@ -127,19 +150,9 @@ namespace TradeAnalysis.Core.Utils
             return status;
         }
 
-        private static bool IsIgnored(string name)
+        private void AnalisysItemsHistory()
         {
-            foreach (string ignoredItem in IgnoredItems)
-            {
-                if (name.Contains(ignoredItem))
-                    return true;
-            }
-            return false;
-        }
-
-        private void AnalisysItemsHistory(IImmutableList<MarketItem> history)
-        {
-            List<MarketItem> trades = new(history);
+            List<MarketItem> trades = new(NotIgnoredItemsHistory!);
             List<MarketItem> depositItems = new();
 
             for (int i = 0; i < trades.Count; i++)
@@ -160,7 +173,7 @@ namespace TradeAnalysis.Core.Utils
                     if (trades[j].SellInfo is null)
                         continue;
 
-                    if ((trades[j].SellInfo!.Time - trades[i].BuyInfo!.Time).TotalDays > TradeDaysLimit)
+                    if ((trades[j].SellInfo!.Time - trades[i].BuyInfo!.Time).TotalDays > TradelessDaysLimit)
                         continue;
 
                     trades[i] = new(trades[i]) { SellInfo = trades[j].SellInfo };
@@ -206,6 +219,16 @@ namespace TradeAnalysis.Core.Utils
             ParsedItems = parsedItems.ToImmutableList();
 
             MarketStatistics = new(this);
+        }
+
+        private static bool IsIgnored(string name)
+        {
+            foreach (string ignoredItem in IgnoredItems)
+            {
+                if (name.Contains(ignoredItem))
+                    return true;
+            }
+            return false;
         }
     }
 }
