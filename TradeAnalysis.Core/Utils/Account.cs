@@ -143,6 +143,7 @@ namespace TradeAnalysis.Core.Utils
             }
 
             ItemsHistory = itemHistory.ToImmutableList();
+            FaultsHistory = faultsHistory.ToImmutableList();
             TransactionsHistory = transactionHistory.ToImmutableList();
 
             Statistics = new(this);
