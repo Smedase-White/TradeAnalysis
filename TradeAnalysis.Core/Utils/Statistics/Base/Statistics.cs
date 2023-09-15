@@ -48,9 +48,9 @@ public class Statistics<StatisticType> where StatisticType : StatisticElement, n
     }
 
     public void FillStatisticValues<ItemsType>(IEnumerable<ItemsType> items,
-        Func<ItemsType, (DateTime, DateTime)> intervalSelection, Func<ItemsType, DateTime, double> valueSelection,
-        Action<StatisticType, double> action, Func<IEnumerable<double>, double>? calc = null)
+        Func<ItemsType, (DateTime, DateTime)> intervalSelection, Func<ItemsType, DateTime, double> valueSelection, 
+        Action<StatisticType, IEnumerable<double>> action)
     {
-        FillStatisticValues<StatisticType, ItemsType>(Data, items, intervalSelection, valueSelection, action, calc);
+        FillStatisticValues<StatisticType, ItemsType>(Data, items, intervalSelection, valueSelection, action);
     }
 }

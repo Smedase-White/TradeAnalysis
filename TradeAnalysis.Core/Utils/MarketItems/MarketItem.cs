@@ -7,6 +7,8 @@ namespace TradeAnalysis.Core.Utils.MarketItems;
 
 public class MarketItem
 {
+    private static readonly string[] IgnoredItems = { "Sealed Graffiti" };
+
     private const int MaxParseTries = 5;
     private const double PeakValue = 1.15;
 
@@ -142,5 +144,13 @@ public class MarketItem
         History = history.ToImmutableList();
 
         return status;
+    }
+
+    public bool IsIgnored()
+    {
+        foreach (string ignoredItem in IgnoredItems)
+            if (Name.Contains(ignoredItem))
+                return true;
+        return false;
     }
 }

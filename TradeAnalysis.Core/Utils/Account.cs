@@ -11,7 +11,6 @@ namespace TradeAnalysis.Core.Utils
     {
         private static readonly DateTime StartTime = new(2021, 1, 1, 0, 0, 0);
         private const int TradelessDaysLimit = 100;
-        private static readonly string[] IgnoredItems = { "Sealed Graffiti" };
         private const int MaxParseCount = 500;
         private const int MaxParallelRequestCount = 5;
 
@@ -49,16 +48,6 @@ namespace TradeAnalysis.Core.Utils
                     return;
                 AnalisysItemsHistory();
             }
-        }
-
-        public IEnumerable<MarketItem>? IgnoredItemsHistory
-        {
-            get => _itemsHistory?.Where(item => IsIgnored(item.Name) == true);
-        }
-
-        public IEnumerable<MarketItem>? NotIgnoredItemsHistory
-        {
-            get => _itemsHistory?.Where(item => IsIgnored(item.Name) == false);
         }
 
         public ImmutableList<MarketItem>? FaultsHistory 
@@ -153,7 +142,7 @@ namespace TradeAnalysis.Core.Utils
 
         private void AnalisysItemsHistory()
         {
-            List<MarketItem> trades = new(NotIgnoredItemsHistory!);
+            List<MarketItem> trades = new(_itemsHistory!.Where(item => item.IsIgnored() == false));
             List<MarketItem> depositItems = new();
 
             for (int i = 0; i < trades.Count; i++)
@@ -220,16 +209,6 @@ namespace TradeAnalysis.Core.Utils
             ParsedItems = parsedItems.ToImmutableList();
 
             MarketStatistics = new(this);
-        }
-
-        private static bool IsIgnored(string name)
-        {
-            foreach (string ignoredItem in IgnoredItems)
-            {
-                if (name.Contains(ignoredItem))
-                    return true;
-            }
-            return false;
         }
     }
 }

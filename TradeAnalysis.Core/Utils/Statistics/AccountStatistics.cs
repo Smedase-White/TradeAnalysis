@@ -33,65 +33,47 @@ public class AccountStatistics : Statistics<AccountStatisticElement>
         Data = new(GetTimeCollection(startTime, endTime, Period.Hour)
             .Select(time => new AccountStatisticElement() { Time = time }));
 
-        FillStatisticValues(_account.NotIgnoredItemsHistory!,
-            item => item.BuyInfo is null ? NullTime : item.BuyInfo.Time.ToInterval(),
+        FillStatisticValues(_account.ItemsHistory!
+            .Where(item => item.IsIgnored() == false & item.BuyInfo is not null),
+            item => item.BuyInfo!.Time.ToInterval(),
             (item, _) => -item.BuyInfo!.Amount,
-            (data, value) => data.Buy = value,
-            values => values.Sum());
+            (data, values) => { data.Buy = values.Sum(); data.BuyCount = values.Count(); });
 
-        FillStatisticValues(_account.NotIgnoredItemsHistory!,
-            item => item.BuyInfo is null ? NullTime : item.BuyInfo.Time.ToInterval(),
-            (item, _) => 0,
-            (data, value) => data.BuyCount = value,
-            values => values.Count());
-
-        FillStatisticValues(_account.NotIgnoredItemsHistory!,
-            item => item.SellInfo is null ? NullTime : item.SellInfo.Time.ToInterval(),
+        FillStatisticValues(_account.ItemsHistory!
+            .Where(item => item.IsIgnored() == false & item.SellInfo is not null),
+            item => item.SellInfo!.Time.ToInterval(),
             (item, _) => item.SellInfo!.Amount,
-            (data, value) => data.Sell = value,
-            values => values.Sum());
-
-        FillStatisticValues(_account.NotIgnoredItemsHistory!,
-            item => item.SellInfo is null ? NullTime : item.SellInfo.Time.ToInterval(),
-            (item, _) => 0,
-            (data, value) => data.SellCount = value,
-            values => values.Count());
+            (data, values) => { data.Sell = values.Sum(); data.SellCount = values.Count(); });
 
         FillStatisticValues(_account.TradeHistory!,
             item => item.SellInfo!.Time.ToInterval(),
             (item, _) => item.Profit!.Value,
-            (data, value) => data.Profit = value,
-            values => values.Sum());
+            (data, values) => data.Profit = values.Sum());
 
         FillStatisticValues(_account.TradeHistory!,
             item => (item.BuyInfo!.Time, item.SellInfo!.Time),
             (item, _) => item.Profit!.Hourly,
-            (data, value) => data.HourlyProfit = value,
-            values => values.Sum());
+            (data, values) => data.HourlyProfit = values.Sum());
 
         FillStatisticValues(_account.TradeHistory!,
             item => item.SellInfo!.Time.ToInterval(),
             (item, _) => item.Profit!.Percent,
-            (data, value) => data.AverageProfitPercent = value,
-            values => values.Average());
+            (data, values) => data.AverageProfitPercent = values.Average());
 
         FillStatisticValues(_account.TradeHistory!,
             item => item.SellInfo!.Time.ToInterval(),
             (item, _) => item.Profit!.Duration,
-            (data, value) => data.SellDuration = value,
-            values => values.Average());
+            (data, values) => data.SellDuration = values.Average());
 
         FillStatisticValues(_account.TransactionsHistory!,
             item => item.Info.Time.ToInterval(),
             (item, _) => item.Info.Amount,
-            (data, value) => data.Transaction = value,
-            values => values.Sum());
+            (data, values) => data.Transaction = values.Sum());
 
         FillStatisticValues(_account.DepositItemsHistory!,
             item => item.SellInfo!.Time.ToInterval(),
             (item, _) => item.SellInfo!.Amount,
-            (data, value) => data.DepositInItems = value,
-            values => values.Sum());
+            (data, values) => data.DepositInItems = values.Sum());
 
         AccountStatisticElement prev = Data.First();
         foreach (AccountStatisticElement element in Data)

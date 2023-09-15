@@ -44,13 +44,6 @@ public class MarketStatistics : Statistics<MarketStatisticElement>
         FillStatisticValues(allOperations,
             item => item.Time.ToInterval(),
             (item, _) => item.Amount,
-            (data, value) => data.Price = value,
-            values => values.Average());
-
-        FillStatisticValues(allOperations,
-            item => item.Time.ToInterval(),
-            (item, _) => 0,
-            (data, value) => data.Count = value,
-            values => values.Count());
+            (data, values) => { data.Price = values.Average(); data.Count = values.Count(); });
     }
 }
