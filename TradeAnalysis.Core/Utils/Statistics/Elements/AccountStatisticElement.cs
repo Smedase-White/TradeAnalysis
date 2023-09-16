@@ -2,13 +2,8 @@
 
 public class AccountStatisticElement : TradeStatisticElement
 {
-    private double? _cost;
-
-    public double Cost
-    {
-        get => _cost ?? 0;
-        set => _cost = value;
-    }
+    [Combinable(CalculationType.Last)]
+    public double Cost { get; set; } = 0;
 
     public new AccountStatisticElement? Prev
     {
@@ -18,10 +13,4 @@ public class AccountStatisticElement : TradeStatisticElement
 
     public override bool IsEmpty
         => base.IsEmpty;
-
-    public override void Combine<StatisticType>(IEnumerable<StatisticType> elements)
-    {
-        base.Combine(elements);
-        _cost = (elements.Last() as AccountStatisticElement)!._cost;
-    }
 }

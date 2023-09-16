@@ -1,6 +1,5 @@
 ﻿using TradeAnalysis.Core.Utils.Statistics.Elements;
 
-
 namespace TradeAnalysis.Core.Utils.Statistics.Base;
 
 using static StatisticsUtils;
@@ -48,7 +47,7 @@ public class Statistics<StatisticType> where StatisticType : StatisticElement, n
     }
 
     public void FillStatisticValues<ItemsType>(IEnumerable<ItemsType> items,
-        Func<ItemsType, (DateTime, DateTime)> intervalSelection, Func<ItemsType, DateTime, double> valueSelection, 
+        Func<ItemsType, (DateTime, DateTime)> intervalSelection, Func<ItemsType, DateTime, double> valueSelection,
         Action<StatisticType, IEnumerable<double>> action)
     {
         FillStatisticValues<StatisticType, ItemsType>(Data, items, intervalSelection, valueSelection, action);

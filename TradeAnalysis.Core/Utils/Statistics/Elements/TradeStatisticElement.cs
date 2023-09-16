@@ -2,34 +2,17 @@
 
 public class TradeStatisticElement : OperationStatisticElement
 {
-    private double? _profit;
-    private double? _hourlyProfit;
-    private double? _averageProfitPercent;
-    private double? _sellDuration;
+    [Combinable(CalculationType.Sum)]
+    public double Profit { get; set; }
 
-    public double Profit
-    {
-        get => _profit ?? 0;
-        set => _profit = value;
-    }
+    [Combinable(CalculationType.Sum)]
+    public double HourlyProfit { get; set; }
 
-    public double HourlyProfit
-    {
-        get => _hourlyProfit ?? 0;
-        set => _hourlyProfit = value;
-    }
+    [Combinable(CalculationType.Avg)]
+    public double AverageProfitPercent { get; set; }
 
-    public double AverageProfitPercent
-    {
-        get => _averageProfitPercent ?? 0;
-        set => _averageProfitPercent = value;
-    }
-
-    public double SellDuration
-    {
-        get => _sellDuration ?? 0;
-        set => _sellDuration = value;
-    }
+    [Combinable(CalculationType.Avg)]
+    public double SellDuration { get; set; }
 
     public new TradeStatisticElement? Prev
     {
@@ -39,13 +22,4 @@ public class TradeStatisticElement : OperationStatisticElement
 
     public override bool IsEmpty
         => base.IsEmpty && (HourlyProfit == 0);
-
-    public override void Combine<StatisticType>(IEnumerable<StatisticType> elements)
-    {
-        base.Combine(elements);
-        Sum(ref _profit, elements, e => (e as TradeStatisticElement)!._profit);
-        Sum(ref _hourlyProfit, elements, e => (e as TradeStatisticElement)!._hourlyProfit);
-        Average(ref _averageProfitPercent, elements, e => (e as TradeStatisticElement)!._averageProfitPercent);
-        Average(ref _sellDuration, elements, e => (e as TradeStatisticElement)!._sellDuration);
-    }
 }

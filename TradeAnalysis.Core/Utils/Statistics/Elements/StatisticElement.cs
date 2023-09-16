@@ -1,10 +1,13 @@
-﻿namespace TradeAnalysis.Core.Utils.Statistics.Elements;
+﻿using System.Reflection;
+
+namespace TradeAnalysis.Core.Utils.Statistics.Elements;
 
 public class StatisticElement : IComparable<StatisticElement>
 {
     private DateTime _time;
     private StatisticElement? _prev;
 
+    [Combinable(CalculationType.Last)]
     public DateTime Time
     {
         get => _time;
@@ -20,33 +23,41 @@ public class StatisticElement : IComparable<StatisticElement>
     public virtual bool IsEmpty
         => true;
 
-    public virtual void Combine<StatisticType>(IEnumerable<StatisticType> elements)
-        where StatisticType : StatisticElement, new()
+    public void Combine(IEnumerable<StatisticElement> elements)
     {
-        DateTime maxTime = elements.OrderBy(e => e.Time).Last().Time;
-        if (maxTime > Time)
-            Time = maxTime;
+        foreach (PropertyInfo property in GetType().GetProperties())
+        {
+            CombinableAttribute? attribute = property.GetCustomAttribute<CombinableAttribute>();
+            if (attribute is null)
+                continue;
+            switch (attribute.CalculationType)
+            {
+                case CalculationType.Sum:
+                    property.SetValue(this, Sum(elements, element => (double)property.GetValue(element)!));
+                    break;
+                case CalculationType.Avg:
+                    property.SetValue(this, Average(elements, element => (double)property.GetValue(element)!));
+                    break;
+                case CalculationType.Last:
+                    property.SetValue(this, property.GetValue(elements.Last()));
+                    break;
+            }
+        }
     }
 
-    public static void Sum<StatisticType>(ref double? property,
-        IEnumerable<StatisticType> elements, Func<StatisticType, double?> selector)
-        where StatisticType : StatisticElement, new()
+    public double Sum(IEnumerable<StatisticElement> elements, Func<StatisticElement, double> selector)
     {
-        property = property.GetValueOrDefault() + elements.Sum(selector);
+        return elements.Sum(selector);
     }
 
-    public static void Average<StatisticType>(ref double? property,
-        IEnumerable<StatisticType> elements, Func<StatisticType, double?> selector)
-        where StatisticType : StatisticElement, new()
+    public double Average(IEnumerable<StatisticElement> elements, Func<StatisticElement, double> selector)
     {
-        elements = elements.Where(e => selector(e) is not null);
+        double defaultValue = selector(this);
+        elements = elements.Where(e => selector(e) != defaultValue);
         if (elements.Any() == false)
-            return;
+            return defaultValue;
 
-        if (property is null)
-            property = elements.Sum(selector) / elements.Count();
-        else
-            property = (property + elements.Sum(selector)) / (1 + elements.Count());
+        return elements.Sum(selector) / elements.Count();
     }
 
     public static StatisticType? Create<StatisticType>(IEnumerable<StatisticType> elements, StatisticType? prev = null)

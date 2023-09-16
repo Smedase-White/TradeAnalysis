@@ -50,10 +50,10 @@ namespace TradeAnalysis.Core.Utils
             }
         }
 
-        public ImmutableList<MarketItem>? FaultsHistory 
-        { 
-            get => _faultsHistory; 
-            private set => _faultsHistory = value; 
+        public ImmutableList<MarketItem>? FaultsHistory
+        {
+            get => _faultsHistory;
+            private set => _faultsHistory = value;
         }
 
         public ImmutableList<MarketTransaction>? TransactionsHistory
