@@ -45,6 +45,17 @@ public class AccountStatistics : Statistics<AccountStatisticElement>
             (item, _) => item.SellInfo!.Amount,
             (data, values) => { data.Sell = values.Sum(); data.SellCount = values.Count(); });
 
+        FillStatisticValues(_account.FaultsHistory!,
+            item => (item.BuyInfo is null ? item.SellInfo!.Time : item.BuyInfo!.Time).ToInterval(),
+            (item, _) => 1,
+            (data, values) => data.FaultsCount = values.Count());
+
+        FillStatisticValues(_account.ItemsHistory!
+            .Where(item => item.IsIgnored() == true & item.BuyInfo is not null),
+            item => item.BuyInfo!.Time.ToInterval(),
+            (item, _) => -item.BuyInfo!.Amount,
+            (data, values) => data.BuyIgnoredCount = values.Count());
+
         FillStatisticValues(_account.TradeHistory!,
             item => item.SellInfo!.Time.ToInterval(),
             (item, _) => item.Profit!.Value,

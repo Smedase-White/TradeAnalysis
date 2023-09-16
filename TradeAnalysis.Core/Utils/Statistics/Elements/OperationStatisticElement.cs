@@ -15,6 +15,12 @@ public class OperationStatisticElement : StatisticElement
     public double SellCount { get; set; } = 0;
 
     [Combinable(CalculationType.Sum)]
+    public double FaultsCount { get; set; } = 0;
+
+    [Combinable(CalculationType.Sum)]
+    public double BuyIgnoredCount { get; set; } = 0;
+
+    [Combinable(CalculationType.Sum)]
     public double Transaction { get; set; } = 0;
 
     [Combinable(CalculationType.Sum)]

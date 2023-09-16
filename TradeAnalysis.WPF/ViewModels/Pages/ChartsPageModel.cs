@@ -34,6 +34,8 @@ public class ChartsPageModel : ViewModelBase
             SelectValue<OperationStatisticElement>(e => e.Sell)),
         new("Количество продаж", LegendValueType.Sum, ChartUnit.Count,
             SelectValue<OperationStatisticElement>(e => e.SellCount)),
+        new("Количество отменённых операций", LegendValueType.Avg, ChartUnit.Count,
+            SelectValue<OperationStatisticElement>(e => e.FaultsCount)),
         new("Транзакции", LegendValueType.Sum, ChartUnit.Currency,
             SelectValue<OperationStatisticElement>(e => e.Transaction)),
         new("Депозит предметами", LegendValueType.Sum, ChartUnit.Currency,
