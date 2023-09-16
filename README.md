@@ -5,7 +5,7 @@
 
 ![til](./ReadmeAssets/BuyChart.png)
 
-![til](./ReadmeAssets/BuyCountChart.png)
+![til](./ReadmeAssets/TransactionChart.png)
 
 ![til](./ReadmeAssets/ProfitChart.png)
 
