@@ -4,21 +4,10 @@ namespace TradeAnalysis.Core.Utils.Statistics.Elements;
 
 public class StatisticElement : IComparable<StatisticElement>
 {
-    private DateTime _time;
-    private StatisticElement? _prev;
-
     [Combinable(CalculationType.Last)]
-    public DateTime Time
-    {
-        get => _time;
-        set => _time = value;
-    }
+    public DateTime Time { get; set; }
 
-    public StatisticElement? Prev
-    {
-        get => _prev;
-        set => _prev = value;
-    }
+    public StatisticElement? Prev { get; set; }
 
     public virtual bool IsEmpty
         => true;
@@ -47,7 +36,8 @@ public class StatisticElement : IComparable<StatisticElement>
 
     public double Sum(IEnumerable<StatisticElement> elements, Func<StatisticElement, double> selector)
     {
-        return elements.Sum(selector);
+        double defaultValue = selector(this);
+        return elements.Where(e => selector(e) != defaultValue).Sum(selector);
     }
 
     public double Average(IEnumerable<StatisticElement> elements, Func<StatisticElement, double> selector)
