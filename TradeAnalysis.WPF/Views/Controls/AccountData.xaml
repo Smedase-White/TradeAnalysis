@@ -11,7 +11,7 @@
 
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="53" />
+            <ColumnDefinition Width="57" />
             <ColumnDefinition Width="*" />
             <ColumnDefinition Width="120" />
             <ColumnDefinition Width="42" />
@@ -48,14 +48,17 @@
             Grid.Column="0"
             VerticalAlignment="Top"
             Margin="10,5,0,0"
-            Content="API Key" />
+            Content="API Keys" />
         <TextBox
             Grid.Row="1"
             Grid.Column="1"
             Grid.ColumnSpan="2"
             VerticalAlignment="Top"
             Margin="5,5,0,0"
-            Text="{Binding MarketApi}" />
+            TextWrapping="Wrap"
+            AcceptsReturn="True"
+            Height="Auto"
+            Text="{Binding MarketApis}" />
 
         <Label
             Grid.Row="2"

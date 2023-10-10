@@ -14,7 +14,7 @@ namespace TradeAnalysis.Core.Utils
         private const int MaxParseCount = 500;
         private const int MaxParallelRequestCount = 5;
 
-        private readonly string _marketApi;
+        private readonly string _marketApis;
 
         private ImmutableList<MarketItem>? _itemsHistory;
         private ImmutableList<MarketItem>? _faultsHistory;
@@ -28,14 +28,14 @@ namespace TradeAnalysis.Core.Utils
         private AccountStatistics? _statistics;
         private MarketStatistics? _marketStatistics;
 
-        public Account(string marketApi)
+        public Account(string marketApis)
         {
-            _marketApi = marketApi;
+            _marketApis = marketApis;
         }
 
-        public string MarketApi
+        public string MarketApis
         {
-            get => _marketApi;
+            get => _marketApis;
         }
 
         public ImmutableList<MarketItem>? ItemsHistory
@@ -94,13 +94,19 @@ namespace TradeAnalysis.Core.Utils
 
         public HttpStatusCode LoadHistory()
         {
-            OperationHistoryRequest request = new(StartTime, DateTime.Now, MarketApi);
-            HttpStatusCode status = request.ResultMessage.StatusCode;
-            if (status != HttpStatusCode.OK)
+            List<OperationHistoryBase> results = new();
+            HttpStatusCode status = HttpStatusCode.NotFound;
+            foreach (string marketApi in MarketApis.Split("\r\n"))
+            {
+                OperationHistoryRequest request = new(StartTime, DateTime.Now, marketApi);
+                status = request.ResultMessage.StatusCode;
+                if (status != HttpStatusCode.OK)
+                    continue;
+                results.AddRange(request.Result!.History);
+            }
+            if (results.Count == 0)
                 return status;
-
-            List<OperationHistoryBase> results = request.Result!.History;
-            results.Reverse();
+            results = results.OrderBy(item => item.Time).ToList();
 
             List<MarketItem> itemHistory = new();
             List<MarketItem> faultsHistory = new();
@@ -137,7 +143,7 @@ namespace TradeAnalysis.Core.Utils
 
             Statistics = new(this);
 
-            return status;
+            return HttpStatusCode.OK;
         }
 
         private void AnalisysItemsHistory()
@@ -202,7 +208,7 @@ namespace TradeAnalysis.Core.Utils
 
             List<Action> parseActions = new();
             foreach (MarketItem item in parsedItems)
-                parseActions.Add(() => item.LoadHistory(MarketApi));
+                parseActions.Add(() => item.LoadHistory(MarketApis));
             ParallelOptions options = new() { MaxDegreeOfParallelism = MaxParallelRequestCount };
             Parallel.Invoke(options, parseActions.ToArray());
 

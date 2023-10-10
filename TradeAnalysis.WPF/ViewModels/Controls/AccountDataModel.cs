@@ -9,7 +9,7 @@ namespace TradeAnalysis.WPF.ViewModels;
 public class AccountDataModel : ViewModelBase
 {
     private string _accountName = "";
-    private string _marketApi = "";
+    private string _marketApis = "";
     private ColorModel _color = new();
 
     private string _status = "Empty";
@@ -32,12 +32,12 @@ public class AccountDataModel : ViewModelBase
         set => ChangeProperty(ref _accountName, value);
     }
 
-    public string MarketApi
+    public string MarketApis
     {
-        get => _marketApi;
+        get => _marketApis;
         set
         {
-            if (ChangeProperty(ref _marketApi, value))
+            if (ChangeProperty(ref _marketApis, value))
             {
                 Status = Account?.Statistics is null ? "Empty" : "Other";
                 MarketStatus = Account?.MarketStatistics is null ? "Empty" : "Other";
@@ -90,7 +90,7 @@ public class AccountDataModel : ViewModelBase
     public void LoadAccount()
     {
         Status = "Load";
-        Account = new(MarketApi);
+        Account = new(MarketApis);
         HttpStatusCode statusCode = Account.LoadHistory();
         Status = $"{statusCode}";
         if (statusCode != HttpStatusCode.OK)
@@ -121,7 +121,7 @@ public class AccountDataModel : ViewModelBase
         return new AccountSave()
         {
             Name = AccountName,
-            MarketApi = MarketApi,
+            MarketApi = MarketApis,
             Color = Color.Hex
         };
     }
@@ -129,7 +129,7 @@ public class AccountDataModel : ViewModelBase
     public void LoadSave(AccountSave save)
     {
         AccountName = save.Name;
-        MarketApi = save.MarketApi;
+        MarketApis = save.MarketApi;
         Color.Hex = save.Color;
     }
 }
