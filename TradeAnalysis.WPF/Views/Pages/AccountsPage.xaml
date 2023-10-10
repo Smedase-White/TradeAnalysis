@@ -23,24 +23,21 @@
                 Margin="10,0,0,0"
                 Background="{StaticResource SecondColor}"
                 Command="{Binding AddAccountCommand}"
-                Content="➕"
-                Style="{StaticResource SmallButton}" />
+                Content="➕"/>
             <Button
                 Width="40"
                 Height="30"
                 Margin="10,0,0,0"
                 Background="{StaticResource LoadColor}"
                 Command="{Binding LoadAccountsCommand}"
-                Content="⭳"
-                Style="{StaticResource SmallButton}" />
+                Content="⭳"/>
             <Button
                 Width="40"
                 Height="30"
                 Margin="10,0,0,0"
                 Background="{StaticResource SaveColor}"
                 Command="{Binding SaveAccountsCommand}"
-                Content="↥"
-                Style="{StaticResource SmallButton}" />
+                Content="↥"/>
         </StackPanel>
         <ItemsControl
             Grid.Row="1"
