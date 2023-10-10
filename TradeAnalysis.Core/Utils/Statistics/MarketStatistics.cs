@@ -38,8 +38,8 @@ public class MarketStatistics : Statistics<MarketStatisticElement>
         DateTime startTime = allOperations.MinBy(o => o.Time)!.Time,
             endTime = allOperations.MaxBy(o => o.Time)!.Time;
 
-        Data = new(from time in GetTimeCollection(startTime, endTime, Period.Hour)
-                   select new MarketStatisticElement() { Time = time });
+        Data = GetTimeEnumerable(startTime, endTime, Period.Hour)
+            .Select(time => new MarketStatisticElement() { Time = time }).ToArray();
 
         FillStatisticValues(allOperations,
             item => item.Time.ToInterval(),

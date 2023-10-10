@@ -74,15 +74,13 @@ public static class TimeUtils
     public static (DateTime, DateTime) ToInterval(this DateTime time)
         => (time.Ceiling(), time.Ceiling());
 
-    public static ICollection<DateTime> GetTimeCollection(DateTime startTime, DateTime endTime, Period period)
+    public static IEnumerable<DateTime> GetTimeEnumerable(DateTime startTime, DateTime endTime, Period period)
     {
         startTime = startTime.Floor(period);
         endTime = endTime.Ceiling(period);
 
-        List<DateTime> dateList = new();
-        for (; startTime <= endTime; startTime = startTime.AddPeriod(period))
-            dateList.Add(startTime);
-        return dateList;
+        for (DateTime time = startTime; time <= endTime; time = time.AddPeriod(period))
+            yield return time;
     }
 
     public static bool InOnePeriod(this DateTime a, DateTime? b, Period period = SmallestPeriod)
@@ -91,6 +89,17 @@ public static class TimeUtils
             return false;
         return a.Floor(period) == b.Value.Floor(period);
     }
+
+    public static double Length(this TimeSpan timeSpan, Period period = SmallestPeriod)
+        => period switch
+        {
+            Period.Hour => timeSpan.TotalHours,
+            Period.Day => timeSpan.TotalDays,
+            Period.Week => timeSpan.TotalDays / 7,
+            Period.Month => timeSpan.TotalDays / 30,
+            Period.Year => timeSpan.TotalDays / 365,
+            _ => throw new NotImplementedException(),
+        };
 
     public static DateTime Min(params DateTime?[] times)
     {

@@ -30,8 +30,8 @@ public class AccountStatistics : Statistics<AccountStatisticElement>
         MarketItem first = _account.ItemsHistory![0], last = _account.ItemsHistory![^1];
         DateTime startTime = Min(first.BuyInfo?.Time, first.SellInfo?.Time, _account.TransactionsHistory?[0].Info.Time),
             endTime = Max(last.BuyInfo?.Time, last.SellInfo?.Time, _account.TransactionsHistory?[^1].Info.Time);
-        Data = new(GetTimeCollection(startTime, endTime, Period.Hour)
-            .Select(time => new AccountStatisticElement() { Time = time }));
+        Data = GetTimeEnumerable(startTime, endTime, Period.Hour)
+            .Select(time => new AccountStatisticElement() { Time = time }).ToArray();
 
         FillStatisticValues(_account.ItemsHistory!
             .Where(item => item.IsIgnored() == false & item.BuyInfo is not null),

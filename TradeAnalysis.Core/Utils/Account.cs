@@ -46,7 +46,7 @@ namespace TradeAnalysis.Core.Utils
                 _itemsHistory = value;
                 if (_itemsHistory is null)
                     return;
-                AnalisysItemsHistory();
+                AnalysisItemsHistory();
             }
         }
 
@@ -146,7 +146,7 @@ namespace TradeAnalysis.Core.Utils
             return HttpStatusCode.OK;
         }
 
-        private void AnalisysItemsHistory()
+        private void AnalysisItemsHistory()
         {
             List<MarketItem> trades = new(_itemsHistory!.Where(item => item.IsIgnored() == false));
             List<MarketItem> depositItems = new();
