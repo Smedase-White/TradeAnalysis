@@ -104,8 +104,10 @@ public class Statistics<StatisticType> where StatisticType : StatisticElement, n
         foreach (DateTime time in GetTimeEnumerable(Data[0].Time, Data[^1].Time, period))
         {
             statistic = StatisticElement.Create(SelectDataPeriod(time, time.Ceiling(period)).Data, statistic);
-            if (statistic is not null)
-                periodData.Add(statistic);
+            if (statistic is null)
+                continue;
+            statistic.Time = time.Ceiling(period);
+            periodData.Add(statistic);
         }
 
         return new(period, periodData);
