@@ -86,8 +86,8 @@ public class ChartModel : ViewModelBase
         title = $"{title} ({Math.Round(_legendValueType switch
         {
             LegendValueType.Sum => statistics.Sum(e => _selectionFunc(e)) ?? 0,
-            LegendValueType.Avg => statistics.Average(e => _selectionFunc(e)) ?? 0,
-            LegendValueType.Last => _selectionFunc(statistics.Last()) ?? 0,
+            LegendValueType.Avg => statistics.Count() > 0 ? statistics.Average(e => _selectionFunc(e)) ?? 0 : 0,
+            LegendValueType.Last => statistics.Count() > 0 ? _selectionFunc(statistics.Last()) ?? 0 : 0,
             _ => throw new NotImplementedException(),
         }, 2)} {GetUnitString(_unit)})";
         Series.Add(CreateLineSeries(points, title, color));

@@ -149,7 +149,7 @@ public class Statistics<StatisticType> where StatisticType : StatisticElement, n
             if (interval.Equals(NullTime))
                 continue;
 
-            Range? range = GetRange(interval.Item1, interval.Item2)!.Value;
+            Range? range = GetRange(interval.Item1, interval.Item2);
             if (range.HasValue == false)
                 continue;
 
@@ -157,7 +157,6 @@ public class Statistics<StatisticType> where StatisticType : StatisticElement, n
                 selectedValues[i].Add(valueSelection(item, GetTime(i)));
         }
         for (int i = 0; i < Data.Length; i++)
-            if (selectedValues[i].Count > 0)
-                action(Data[i], selectedValues[i]);
+            action(Data[i], selectedValues[i]);
     }
 }

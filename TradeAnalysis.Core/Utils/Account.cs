@@ -101,7 +101,7 @@ namespace TradeAnalysis.Core.Utils
                 OperationHistoryRequest request = new(StartTime, DateTime.Now, marketApi);
                 status = request.ResultMessage.StatusCode;
                 if (status != HttpStatusCode.OK)
-                    continue;
+                    return status;
                 results.AddRange(request.Result!.History);
             }
             if (results.Count == 0)

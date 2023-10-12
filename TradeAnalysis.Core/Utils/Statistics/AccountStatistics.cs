@@ -69,12 +69,12 @@ public class AccountStatistics : Statistics<AccountStatisticElement>
         FillStatisticValues(_account.TradeHistory!,
             item => item.SellInfo!.Time.ToInterval(),
             (item, _) => item.Profit!.Percent,
-            (data, values) => data.AverageProfitPercent = values.Average());
+            (data, values) => data.AverageProfitPercent = values.Count() > 0 ? values.Average() : 0);
 
         FillStatisticValues(_account.TradeHistory!,
             item => item.SellInfo!.Time.ToInterval(),
             (item, _) => item.Profit!.Duration,
-            (data, values) => data.SellDuration = values.Average());
+            (data, values) => data.SellDuration = values.Count() > 0 ? values.Average() : 0);
 
         FillStatisticValues(_account.TransactionsHistory!,
             item => item.Info.Time.ToInterval(),
