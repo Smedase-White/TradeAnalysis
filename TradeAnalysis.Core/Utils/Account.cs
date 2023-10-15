@@ -9,12 +9,14 @@ namespace TradeAnalysis.Core.Utils
 {
     public class Account
     {
-        private static readonly DateTime StartTime = new(2021, 1, 1, 0, 0, 0);
+        private static readonly DateTime StartTime = new(2001, 1, 1, 0, 0, 0);
         private const int TradelessDaysLimit = 100;
         private const int MaxParseCount = 500;
         private const int MaxParallelRequestCount = 5;
 
         private readonly string _marketApis;
+
+        private DateTime? _startHistoryTime, _endHistoryTime;
 
         private ImmutableList<MarketItem>? _itemsHistory;
         private ImmutableList<MarketItem>? _faultsHistory;
@@ -36,6 +38,16 @@ namespace TradeAnalysis.Core.Utils
         public string MarketApis
         {
             get => _marketApis;
+        }
+
+        public DateTime? StartHistoryTime
+        {
+            get => _startHistoryTime;
+        }
+
+        public DateTime? EndHistoryTime
+        {
+            get => _endHistoryTime;
         }
 
         public ImmutableList<MarketItem>? ItemsHistory
@@ -106,7 +118,11 @@ namespace TradeAnalysis.Core.Utils
             }
             if (results.Count == 0)
                 return status;
+
             results = results.OrderBy(item => item.Time).ToList();
+
+            _startHistoryTime = results.First().Time;
+            _endHistoryTime = results.Last().Time;
 
             List<MarketItem> itemHistory = new();
             List<MarketItem> faultsHistory = new();
@@ -151,13 +167,13 @@ namespace TradeAnalysis.Core.Utils
             List<MarketItem> trades = new(_itemsHistory!.Where(item => item.IsIgnored() == false));
             List<MarketItem> depositItems = new();
 
-            for (int i = 0; i < trades.Count; i++)
+            int i = 0;
+            while (i < trades.Count)
             {
                 if (trades[i].BuyInfo is null)
                 {
                     depositItems.Add(trades[i]);
                     trades.RemoveAt(i);
-                    i--;
                     continue;
                 }
 
@@ -170,7 +186,7 @@ namespace TradeAnalysis.Core.Utils
                         continue;
 
                     if ((trades[j].SellInfo!.Time - trades[i].BuyInfo!.Time).TotalDays > TradelessDaysLimit)
-                        continue;
+                        break;
 
                     trades[i] = new(trades[i]) { SellInfo = trades[j].SellInfo };
                     trades.RemoveAt(j);
@@ -180,9 +196,10 @@ namespace TradeAnalysis.Core.Utils
                 if (trades[i].SellInfo is null)
                 {
                     trades.RemoveAt(i);
-                    i--;
                     continue;
                 }
+
+                i++;
             }
 
             TradeHistory = trades.ToImmutableList();

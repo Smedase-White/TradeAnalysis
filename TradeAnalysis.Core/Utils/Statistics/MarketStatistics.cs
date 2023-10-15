@@ -34,16 +34,13 @@ public class MarketStatistics : Statistics<MarketStatisticElement>
                 continue;
             allOperations.AddRange(item.History);
         }
+        allOperations = allOperations.OrderBy(operation => operation.Time).ToList();
 
-        DateTime startTime = allOperations.MinBy(o => o.Time)!.Time,
-            endTime = allOperations.MaxBy(o => o.Time)!.Time;
-
-        Data = GetTimeEnumerable(startTime, endTime, Period.Hour)
-            .Select(time => new MarketStatisticElement() { Time = time }).ToArray();
+        CreateData(allOperations.First().Time, allOperations.Last().Time);
 
         FillStatisticValues(allOperations,
             item => item.Time.ToInterval(),
             (item, _) => item.Amount,
-            (data, values) => { data.Price = values.Average(); data.Count = values.Count(); });
+            (data, values) => { data.Price = values.Average(); data.Count = values.Count; });
     }
 }

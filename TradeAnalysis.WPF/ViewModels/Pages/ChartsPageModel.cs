@@ -239,8 +239,8 @@ public class ChartsPageModel : ViewModelBase
     {
         return PeriodSelection switch
         {
-            PeriodSelection.Last => statistics.SelectDataPeriod(DateTime.Now.Ceiling(PointPeriod).AddPeriod(SelectionPeriod, -_selectionLength), DateTime.Now.Ceiling(PointPeriod))!,
-            PeriodSelection.Current => statistics.SelectDataPeriod(DateTime.Now.Floor(SelectionPeriod).AddPeriod(SelectionPeriod, -_selectionLength + 1), DateTime.Now.Ceiling(SelectionPeriod))!,
+            PeriodSelection.Last => statistics.SelectPeriod(DateTime.Now.Ceiling(PointPeriod).AddPeriod(SelectionPeriod, -_selectionLength), DateTime.Now.Ceiling(PointPeriod))!,
+            PeriodSelection.Current => statistics.SelectPeriod(DateTime.Now.Floor(SelectionPeriod).AddPeriod(SelectionPeriod, -_selectionLength + 1), DateTime.Now.Ceiling(SelectionPeriod))!,
             _ => throw new NotImplementedException(),
         };
     }
