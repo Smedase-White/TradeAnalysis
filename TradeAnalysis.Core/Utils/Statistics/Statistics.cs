@@ -2,7 +2,7 @@
 
 using static TradeAnalysis.Core.Utils.TimeUtils;
 
-namespace TradeAnalysis.Core.Utils.Statistics.Base;
+namespace TradeAnalysis.Core.Utils.Statistics;
 
 public class Statistics<StatisticType> where StatisticType : StatisticElement, new()
 {

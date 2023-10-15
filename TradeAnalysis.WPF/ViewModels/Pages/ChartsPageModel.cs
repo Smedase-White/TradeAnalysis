@@ -5,7 +5,7 @@ using System.Collections.ObjectModel;
 using SkiaSharp;
 
 using TradeAnalysis.Core.Utils;
-using TradeAnalysis.Core.Utils.Statistics.Base;
+using TradeAnalysis.Core.Utils.Statistics;
 using TradeAnalysis.Core.Utils.Statistics.Elements;
 
 using static TradeAnalysis.Core.Utils.TimeUtils;
