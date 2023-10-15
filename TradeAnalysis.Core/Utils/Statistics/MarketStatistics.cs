@@ -1,8 +1,6 @@
 ﻿using TradeAnalysis.Core.Utils.MarketItems;
 using TradeAnalysis.Core.Utils.Statistics.Elements;
 
-using static TradeAnalysis.Core.Utils.TimeUtils;
-
 namespace TradeAnalysis.Core.Utils.Statistics;
 
 public class MarketStatistics : Statistics<MarketStatisticElement>

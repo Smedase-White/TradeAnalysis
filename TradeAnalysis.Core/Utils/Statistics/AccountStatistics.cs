@@ -1,7 +1,4 @@
-﻿using TradeAnalysis.Core.Utils.MarketItems;
-using TradeAnalysis.Core.Utils.Statistics.Elements;
-
-using static TradeAnalysis.Core.Utils.TimeUtils;
+﻿using TradeAnalysis.Core.Utils.Statistics.Elements;
 
 namespace TradeAnalysis.Core.Utils.Statistics;
 
