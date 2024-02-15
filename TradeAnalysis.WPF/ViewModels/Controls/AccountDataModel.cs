@@ -89,6 +89,8 @@ public class AccountDataModel : ViewModelBase
 
     public void LoadAccount()
     {
+        if (MarketApis.Equals(""))
+            return;
         Status = "Load";
         Account = new(MarketApis);
         HttpStatusCode statusCode = Account.LoadHistory();

@@ -41,6 +41,7 @@ public class AccountsPageModel : ViewModelBase
         data.RemoveCommand.AddExecute(obj => { Accounts.Remove(data); SaveAccounts(); });
         data.LoadCommand.AddExecute(obj => SaveAccounts());
         Accounts.Add(data);
+        SaveAccounts();
     }
 
     public void LoadAccounts()
