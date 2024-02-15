@@ -13,12 +13,10 @@ public class AccountsPageModel : ViewModelBase
     private ObservableCollection<AccountDataModel> _accounts = new();
 
     private RelayCommand? _addAccountCommand;
-    private RelayCommand? _loadAccountsCommand;
-    private RelayCommand? _saveAccountsCommand;
 
     public AccountsPageModel()
     {
-
+        LoadAccounts();
     }
 
     public ObservableCollection<AccountDataModel> Accounts
@@ -37,20 +35,11 @@ public class AccountsPageModel : ViewModelBase
         get => _addAccountCommand ??= new(obj => AddAccount());
     }
 
-    public RelayCommand LoadAccountsCommand
-    {
-        get => _loadAccountsCommand ??= new(obj => LoadAccounts());
-    }
-
-    public RelayCommand SaveAccountsCommand
-    {
-        get => _saveAccountsCommand ??= new(obj => SaveAccounts());
-    }
-
     public void AddAccount(AccountDataModel? data = null)
     {
         data ??= new();
-        data.RemoveCommand.AddExecute(obj => Accounts.Remove(data));
+        data.RemoveCommand.AddExecute(obj => { Accounts.Remove(data); SaveAccounts(); });
+        data.LoadCommand.AddExecute(obj => SaveAccounts());
         Accounts.Add(data);
     }
 
