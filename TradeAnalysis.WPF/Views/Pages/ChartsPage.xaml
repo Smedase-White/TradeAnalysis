@@ -21,27 +21,42 @@
                 Width="150"
                 Margin="10,0"
                 DataContext="{Binding AccountSelect}" />
-            <ComboBox
-                Width="80"
-                Margin="10,0"
-                ItemsSource="{Binding PointPeriodValues}"
-                SelectedItem="{Binding PointPeriod}" />
-            <TextBox
-                Width="30"
-                Margin="10,5,0,5"
-                Text="{Binding SelectionLength}"
-                Style="{StaticResource TopStackPanelInput}"
-                />
-            <ComboBox
-                Width="80"
-                Margin="5,0,10,0"
-                ItemsSource="{Binding SelectionPeriodValues}"
-                SelectedItem="{Binding SelectionPeriod}" />
-            <ComboBox
-                Width="80"
-                Margin="10,0"
-                ItemsSource="{Binding PeriodSelectionValues}"
-                SelectedItem="{Binding PeriodSelection}" />
+            <StackPanel
+                Margin="5,5,10,5"
+                Style="{StaticResource PanelElement}"
+                Orientation="Horizontal">
+                <Label
+                    Margin="5,0,0,0"
+                    Content="Частота: " />
+                <ComboBox
+                    Width="80"
+                    Margin="5,0,5,0"
+                    ItemsSource="{Binding PointPeriodValues}"
+                    SelectedItem="{Binding PointPeriod}" />
+            </StackPanel>
+            <StackPanel
+                Margin="5"
+                Style="{StaticResource PanelElement}"
+                Orientation="Horizontal">
+                <Label
+                    Margin="5,0,0,0"
+                    Content="Период: " />
+                <TextBox
+                    Width="30"
+                    Margin="5,0,0,0"
+                    Text="{Binding SelectionLength}"
+                    Style="{StaticResource TopStackPanelInput}"/>
+                <ComboBox
+                    Width="80"
+                    Margin="5,0,5,0"
+                    ItemsSource="{Binding SelectionPeriodValues}"
+                    SelectedItem="{Binding SelectionPeriod}" />
+                <ComboBox
+                    Width="80"
+                    Margin="5,0,5,0"
+                    ItemsSource="{Binding PeriodSelectionValues}"
+                    SelectedItem="{Binding PeriodSelection}" />
+            </StackPanel>
         </StackPanel>
         <ItemsControl
             Grid.Row="1"
