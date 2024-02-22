@@ -11,13 +11,24 @@ public static class JsonSave
     {
         if (File.Exists(path) == false)
             return default;
-        using FileStream stream = File.OpenRead(path);
-        return JsonSerializer.Deserialize<T>(stream, _options);
+        try
+        {
+            using FileStream stream = File.OpenRead(path);
+            return JsonSerializer.Deserialize<T>(stream, _options);
+        }
+        catch
+        {
+            return default;
+        }
     }
 
     public static void Save<T>(T obj, string path)
     {
-        using FileStream stream = File.Create(path);
-        JsonSerializer.Serialize(stream, obj, _options);
+        try
+        {
+            using FileStream stream = File.Create(path);
+            JsonSerializer.Serialize(stream, obj, _options);
+        }
+        catch { }
     }
 }
