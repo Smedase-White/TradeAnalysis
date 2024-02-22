@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Threading.Tasks;
 
 using SkiaSharp;
 
@@ -87,7 +88,7 @@ public class ChartsPageModel : ViewModelBase
         AddCharts(_marketPeriodicityCharts);
         AddCharts(_marketSeasonalityCharts);
 
-        AccountSelect.CloseCommand.AddExecute(obj => { DrawCharts(); });
+        AccountSelect.CloseCommand.AddExecute(obj => Task.Run(() => DrawCharts()));
     }
 
     public AccountSelectModel AccountSelect
@@ -96,7 +97,7 @@ public class ChartsPageModel : ViewModelBase
         set
         {
             ChangeProperty(ref _accountSelect, value);
-            _accountSelect.CloseCommand.AddExecute(obj => { DrawCharts(); });
+            _accountSelect.CloseCommand.AddExecute(obj => Task.Run(() => DrawCharts()));
         }
     }
 

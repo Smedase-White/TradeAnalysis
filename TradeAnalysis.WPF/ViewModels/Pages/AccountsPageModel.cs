@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading.Tasks;
 
 using TradeAnalysis.Core.Utils.Saves;
 
@@ -32,14 +33,14 @@ public class AccountsPageModel : ViewModelBase
 
     public RelayCommand AddAccountCommand
     {
-        get => _addAccountCommand ??= new(obj => AddAccount());
+        get => _addAccountCommand ??= new(obj => Task.Run(() => AddAccount()));
     }
 
     public void AddAccount(AccountDataModel? data = null)
     {
         data ??= new();
-        data.RemoveCommand.AddExecute(obj => { Accounts.Remove(data); SaveAccounts(); });
-        data.LoadCommand.AddExecute(obj => SaveAccounts());
+        data.RemoveCommand.AddExecute(obj => Task.Run(() => { Accounts.Remove(data); SaveAccounts(); }));
+        data.LoadCommand.AddExecute(obj => Task.Run(() => SaveAccounts()));
         Accounts.Add(data);
         SaveAccounts();
     }

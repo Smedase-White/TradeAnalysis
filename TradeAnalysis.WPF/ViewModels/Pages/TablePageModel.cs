@@ -1,4 +1,6 @@
-﻿namespace TradeAnalysis.WPF.ViewModels
+﻿using System.Threading.Tasks;
+
+namespace TradeAnalysis.WPF.ViewModels
 {
     public class TablePageModel : ViewModelBase
     {
@@ -7,7 +9,7 @@
 
         public TablePageModel()
         {
-            AccountSelect.CloseCommand.AddExecute(obj => { LoadTable(); });
+            AccountSelect.CloseCommand.AddExecute(obj => Task.Run(() => LoadTable()));
         }
 
         public AccountSelectModel AccountSelect
@@ -16,7 +18,7 @@
             set
             {
                 ChangeProperty(ref _accountSelect, value);
-                _accountSelect.CloseCommand.AddExecute(obj => { LoadTable(); });
+                _accountSelect.CloseCommand.AddExecute(obj => Task.Run(() => LoadTable()));
             }
         }
 
