@@ -3,6 +3,8 @@
 
 ![til](./ReadmeAssets/AccountsPage.png)
 
+![til](./ReadmeAssets/TablePage.png)
+
 ![til](./ReadmeAssets/BuyChart.png)
 
 ![til](./ReadmeAssets/TransactionChart.png)
