@@ -24,6 +24,7 @@ namespace TradeAnalysis.Core.Utils
 
         private ImmutableList<MarketItem>? _tradeHistory;
         private ImmutableList<MarketItem>? _depositItemsHistory;
+        private ImmutableList<MarketItem>? _unsoldItemsHistory;
 
         private ImmutableList<MarketItem>? _parsedItems;
 
@@ -84,6 +85,12 @@ namespace TradeAnalysis.Core.Utils
         {
             get => _depositItemsHistory;
             private set => _depositItemsHistory = value;
+        }
+
+        public ImmutableList<MarketItem>? UnsoldItemsHistory
+        {
+            get => _unsoldItemsHistory;
+            private set => _unsoldItemsHistory = value;
         }
 
         public ImmutableList<MarketItem>? ParsedItems
@@ -166,6 +173,7 @@ namespace TradeAnalysis.Core.Utils
         {
             List<MarketItem> trades = new(_itemsHistory!.Where(item => item.IsIgnored() == false));
             List<MarketItem> depositItems = new();
+            List<MarketItem> unsoldItems = new();
 
             int i = 0;
             while (i < trades.Count)
@@ -195,6 +203,7 @@ namespace TradeAnalysis.Core.Utils
 
                 if (trades[i].SellInfo is null)
                 {
+                    unsoldItems.Add(trades[i]);
                     trades.RemoveAt(i);
                     continue;
                 }
@@ -204,6 +213,7 @@ namespace TradeAnalysis.Core.Utils
 
             TradeHistory = trades.ToImmutableList();
             DepositItemsHistory = depositItems.ToImmutableList();
+            UnsoldItemsHistory = unsoldItems.ToImmutableList();
         }
 
         public void ParseItems()
