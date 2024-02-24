@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 
 using TradeAnalysis.Core.Utils.Saves;
@@ -28,7 +29,7 @@ public class AccountsPageModel : ViewModelBase
 
     public IEnumerable<AccountDataModel> LoadedAccounts
     {
-        get => Accounts.Where(account => account.Account is not null);
+        get => Accounts.Where(account => account.Status is HttpStatusCode.OK);
     }
 
     public RelayCommand AddAccountCommand
