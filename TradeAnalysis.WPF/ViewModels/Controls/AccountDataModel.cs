@@ -12,8 +12,8 @@ public class AccountDataModel : ViewModelBase
     private string _marketApis = "";
     private ColorModel _color = new();
 
-    private string _status = "Empty";
-    private string _marketStatus = "Empty";
+    private HttpStatusCode _status = HttpStatusCode.NoContent;
+    private HttpStatusCode _marketStatus = HttpStatusCode.NoContent;
 
     private RelayCommand? _loadCommand;
     private RelayCommand? _parseCommand;
@@ -39,8 +39,8 @@ public class AccountDataModel : ViewModelBase
         {
             if (ChangeProperty(ref _marketApis, value))
             {
-                Status = Account?.Statistics is null ? "Empty" : "Other";
-                MarketStatus = Account?.MarketStatistics is null ? "Empty" : "Other";
+                Status = Account?.Statistics is null ? HttpStatusCode.NoContent : HttpStatusCode.NonAuthoritativeInformation;
+                MarketStatus = Account?.MarketStatistics is null ? HttpStatusCode.NoContent : HttpStatusCode.NonAuthoritativeInformation;
             }
         }
     }
@@ -51,13 +51,13 @@ public class AccountDataModel : ViewModelBase
         set => ChangeProperty(ref _color, value);
     }
 
-    public string Status
+    public HttpStatusCode Status
     {
         get => _status;
         private set => ChangeProperty(ref _status, value);
     }
 
-    public string MarketStatus
+    public HttpStatusCode MarketStatus
     {
         get => _marketStatus;
         private set => ChangeProperty(ref _marketStatus, value);
@@ -91,10 +91,10 @@ public class AccountDataModel : ViewModelBase
     {
         if (MarketApis.Equals(""))
             return;
-        Status = "Load";
+        Status = HttpStatusCode.Processing;
         Account = new(MarketApis);
         HttpStatusCode statusCode = Account.LoadHistory();
-        Status = $"{statusCode}";
+        Status = statusCode;
         if (statusCode != HttpStatusCode.OK)
         {
             Account = null;
@@ -102,7 +102,7 @@ public class AccountDataModel : ViewModelBase
         }
         if (Account.ItemsHistory!.Count == 0)
         {
-            Status = "Empty";
+            Status = HttpStatusCode.NoContent;
             Account = null;
             return;
         }
@@ -113,9 +113,9 @@ public class AccountDataModel : ViewModelBase
         if (Account is null)
             return;
 
-        MarketStatus = "Load";
+        MarketStatus = HttpStatusCode.Processing;
         Account.ParseItems();
-        MarketStatus = "OK";
+        MarketStatus = HttpStatusCode.OK;
     }
 
     public AccountSave GetSave()
