@@ -18,12 +18,12 @@
         </Grid.RowDefinitions>
         <StackPanel Grid.Row="0" Style="{StaticResource TopStackPanel}">
             <Button
-                Width="40"
-                Height="30"
-                Margin="10,0,0,0"
-                Background="{StaticResource SecondColor}"
+                Width="140"
+                Margin="10,7"
+                Padding="0"
                 Command="{Binding AddAccountCommand}"
-                Content="➕"/>
+                Style="{StaticResource InputElement}"
+                Content="➕ Добавить аккаунт"/>
         </StackPanel>
         <ItemsControl
             Grid.Row="1"
