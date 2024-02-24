@@ -40,9 +40,9 @@ public class AccountsPageModel : ViewModelBase
     public void AddAccount(AccountDataModel? data = null)
     {
         data ??= new();
-        data.RemoveCommand.AddExecute(obj => Task.Run(() => { Accounts.Remove(data); SaveAccounts(); }));
+        data.RemoveCommand.AddExecute(obj => Task.Run(() => { SyncRemoveAccount(data); SaveAccounts(); }));
         data.LoadCommand.AddExecute(obj => Task.Run(() => SaveAccounts()));
-        Accounts.Add(data);
+        SyncAddAccount(data);
         SaveAccounts();
     }
 
@@ -51,7 +51,7 @@ public class AccountsPageModel : ViewModelBase
         AccountsSave? save = JsonSave.Load<AccountsSave>(SaveFilePath);
         if (save == null)
             return;
-        Accounts.Clear();
+        SyncClearAccount();
         foreach (AccountSave savedAccount in save.Accounts)
         {
             AccountDataModel account = new();
@@ -68,5 +68,20 @@ public class AccountsPageModel : ViewModelBase
             Accounts = Accounts.Select(account => account.GetSave()).ToList()
         };
         JsonSave.Save(save, SaveFilePath);
+    }
+
+    private void SyncAddAccount(AccountDataModel data)
+    {
+        App.Current.Dispatcher.Invoke(() => { Accounts.Add(data); });
+    }
+
+    private void SyncRemoveAccount(AccountDataModel data)
+    {
+        App.Current.Dispatcher.Invoke(() => { Accounts.Remove(data); });
+    }
+
+    private void SyncClearAccount()
+    {
+        App.Current.Dispatcher.Invoke(() => { Accounts.Clear(); });
     }
 }
