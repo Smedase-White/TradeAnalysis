@@ -21,6 +21,19 @@
                 Width="150"
                 Margin="10,0"
                 DataContext="{Binding AccountSelect}" />
+            <StackPanel
+                Margin="5,5,10,5"
+                Style="{StaticResource PanelElement}"
+                Orientation="Horizontal">
+                <Label
+                    Margin="5,0,0,0"
+                    Content="Тип данных: " />
+                <ComboBox
+                    Width="80"
+                    Margin="5,0,5,0"
+                    ItemsSource="{Binding TableTypeValues}"
+                    SelectedItem="{Binding TableType}" />
+            </StackPanel>
         </StackPanel>
         <elements:TradeTable
             Grid.Row="1"

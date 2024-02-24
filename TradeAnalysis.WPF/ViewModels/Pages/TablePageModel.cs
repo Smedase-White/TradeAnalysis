@@ -1,10 +1,16 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace TradeAnalysis.WPF.ViewModels
 {
     public class TablePageModel : ViewModelBase
     {
         private AccountSelectModel _accountSelect = new();
+
+        private TableType _tableType = TableType.Resale;
+
         private TradeTableModel _tradeTable = new();
 
         public TablePageModel()
@@ -22,6 +28,21 @@ namespace TradeAnalysis.WPF.ViewModels
             }
         }
 
+        public TableType TableType
+        {
+            get => _tableType;
+            set
+            {
+                ChangeProperty(ref _tableType, value);
+                LoadTable();
+            }
+        }
+
+        public IEnumerable<TableType> TableTypeValues
+        {
+            get => Enum.GetValues(typeof(TableType)).Cast<TableType>();
+        }
+
         public TradeTableModel TradeTable
         {
             get => _tradeTable;
@@ -30,7 +51,7 @@ namespace TradeAnalysis.WPF.ViewModels
 
         public void LoadTable()
         {
-            TradeTable.LoadTable(AccountSelect.SelectedAccounts);
+            TradeTable.LoadTable(AccountSelect.SelectedAccounts, TableType);
         }
     }
 }
