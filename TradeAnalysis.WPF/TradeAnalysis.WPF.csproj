@@ -7,10 +7,23 @@
     <UseWPF>true</UseWPF>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <BeautySharedRuntimeMode>False</BeautySharedRuntimeMode>
+    <BeautyLibsDir Condition="$(BeautySharedRuntimeMode) == 'True'">../libraries</BeautyLibsDir>
+    <BeautyLibsDir Condition="$(BeautySharedRuntimeMode) != 'True'">./libraries</BeautyLibsDir>
+    <DisableBeauty>False</DisableBeauty>
+    <BeautyOnPublishOnly>False</BeautyOnPublishOnly>
+    <BeautyEnableDebugging>False</BeautyEnableDebugging>
+    <BeautyUsePatch>True</BeautyUsePatch>
+    <BeautyLogLevel>Info</BeautyLogLevel>
+  </PropertyGroup>
+    
+
   <ItemGroup>
     <PackageReference Include="LiveChartsCore" Version="2.0.0-beta.855" />
     <PackageReference Include="LiveChartsCore.SkiaSharpView.WPF" Version="2.0.0-beta.855" />
     <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.39" />
+    <PackageReference Include="nulastudio.NetBeauty" Version="2.1.4.3" />
   </ItemGroup>
 
   <ItemGroup>
